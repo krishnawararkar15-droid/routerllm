@@ -1,0 +1,5 @@
+{
+  "name": "RouteLLM",
+  "description": "One API To Cut Your AI Costs Forever. Automatically route prompts to the most cost-effective AI models.",
+  "requestFramePermissions": []
+}
