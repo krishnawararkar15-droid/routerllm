@@ -1,9 +1,16 @@
+from supabase import create_client
+import os
+
+supabase = create_client(
+    os.environ.get("SUPABASE_URL"),
+    os.environ.get("SUPABASE_KEY")
+)
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
 import re
 import uvicorn
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -189,6 +196,21 @@ async def route_prompt(request: RouteRequest):
     cost = calculate_cost(model, prompt_tokens, completion_tokens)
     requests_remaining = subscription["request_limit"] - subscription["requests_used"]
 
+    # Log to Supabase
+    subscription_key = sub_key
+    prompt_type = "simple" if is_simple(request.prompt) else "complex"
+    model_used = model
+    tokens_used = total_tokens
+    cost_usd = cost
+
+    supabase.table("requests").insert({
+        "subscription_key": subscription_key,
+        "prompt_type": prompt_type,
+        "model_used": model_used,
+        "tokens_used": tokens_used,
+        "cost_usd": cost_usd
+    }).execute()
+
     return RouteResponse(
         response=response_text,
         model_used=model,
@@ -226,6 +248,29 @@ async def list_subscriptions():
             }
             for key, data in SUBSCRIPTION_KEYS.items()
         ]
+    }
+
+@app.get("/stats/{subscription_key}")
+def get_stats(subscription_key: str):
+    requests_data = supabase.table("requests")\
+        .select("*")\
+        .eq("subscription_key", subscription_key)\
+        .order("created_at", desc=True)\
+        .execute()
+
+    rows = requests_data.data
+    total_requests = len(rows)
+    total_tokens = sum(r["tokens_used"] for r in rows)
+    total_cost = sum(float(r["cost_usd"]) for r in rows)
+    gpt4o_cost = (total_tokens / 1000) * 0.005
+    total_saved = round(gpt4o_cost - total_cost, 4)
+
+    return {
+        "total_requests": total_requests,
+        "total_tokens": total_tokens,
+        "total_cost_usd": round(total_cost, 4),
+        "total_saved_usd": total_saved,
+        "recent_requests": rows[:20]
     }
 
 if __name__ == "__main__":
