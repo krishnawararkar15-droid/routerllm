@@ -18,7 +18,7 @@ export default defineConfig(({mode}) => {
     server: {
       proxy: {
         '/api/external': {
-          target: 'https://web-production-d5a02.up.railway.app',
+          target: 'https://routerllm.onrender.com',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api\/external/, ''),
         },

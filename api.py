@@ -1,5 +1,7 @@
 from supabase import create_client
 import os
+import secrets
+import string
 
 supabase = create_client(
     os.environ.get("SUPABASE_URL"),
@@ -48,6 +50,15 @@ class SubscriptionInfo(BaseModel):
     request_limit: int
     requests_used: int
     requests_remaining: int
+
+class SignupRequest(BaseModel):
+    email: str
+
+class SignupResponse(BaseModel):
+    subscription_key: str
+    email: str
+    plan: str
+    token_limit: int
 
 def count_words(text):
     words = text.split()
@@ -157,11 +168,35 @@ async def root():
         "status": "ok",
         "message": "RouteLLM API is running",
         "endpoints": {
+            "POST /signup": "Register a new user and get subscription key",
             "POST /route": "Send a prompt to AI",
             "GET /subscription/{key}": "Check subscription usage",
             "GET /docs": "API documentation"
         }
     }
+
+@app.post("/signup", response_model=SignupResponse)
+async def signup(request: SignupRequest):
+    if not request.email.strip():
+        raise HTTPException(status_code=400, detail="Email cannot be empty")
+    
+    random_part = ''.join(secrets.choice(string.ascii_lowercase + string.digits) for _ in range(32))
+    subscription_key = f"sk-rl-{random_part}"
+    
+    supabase.table("users").insert({
+        "email": request.email,
+        "subscription_key": subscription_key,
+        "plan": "free",
+        "token_limit": 500000,
+        "tokens_used": 0
+    }).execute()
+    
+    return SignupResponse(
+        subscription_key=subscription_key,
+        email=request.email,
+        plan="free",
+        token_limit=500000
+    )
 
 @app.post("/route", response_model=RouteResponse)
 async def route_prompt(request: RouteRequest):
@@ -170,15 +205,19 @@ async def route_prompt(request: RouteRequest):
     if not request.prompt.strip():
         raise HTTPException(status_code=400, detail="Prompt cannot be empty")
 
-    if sub_key not in SUBSCRIPTION_KEYS:
+    user_data = supabase.table("users").select("*").eq("subscription_key", sub_key).execute()
+    
+    if not user_data.data:
         raise HTTPException(status_code=401, detail="Invalid subscription key")
-
-    subscription = SUBSCRIPTION_KEYS[sub_key]
-
-    if subscription["requests_used"] >= subscription["request_limit"]:
+    
+    user = user_data.data[0]
+    tokens_used = user.get("tokens_used", 0)
+    token_limit = user.get("token_limit", 500000)
+    
+    if tokens_used >= token_limit:
         raise HTTPException(
             status_code=429,
-            detail=f"Request limit reached. Used {subscription['requests_used']}/{subscription['request_limit']} requests."
+            detail=f"Token limit reached. Used {tokens_used}/{token_limit} tokens."
         )
 
     if is_simple(request.prompt):
@@ -192,22 +231,21 @@ async def route_prompt(request: RouteRequest):
         request.prompt, model
     )
 
-    subscription["requests_used"] += 1
+    new_tokens_used = tokens_used + total_tokens
+    supabase.table("users").update({"tokens_used": new_tokens_used}).eq("subscription_key", sub_key).execute()
+    
     cost = calculate_cost(model, prompt_tokens, completion_tokens)
-    requests_remaining = subscription["request_limit"] - subscription["requests_used"]
+    tokens_remaining = token_limit - new_tokens_used
 
-    # Log to Supabase
-    subscription_key = sub_key
     prompt_type = "simple" if is_simple(request.prompt) else "complex"
     model_used = model
-    tokens_used = total_tokens
     cost_usd = cost
 
     supabase.table("requests").insert({
-        "subscription_key": subscription_key,
+        "subscription_key": sub_key,
         "prompt_type": prompt_type,
         "model_used": model_used,
-        "tokens_used": tokens_used,
+        "tokens_used": total_tokens,
         "cost_usd": cost_usd
     }).execute()
 
@@ -216,7 +254,7 @@ async def route_prompt(request: RouteRequest):
         model_used=model,
         tokens_used=total_tokens,
         cost_usd=cost,
-        requests_remaining=requests_remaining
+        requests_remaining=tokens_remaining
     )
 
 @app.get("/subscription/{subscription_key}", response_model=SubscriptionInfo)
