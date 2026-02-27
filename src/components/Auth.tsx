@@ -44,7 +44,16 @@ const AuthLayout = ({ children, rightContent }: { children: React.ReactNode, rig
 
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [subscriptionKey, setSubscriptionKey] = useState('');
   const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (subscriptionKey.trim()) {
+      localStorage.setItem('routellm_key', subscriptionKey.trim());
+      navigate('/dashboard');
+    }
+  };
 
   return (
     <AuthLayout 
@@ -94,43 +103,30 @@ export const Login = () => {
     >
       <div className="flex-1">
         <h1 className="text-3xl font-bold text-white mb-3">Welcome back</h1>
-        <p className="text-white/50 text-sm mb-8">Enter your credentials to access your account.</p>
+        <p className="text-white/50 text-sm mb-8">Enter your subscription key to access your account.</p>
 
-        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); navigate('/dashboard'); }}>
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Email address</label>
+            <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Subscription Key</label>
             <input 
-              type="email" 
-              placeholder="name@work-email.com"
+              type="text" 
+              placeholder="sk-rl-..."
+              value={subscriptionKey}
+              onChange={(e) => setSubscriptionKey(e.target.value)}
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Password</label>
-            <div className="relative">
-              <input 
-                type={showPassword ? "text" : "password"} 
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
-              />
-              <button 
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20 group">
+          <button 
+            disabled={!subscriptionKey.trim()}
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20 group disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             Sign In
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </form>
 
         <div className="mt-8 text-center space-y-4">
-          <button className="text-xs font-bold text-blue-500 hover:text-blue-400 transition-colors">Forgot password?</button>
           <p className="text-xs text-white/40 font-medium">
             Don't have an account? <Link to="/signup" className="text-blue-500 hover:text-blue-400 font-bold transition-colors">Create one now</Link>
           </p>

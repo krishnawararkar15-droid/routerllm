@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
-const API_BASE = "https://routerllm.onrender.com";
+const API_BASE = "/api/external";
 import { 
   LayoutDashboard, 
   Key, 
@@ -130,9 +129,6 @@ export const Dashboard = () => {
   const [recentRequests, setRecentRequests] = useState<any[]>([]);
   const [subscriptionKey, setSubscriptionKey] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string>('');
-  const [subscriptionData, setSubscriptionData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const key = localStorage.getItem('routellm_key');
@@ -146,75 +142,16 @@ export const Dashboard = () => {
     setSubscriptionKey(key);
     setUserEmail(email || '');
     
-    async function loadSubscriptionData() {
-      try {
-        setLoading(true);
-        const res = await fetch(`${API_BASE}/subscription/${key}`);
-        
-        if (!res.ok) {
-          throw new Error('Failed to fetch subscription');
-        }
-        
-        const data = await res.json();
-        setSubscriptionData(data);
-      } catch (err) {
-        setError('Could not load data');
-        console.error("Failed to load subscription:", err);
-      } finally {
-        setLoading(false);
+    setRecentRequests([
+      {
+        model: 'google/gemma-3-4b-it:free',
+        type: 'SIMPLE',
+        tokens: 124,
+        cost: '$0.00',
+        time: 'Just now'
       }
-    }
-
-    async function loadRecentRequests() {
-      try {
-        const res = await fetch(`${API_BASE}/route`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            prompt: "What is the capital of India?",
-            subscription_key: key
-          })
-        });
-        const data = await res.json();
-        setRecentRequests([{
-          model: data.model_used,
-          type: 'ROUTED',
-          tokens: data.tokens_used,
-          cost: `$${data.cost_usd.toFixed(4)}`,
-          time: 'Just now'
-        }]);
-      } catch (err) {
-        console.error("Failed to load recent requests:", err);
-      }
-    }
-
-    loadSubscriptionData();
-    loadRecentRequests();
+    ]);
   }, [navigate]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white/60 text-center">
-          <p>{error}</p>
-          <button 
-            onClick={() => navigate('/signup')}
-            className="mt-4 text-blue-500 hover:text-blue-400"
-          >
-            Go to Signup
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
@@ -308,7 +245,7 @@ export const Dashboard = () => {
           <div className="flex-1 min-w-0">
             <div className="text-sm font-bold truncate">{userEmail || 'User'}</div>
             <div className="inline-flex px-1.5 py-0.5 rounded bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[8px] font-bold text-[#3b82f6] uppercase tracking-widest">
-              {subscriptionData?.plan || 'free'} Plan
+              free Plan
             </div>
           </div>
         </div>
@@ -398,8 +335,8 @@ export const Dashboard = () => {
           <div className="max-w-7xl mx-auto space-y-3 sm:space-y-[16px]">
             {/* Stats Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-[16px]">
-              <StatCard title="Total Requests" value={subscriptionData?.requests_used?.toLocaleString() || '0'} change="+12.5%" trend="up" />
-              <StatCard title="Total Tokens" value={subscriptionData?.tokens_used ? (subscriptionData.tokens_used >= 1000000 ? (subscriptionData.tokens_used / 1000000).toFixed(1) + 'M' : subscriptionData.tokens_used >= 1000 ? (subscriptionData.tokens_used / 1000).toFixed(0) + 'K' : subscriptionData.tokens_used.toString()) : '0'} change="+8.2%" trend="up" />
+              <StatCard title="Total Requests" value="0" change="+12.5%" trend="up" />
+              <StatCard title="Total Tokens" value="0" change="+8.2%" trend="up" />
               <StatCard title="Total Savings" value="$1,242.40" change="+24.1%" trend="up" />
               <StatCard title="Avg. Latency" value="142ms" change="-12ms" trend="up" />
             </div>
