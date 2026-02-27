@@ -51,6 +51,7 @@ export const Login = () => {
     e.preventDefault();
     if (subscriptionKey.trim()) {
       localStorage.setItem('routellm_key', subscriptionKey.trim());
+      localStorage.setItem('routellm_email', 'User');
       navigate('/dashboard');
     }
   };

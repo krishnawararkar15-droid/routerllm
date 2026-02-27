@@ -134,13 +134,11 @@ export const Dashboard = () => {
     const key = localStorage.getItem('routellm_key');
     const email = localStorage.getItem('routellm_email');
     
-    if (!key) {
-      navigate('/signup');
-      return;
+    if (key) {
+      setSubscriptionKey(key);
     }
     
-    setSubscriptionKey(key);
-    setUserEmail(email || '');
+    setUserEmail(email || 'Guest');
     
     setRecentRequests([
       {
@@ -151,7 +149,7 @@ export const Dashboard = () => {
         time: 'Just now'
       }
     ]);
-  }, [navigate]);
+  }, []);
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
@@ -240,12 +238,12 @@ export const Dashboard = () => {
       <div className="mt-auto p-6 border-t border-white/[0.06]">
         <div className="flex items-center gap-3 mb-6 px-2">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] flex items-center justify-center text-black font-bold">
-            {userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}
+            {userEmail && userEmail !== 'Guest' ? userEmail.charAt(0).toUpperCase() : 'G'}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold truncate">{userEmail || 'User'}</div>
+            <div className="text-sm font-bold truncate">{userEmail}</div>
             <div className="inline-flex px-1.5 py-0.5 rounded bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[8px] font-bold text-[#3b82f6] uppercase tracking-widest">
-              free Plan
+              {subscriptionKey ? 'free Plan' : 'Guest Mode'}
             </div>
           </div>
         </div>
