@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-const API_BASE = "/api/external";
+import { Loader2 } from 'lucide-react';
+const API_BASE = "https://routerllm.onrender.com";
 import { 
   LayoutDashboard, 
   Key, 
@@ -127,17 +128,40 @@ export const Dashboard = () => {
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [recentRequests, setRecentRequests] = useState<any[]>([]);
+  const [subscriptionKey, setSubscriptionKey] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [subscriptionData, setSubscriptionData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadRealData() {
+    const key = localStorage.getItem('routellm_key');
+    const email = localStorage.getItem('routellm_email');
+    
+    if (!key) {
+      navigate('/signup');
+      return;
+    }
+    
+    setSubscriptionKey(key);
+    setUserEmail(email || '');
+    
+    async function loadSubscriptionData() {
       try {
-        const res = await fetch(`${API_BASE}/subscriptions`);
+        setLoading(true);
+        const res = await fetch(`${API_BASE}/subscription/${key}`);
+        
+        if (!res.ok) {
+          throw new Error('Failed to fetch subscription');
+        }
+        
         const data = await res.json();
-        const totalUsed = data.subscriptions.reduce((a: any, b: any) => a + b.used, 0);
-        const el = document.getElementById("total-requests");
-        if (el) el.innerText = totalUsed.toLocaleString();
+        setSubscriptionData(data);
       } catch (err) {
-        console.error("Failed to load subscriptions:", err);
+        setError('Could not load data');
+        console.error("Failed to load subscription:", err);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -148,7 +172,7 @@ export const Dashboard = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             prompt: "What is the capital of India?",
-            subscription_key: "sub-basic-001"
+            subscription_key: key
           })
         });
         const data = await res.json();
@@ -164,9 +188,33 @@ export const Dashboard = () => {
       }
     }
 
-    loadRealData();
+    loadSubscriptionData();
     loadRecentRequests();
-  }, []);
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white/60 text-center">
+          <p>{error}</p>
+          <button 
+            onClick={() => navigate('/signup')}
+            className="mt-4 text-blue-500 hover:text-blue-400"
+          >
+            Go to Signup
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
@@ -255,12 +303,12 @@ export const Dashboard = () => {
       <div className="mt-auto p-6 border-t border-white/[0.06]">
         <div className="flex items-center gap-3 mb-6 px-2">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] flex items-center justify-center text-black font-bold">
-            AR
+            {userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold truncate">Alex Rivera</div>
+            <div className="text-sm font-bold truncate">{userEmail || 'User'}</div>
             <div className="inline-flex px-1.5 py-0.5 rounded bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[8px] font-bold text-[#3b82f6] uppercase tracking-widest">
-              Pro Plan
+              {subscriptionData?.plan || 'free'} Plan
             </div>
           </div>
         </div>
@@ -350,8 +398,8 @@ export const Dashboard = () => {
           <div className="max-w-7xl mx-auto space-y-3 sm:space-y-[16px]">
             {/* Stats Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-[16px]">
-              <StatCard id="total-requests" title="Total Requests" value="84,291" change="+12.5%" trend="up" />
-              <StatCard title="Total Tokens" value="1.2M" change="+8.2%" trend="up" />
+              <StatCard title="Total Requests" value={subscriptionData?.requests_used?.toLocaleString() || '0'} change="+12.5%" trend="up" />
+              <StatCard title="Total Tokens" value={subscriptionData?.tokens_used ? (subscriptionData.tokens_used >= 1000000 ? (subscriptionData.tokens_used / 1000000).toFixed(1) + 'M' : subscriptionData.tokens_used >= 1000 ? (subscriptionData.tokens_used / 1000).toFixed(0) + 'K' : subscriptionData.tokens_used.toString()) : '0'} change="+8.2%" trend="up" />
               <StatCard title="Total Savings" value="$1,242.40" change="+24.1%" trend="up" />
               <StatCard title="Avg. Latency" value="142ms" change="-12ms" trend="up" />
             </div>

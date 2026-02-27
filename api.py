@@ -270,21 +270,29 @@ async def route_prompt(request: RouteRequest):
         requests_remaining=tokens_remaining
     )
 
-@app.get("/subscription/{subscription_key}", response_model=SubscriptionInfo)
+@app.get("/subscription/{subscription_key}")
 async def get_subscription_info(subscription_key: str):
-    if subscription_key not in SUBSCRIPTION_KEYS:
+    user_data = supabase.table("users").select("*").eq("subscription_key", subscription_key).execute()
+    
+    if not user_data.data:
         raise HTTPException(status_code=404, detail="Subscription key not found")
-
-    subscription = SUBSCRIPTION_KEYS[subscription_key]
-    requests_remaining = subscription["request_limit"] - subscription["requests_used"]
-
-    return SubscriptionInfo(
-        subscription_key=subscription_key,
-        plan=subscription["plan"],
-        request_limit=subscription["request_limit"],
-        requests_used=subscription["requests_used"],
-        requests_remaining=requests_remaining
-    )
+    
+    user = user_data.data[0]
+    tokens_used = user.get("tokens_used", 0)
+    token_limit = user.get("token_limit", 500000)
+    tokens_remaining = token_limit - tokens_used
+    
+    requests_data = supabase.table("requests").select("id").eq("subscription_key", subscription_key).execute()
+    requests_used = len(requests_data.data)
+    
+    return {
+        "subscription_key": subscription_key,
+        "plan": user.get("plan", "free"),
+        "token_limit": token_limit,
+        "tokens_used": tokens_used,
+        "tokens_remaining": tokens_remaining,
+        "requests_used": requests_used,
+    }
 
 @app.get("/subscriptions")
 async def list_subscriptions():
