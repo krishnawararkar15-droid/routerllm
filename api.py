@@ -182,11 +182,13 @@ async def signup(data: dict):
         email = data.get("email")
         password = data.get("password")
         
-        if not email or not password:
-            return {"error": "Email and password are required"}
+        if not email:
+            return {"error": "Email is required"}
         
         key = "sk-rl-" + secrets.token_hex(16)
-        password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        password_hash = None
+        if password:
+            password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         
         existing = supabase.table("users").select("subscription_key").eq("email", email).execute()
         if existing.data:
@@ -211,19 +213,23 @@ async def login(data: dict):
     try:
         email = data.get("email")
         password = data.get("password")
-        if not email or not password:
-            return {"error": "Email and password required"}
+        if not email:
+            return {"error": "Email required"}
         from supabase import create_client
         sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
         result = sb.table("users").select("*").eq("email", email).execute()
         if not result.data:
             return {"error": "No account found with this email"}
         user = result.data[0]
+        if not user.get("password_hash"):
+            return {"subscription_key": user["subscription_key"], "plan": user.get("plan", "free"), "email": email}
+        if not password:
+            return {"error": "Password required"}
         from passlib.context import CryptContext
         pwd_context = CryptContext(schemes=["bcrypt"])
-        if not user.get("password_hash") or not pwd_context.verify(password, user["password_hash"]):
+        if not pwd_context.verify(password, user["password_hash"]):
             return {"error": "Invalid email or password"}
-        return {"subscription_key": user["subscription_key"], "plan": user["plan"], "email": email}
+        return {"subscription_key": user["subscription_key"], "plan": user.get("plan", "free"), "email": email}
     except Exception as e:
         return {"error": str(e)}
 
