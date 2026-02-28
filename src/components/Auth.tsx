@@ -44,15 +44,40 @@ const AuthLayout = ({ children, rightContent }: { children: React.ReactNode, rig
 
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [subscriptionKey, setSubscriptionKey] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (subscriptionKey.trim()) {
-      localStorage.setItem('routellm_key', subscriptionKey.trim());
-      localStorage.setItem('routellm_email', 'User');
+    if (!email.trim() || !password.trim()) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const res = await fetch('https://routerllm.onrender.com/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await res.json();
+      
+      if (data.error) {
+        setError('Invalid email or password');
+        return;
+      }
+      
+      localStorage.setItem('routellm_key', data.subscription_key);
+      localStorage.setItem('routellm_email', email);
       navigate('/dashboard');
+    } catch (err) {
+      setError('Invalid email or password');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,25 +129,49 @@ export const Login = () => {
     >
       <div className="flex-1">
         <h1 className="text-3xl font-bold text-white mb-3">Welcome back</h1>
-        <p className="text-white/50 text-sm mb-8">Enter your subscription key to access your account.</p>
+        <p className="text-white/50 text-sm mb-8">Enter your credentials to access your account.</p>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Subscription Key</label>
+            <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Email address</label>
             <input 
-              type="text" 
-              placeholder="sk-rl-..."
-              value={subscriptionKey}
-              onChange={(e) => setSubscriptionKey(e.target.value)}
+              type="email" 
+              placeholder="name@work-email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
             />
           </div>
 
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Password</label>
+            <div className="relative">
+              <input 
+                type={showPassword ? "text" : "password"} 
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+              />
+              <button 
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <div className="text-red-500 text-sm">{error}</div>
+          )}
+
           <button 
-            disabled={!subscriptionKey.trim()}
+            disabled={loading || !email.trim() || !password.trim()}
             className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20 group disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Sign In
+            {loading ? 'Signing in...' : 'Sign In'}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </form>
@@ -140,6 +189,8 @@ export const Login = () => {
 export const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [subscriptionKey, setSubscriptionKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -147,7 +198,12 @@ export const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || !password.trim() || !confirmPassword.trim()) return;
+    
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
     
     setLoading(true);
     setError(null);
@@ -156,7 +212,7 @@ export const Signup = () => {
       const res = await fetch('https://routerllm.onrender.com/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, password })
       });
       
       const data = await res.json();
@@ -387,13 +443,44 @@ export const Signup = () => {
             />
           </div>
 
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Password</label>
+            <div className="relative">
+              <input 
+                type={showPassword ? "text" : "password"} 
+                placeholder="Create a password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+              />
+              <button 
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Confirm Password</label>
+            <input 
+              type="password" 
+              placeholder="Confirm your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+            />
+          </div>
+
           {error && (
             <div className="text-red-500 text-sm">{error}</div>
           )}
 
           <button 
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20 group disabled:opacity-50"
+            disabled={loading || !email.trim() || !password.trim() || !confirmPassword.trim()}
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20 group disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Creating...' : 'Create Account'}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

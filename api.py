@@ -2,6 +2,7 @@ from supabase import create_client
 import os
 import secrets
 import string
+import bcrypt
 
 supabase = create_client(
     os.environ.get("SUPABASE_URL"),
@@ -179,37 +180,60 @@ async def root():
 async def signup(data: dict):
     try:
         email = data.get("email")
-        if not email:
-            return {"error": "Email is required"}
+        password = data.get("password")
         
-        import secrets
+        if not email or not password:
+            return {"error": "Email and password are required"}
+        
         key = "sk-rl-" + secrets.token_hex(16)
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         
-        supabase_url = os.getenv("SUPABASE_URL")
-        supabase_key = os.getenv("SUPABASE_KEY")
-        
-        if not supabase_url or not supabase_key:
-            return {"error": "Supabase not configured. Add SUPABASE_URL and SUPABASE_KEY to environment variables."}
-        
-        from supabase import create_client
-        sb = create_client(supabase_url, supabase_key)
-        
-        existing = sb.table("users").select("subscription_key").eq("email", email).execute()
+        existing = supabase.table("users").select("subscription_key").eq("email", email).execute()
         if existing.data:
-            return {"subscription_key": existing.data[0]["subscription_key"], "plan": "free", "token_limit": 500000}
+            return {"error": "Email already registered"}
         
-        sb.table("users").insert({
+        supabase.table("users").insert({
             "email": email,
             "subscription_key": key,
             "plan": "free",
             "tokens_used": 0,
-            "token_limit": 500000
+            "token_limit": 500000,
+            "password_hash": password_hash
         }).execute()
         
         return {"subscription_key": key, "plan": "free", "token_limit": 500000}
     
     except Exception as e:
         return {"error": f"Signup failed: {str(e)}"}
+
+@app.post("/login")
+async def login(data: dict):
+    try:
+        email = data.get("email")
+        password = data.get("password")
+        
+        if not email or not password:
+            return {"error": "Email and password are required"}
+        
+        user_data = supabase.table("users").select("*").eq("email", email).execute()
+        
+        if not user_data.data:
+            return {"error": "Invalid email or password"}
+        
+        user = user_data.data[0]
+        stored_hash = user.get("password_hash", "")
+        
+        if not stored_hash or not bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8')):
+            return {"error": "Invalid email or password"}
+        
+        return {
+            "subscription_key": user["subscription_key"],
+            "email": user["email"],
+            "plan": user.get("plan", "free")
+        }
+    
+    except Exception as e:
+        return {"error": f"Login failed: {str(e)}"}
 
 @app.post("/route", response_model=RouteResponse)
 async def route_prompt(request: RouteRequest):
