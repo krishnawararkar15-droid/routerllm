@@ -43,146 +43,57 @@ const AuthLayout = ({ children, rightContent }: { children: React.ReactNode, rig
 };
 
 export const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || !password.trim()) return;
-    
+  const handleLogin = async () => {
     setLoading(true);
-    setError(null);
-    
+    setError('');
     try {
       const res = await fetch('https://routerllm.onrender.com/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      
       const data = await res.json();
-      
-      if (data.error) {
-        setError('Invalid email or password');
-        return;
+      if (data.subscription_key) {
+        localStorage.setItem('routellm_key', data.subscription_key);
+        localStorage.setItem('routellm_email', email);
+        navigate('/dashboard');
+      } else {
+        setError(data.error || 'Invalid email or password');
       }
-      
-      localStorage.setItem('routellm_key', data.subscription_key);
-      localStorage.setItem('routellm_email', email);
-      navigate('/dashboard');
-    } catch (err) {
-      setError('Invalid email or password');
-    } finally {
-      setLoading(false);
+    } catch (e) {
+      setError('Connection failed. Try again.');
     }
+    setLoading(false);
   };
 
   return (
-    <AuthLayout 
-      rightContent={
-        <div className="space-y-8">
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative bg-[#141414] rounded-2xl border border-white/10 p-6 shadow-2xl text-left">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Savings Dashboard</span>
-                </div>
-                <div className="px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-500">
-                  LIVE
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="space-y-1">
-                  <div className="text-[10px] text-white/30 uppercase font-bold">Tokens Used</div>
-                  <div className="text-lg font-bold text-white">1.2M</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-[10px] text-white/30 uppercase font-bold">Spent</div>
-                  <div className="text-lg font-bold text-white">$12.40</div>
-                </div>
-              </div>
-
-              <div className="bg-emerald-500/5 rounded-xl p-4 border border-emerald-500/10">
-                <div className="text-[10px] text-emerald-500/60 uppercase font-bold mb-1">Money Saved</div>
-                <div className="flex items-baseline gap-2">
-                  <div className="text-3xl font-bold text-emerald-500">$67.80</div>
-                  <div className="text-[10px] text-emerald-500/40 font-medium">vs GPT-4o</div>
-                </div>
-              </div>
-            </div>
+    <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 w-full max-w-md">
+        <h2 className="text-2xl font-bold text-white mb-2">Welcome back</h2>
+        <p className="text-white/40 text-sm mb-6">Sign in to your RouteLLM account</p>
+        {error && <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg p-3 mb-4">{error}</div>}
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-widest mb-2 block">Email</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@gmail.com" className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <h3 className="text-2xl font-bold text-white mb-3">Every request. Optimized.</h3>
-            <p className="text-white/50 text-sm leading-relaxed">
-              84,291 requests routed this month. Zero manual work.
-            </p>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-widest mb-2 block">Password</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
-        </div>
-      }
-    >
-      <div className="flex-1">
-        <h1 className="text-3xl font-bold text-white mb-3">Welcome back</h1>
-        <p className="text-white/50 text-sm mb-8">Enter your credentials to access your account.</p>
-
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Email address</label>
-            <input 
-              type="email" 
-              placeholder="name@work-email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Password</label>
-            <div className="relative">
-              <input 
-                type={showPassword ? "text" : "password"} 
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
-              />
-              <button 
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-sm">{error}</div>
-          )}
-
-          <button 
-            disabled={loading || !email.trim() || !password.trim()}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20 group disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Signing in...' : 'Sign In'}
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <button onClick={handleLogin} disabled={loading} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg text-sm transition-all">
+            {loading ? 'Signing in...' : 'Sign In →'}
           </button>
-        </form>
-
-        <div className="mt-8 text-center space-y-4">
-          <p className="text-xs text-white/40 font-medium">
-            Don't have an account? <Link to="/signup" className="text-blue-500 hover:text-blue-400 font-bold transition-colors">Create one now</Link>
-          </p>
+          <p className="text-center text-sm text-white/40">Don't have an account? <a href="/signup" className="text-blue-400 hover:text-blue-300">Create one now</a></p>
         </div>
       </div>
-    </AuthLayout>
+    </div>
   );
 };
 

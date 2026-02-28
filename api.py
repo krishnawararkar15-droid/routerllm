@@ -211,29 +211,21 @@ async def login(data: dict):
     try:
         email = data.get("email")
         password = data.get("password")
-        
         if not email or not password:
-            return {"error": "Email and password are required"}
-        
-        user_data = supabase.table("users").select("*").eq("email", email).execute()
-        
-        if not user_data.data:
+            return {"error": "Email and password required"}
+        from supabase import create_client
+        sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+        result = sb.table("users").select("*").eq("email", email).execute()
+        if not result.data:
+            return {"error": "No account found with this email"}
+        user = result.data[0]
+        from passlib.context import CryptContext
+        pwd_context = CryptContext(schemes=["bcrypt"])
+        if not user.get("password_hash") or not pwd_context.verify(password, user["password_hash"]):
             return {"error": "Invalid email or password"}
-        
-        user = user_data.data[0]
-        stored_hash = user.get("password_hash", "")
-        
-        if not stored_hash or not bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8')):
-            return {"error": "Invalid email or password"}
-        
-        return {
-            "subscription_key": user["subscription_key"],
-            "email": user["email"],
-            "plan": user.get("plan", "free")
-        }
-    
+        return {"subscription_key": user["subscription_key"], "plan": user["plan"], "email": email}
     except Exception as e:
-        return {"error": f"Login failed: {str(e)}"}
+        return {"error": str(e)}
 
 @app.post("/route", response_model=RouteResponse)
 async def route_prompt(request: RouteRequest):
