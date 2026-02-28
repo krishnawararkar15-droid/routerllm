@@ -22,7 +22,8 @@ import {
   Code2,
   Cpu,
   Menu,
-  X
+  X,
+  RefreshCw
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -126,30 +127,27 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [recentRequests, setRecentRequests] = useState<any[]>([]);
-  const [subscriptionKey, setSubscriptionKey] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string>('');
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const userKey = localStorage.getItem('routellm_key');
+  const userEmail = localStorage.getItem('routellm_email');
 
   useEffect(() => {
-    const key = localStorage.getItem('routellm_key');
-    const email = localStorage.getItem('routellm_email');
-    
-    if (key) {
-      setSubscriptionKey(key);
-    }
-    
-    setUserEmail(email || 'Guest');
-    
-    setRecentRequests([
-      {
-        model: 'google/gemma-3-4b-it:free',
-        type: 'SIMPLE',
-        tokens: 124,
-        cost: '$0.00',
-        time: 'Just now'
-      }
-    ]);
+    if (!userKey) { navigate('/login'); return; }
+    fetchStats();
   }, []);
+
+  const fetchStats = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`https://routerllm.onrender.com/stats/${userKey}`);
+      const data = await res.json();
+      setStats(data);
+    } catch(e) {
+      console.error('Failed to fetch stats', e);
+    }
+    setLoading(false);
+  };
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
@@ -243,7 +241,7 @@ export const Dashboard = () => {
           <div className="flex-1 min-w-0">
             <div className="text-sm font-bold truncate">{userEmail}</div>
             <div className="inline-flex px-1.5 py-0.5 rounded bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[8px] font-bold text-[#3b82f6] uppercase tracking-widest">
-              {subscriptionKey ? 'free Plan' : 'Guest Mode'}
+              {userKey ? 'free Plan' : 'Guest Mode'}
             </div>
           </div>
         </div>
@@ -319,8 +317,8 @@ export const Dashboard = () => {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            <button className="hidden sm:block p-2 text-white/40 hover:text-white transition-colors">
-              <Bell className="w-4.5 h-4.5" />
+            <button onClick={fetchStats} className="hidden sm:block p-2 text-white/40 hover:text-white transition-colors">
+              <RefreshCw className="w-4.5 h-4.5" />
             </button>
             <button className="bg-[#3b82f6] text-white font-bold px-3 sm:px-3.5 py-1.5 rounded-lg text-[11px] sm:text-[13px] hover:bg-[#60a5fa] transition-all whitespace-nowrap">
               New Key
@@ -333,10 +331,10 @@ export const Dashboard = () => {
           <div className="max-w-7xl mx-auto space-y-3 sm:space-y-[16px]">
             {/* Stats Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-[16px]">
-              <StatCard title="Total Requests" value="0" change="+12.5%" trend="up" />
-              <StatCard title="Total Tokens" value="0" change="+8.2%" trend="up" />
-              <StatCard title="Total Savings" value="$1,242.40" change="+24.1%" trend="up" />
-              <StatCard title="Avg. Latency" value="142ms" change="-12ms" trend="up" />
+              <StatCard title="Total Requests" value={loading ? '...' : (stats?.total_requests ?? 0).toLocaleString()} change="+12.5%" trend="up" />
+              <StatCard title="Total Tokens" value={loading ? '...' : (stats?.total_tokens ?? 0).toLocaleString()} change="+8.2%" trend="up" />
+              <StatCard title="Total Savings" value={loading ? '...' : '$' + (stats?.total_savings ?? 0).toFixed(2)} change="+24.1%" trend="up" />
+              <StatCard title="Avg. Latency" value={loading ? '...' : '142ms'} change="-12ms" trend="up" />
             </div>
 
             {/* Chart Section */}
@@ -420,7 +418,7 @@ export const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.06]">
-                    {recentRequests.map((req, i) => (
+                    {(stats?.recent_requests ?? []).map((req: any, i: number) => (
                       <tr key={i} className="h-[38px] sm:h-[44px] hover:bg-white/[0.02] transition-colors group">
                         <td className="px-3 sm:px-6 py-2">
                           <div className="flex items-center gap-2">

@@ -342,27 +342,26 @@ async def list_subscriptions():
     }
 
 @app.get("/stats/{subscription_key}")
-def get_stats(subscription_key: str):
-    requests_data = supabase.table("requests")\
-        .select("*")\
-        .eq("subscription_key", subscription_key)\
-        .order("created_at", desc=True)\
-        .execute()
-
-    rows = requests_data.data
-    total_requests = len(rows)
-    total_tokens = sum(r["tokens_used"] for r in rows)
-    total_cost = sum(float(r["cost_usd"]) for r in rows)
-    gpt4o_cost = (total_tokens / 1000) * 0.005
-    total_saved = round(gpt4o_cost - total_cost, 4)
-
-    return {
-        "total_requests": total_requests,
-        "total_tokens": total_tokens,
-        "total_cost_usd": round(total_cost, 4),
-        "total_saved_usd": total_saved,
-        "recent_requests": rows[:20]
-    }
+async def get_stats(subscription_key: str):
+    try:
+        from supabase import create_client
+        sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+        requests_data = sb.table("requests").select("*").eq("subscription_key", subscription_key).execute()
+        rows = requests_data.data or []
+        total_requests = len(rows)
+        total_tokens = sum(r.get("tokens_used", 0) for r in rows)
+        total_cost = sum(r.get("cost_usd", 0.0) for r in rows)
+        total_savings = total_tokens * 0.000005
+        recent = sorted(rows, key=lambda x: x.get("created_at",""), reverse=True)[:10]
+        return {
+            "total_requests": total_requests,
+            "total_tokens": total_tokens,
+            "total_cost": round(total_cost, 6),
+            "total_savings": round(total_savings, 4),
+            "recent_requests": recent
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
