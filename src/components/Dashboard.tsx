@@ -97,20 +97,12 @@ export const Dashboard = () => {
 
   useEffect(() => {
     if (!userKey) { navigate('/login'); return; }
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
     setLoading(true);
-    try {
-      const res = await fetch(`https://routerllm.onrender.com/stats/${userKey}`);
-      const data = await res.json();
-      setStats(data);
-    } catch(e) {
-      console.error('Failed to fetch stats', e);
-    }
-    setLoading(false);
-  };
+    fetch('https://routerllm.onrender.com/stats/' + userKey)
+      .then(r => r.json())
+      .then(d => { setStats(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
 
   const SectionLabel = ({ label }: { label: string }) => (
     <div className="px-3 pt-5 pb-1.5">
@@ -196,7 +188,7 @@ export const Dashboard = () => {
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[12px] font-bold text-white truncate">{userEmail || 'User'}</div>
-            <div className="text-[9px] text-white/30 uppercase tracking-wider">Free Plan</div>
+            <div className="text-[9px] text-white/30 uppercase tracking-wider">{(stats?.plan ?? 'free').charAt(0).toUpperCase() + (stats?.plan ?? 'free').slice(1)} Plan</div>
           </div>
         </div>
         <Link
@@ -272,7 +264,13 @@ export const Dashboard = () => {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={fetchStats} className="hidden sm:block p-2 text-white/40 hover:text-white transition-colors">
+            <button onClick={() => {
+              setLoading(true);
+              fetch('https://routerllm.onrender.com/stats/' + userKey)
+                .then(r => r.json())
+                .then(d => { setStats(d); setLoading(false); })
+                .catch(() => setLoading(false));
+            }} className="hidden sm:block p-2 text-white/40 hover:text-white transition-colors">
               <RefreshCw className="w-4.5 h-4.5" />
             </button>
             <button className="bg-[#3b82f6] text-white font-bold px-3 sm:px-3.5 py-1.5 rounded-lg text-[11px] sm:text-[13px] hover:bg-[#60a5fa] transition-all whitespace-nowrap">
@@ -373,25 +371,24 @@ export const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.06]">
-                    {(stats?.recent_requests ?? []).map((req: any, i: number) => (
-                      <tr key={i} className="h-[38px] sm:h-[44px] hover:bg-white/[0.02] transition-colors group">
-                        <td className="px-3 sm:px-6 py-2">
+                    {loading ? (
+                      <tr><td colSpan={5} className="text-center py-8 text-white/30 text-sm">Loading...</td></tr>
+                    ) : (stats?.recent_requests ?? []).length === 0 ? (
+                      <tr><td colSpan={5} className="text-center py-8 text-white/30 text-sm">No requests yet. Make your first API call!</td></tr>
+                    ) : (stats?.recent_requests ?? []).map((req: any, i: number) => (
+                      <tr key={i} className="h-[44px] hover:bg-white/[0.02] transition-colors">
+                        <td className="px-6 py-2">
                           <div className="flex items-center gap-2">
-                            <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#3b82f6]" />
-                            <span className="text-[11px] sm:text-[13px] font-bold text-white">{req.model}</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#3b82f6]" />
+                            <span className="text-[13px] font-bold text-white">{req.model_used}</span>
                           </div>
                         </td>
-                        <td className="px-3 sm:px-6 py-2">
-                          <span className={cn(
-                            "px-1.5 sm:px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold",
-                            req.type === 'ROUTED' ? "bg-[#3b82f6]/20 text-[#3b82f6]" : "bg-[#3b82f6]/10 text-[#3b82f6]/60"
-                          )}>
-                            {req.type}
-                          </span>
+                        <td className="px-6 py-2">
+                          <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#3b82f6]/20 text-[#3b82f6]">{req.prompt_type}</span>
                         </td>
-                        <td className="px-3 sm:px-6 py-2 text-[11px] sm:text-[13px] text-white/60">{req.tokens}</td>
-                        <td className="px-3 sm:px-6 py-2 text-[11px] sm:text-[13px] font-bold text-white">{req.cost}</td>
-                        <td className="px-3 sm:px-6 py-2 text-[11px] sm:text-[13px] text-white/30 text-right">{req.time}</td>
+                        <td className="px-6 py-2 text-[13px] text-white/60">{req.tokens_used}</td>
+                        <td className="px-6 py-2 text-[13px] font-bold text-white">${Number(req.cost_usd ?? 0).toFixed(4)}</td>
+                        <td className="px-6 py-2 text-[13px] text-white/30 text-right">{new Date(req.created_at).toLocaleTimeString()}</td>
                       </tr>
                     ))}
                   </tbody>
