@@ -121,26 +121,31 @@ export const Dashboard = () => {
   const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, label: string, active?: boolean, to?: string }) => (
     <Link
       to={to}
-      className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full group")}
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full mb-0.5"
       style={active ? {
-        background: 'rgba(255,255,255,0.08)',
-        backdropFilter: 'blur(10px)',
+        background: 'rgba(255,255,255,0.07)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
         border: '1px solid rgba(255,255,255,0.12)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
-        color: '#fff'
+        boxShadow: '0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
+        color: '#ffffff'
       } : {
-        border: '1px solid transparent',
+        background: 'rgba(255,255,255,0.03)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255,255,255,0.06)',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
         color: 'rgba(255,255,255,0.45)'
       }}
     >
-      <Icon className="w-4 h-4 flex-shrink-0" style={active ? { color: '#60a5fa' } : {}} />
+      <Icon className="w-4 h-4 flex-shrink-0" style={active ? { color: '#60a5fa' } : { color: 'rgba(255,255,255,0.4)' }} />
       <span className="text-[13px] font-medium">{label}</span>
     </Link>
   );
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 50%, rgba(0,0,0,0.1) 100%)' }}>
-      <div className="px-5 py-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+    <div className="flex flex-col h-full" style={{ background: 'transparent' }}>
+      <div className="px-5 py-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'transparent' }}>
         <Link to="/" className="flex items-center gap-2.5">
           <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
             <Layers className="text-black w-4 h-4" />
@@ -184,7 +189,7 @@ export const Dashboard = () => {
 
       </div>
 
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: 'rgba(0,0,0,0.2)', backdropFilter: 'blur(10px)' }} className="p-3">
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3">
         <div className="flex items-center gap-3 px-2 py-2 mb-1">
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-black text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', boxShadow: '0 0 12px rgba(59,130,246,0.4)' }}>
             {userEmail ? userEmail[0].toUpperCase() : 'K'}
@@ -241,7 +246,7 @@ export const Dashboard = () => {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className="w-64 flex flex-col hidden lg:flex relative" style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(20px)', borderRight: '1px solid rgba(255,255,255,0.08)', boxShadow: '4px 0 24px rgba(0,0,0,0.4), inset -1px 0 0 rgba(255,255,255,0.05)' }}>
+      <aside className="w-64 flex flex-col hidden lg:flex" style={{ background: '#09090b', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
         <SidebarContent />
       </aside>
 
