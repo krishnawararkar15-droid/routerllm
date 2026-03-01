@@ -112,28 +112,35 @@ export const Dashboard = () => {
     setLoading(false);
   };
 
+  const SectionLabel = ({ label }: { label: string }) => (
+    <div className="px-3 pt-5 pb-1.5">
+      <span style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(255,255,255,0.18)', textTransform: 'uppercase', letterSpacing: '0.2em' }}>{label}</span>
+    </div>
+  );
+
   const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, label: string, active?: boolean, to?: string }) => (
     <Link
       to={to}
-      className={cn(
-        "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all w-full",
-        active ? "bg-white/10 text-white" : "text-white/50 hover:text-white hover:bg-white/5"
-      )}
+      className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full group")}
+      style={active ? {
+        background: 'rgba(255,255,255,0.08)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+        color: '#fff'
+      } : {
+        border: '1px solid transparent',
+        color: 'rgba(255,255,255,0.45)'
+      }}
     >
-      <Icon className="w-4 h-4 flex-shrink-0" />
+      <Icon className="w-4 h-4 flex-shrink-0" style={active ? { color: '#60a5fa' } : {}} />
       <span className="text-[13px] font-medium">{label}</span>
     </Link>
   );
 
-  const SectionLabel = ({ label }: { label: string }) => (
-    <div className="px-3 pt-5 pb-1.5">
-      <span className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em]">{label}</span>
-    </div>
-  );
-
   const SidebarContent = () => (
-    <div className="flex flex-col h-full">
-      <div className="px-5 py-6 border-b border-white/[0.05]">
+    <div className="flex flex-col h-full" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 50%, rgba(0,0,0,0.1) 100%)' }}>
+      <div className="px-5 py-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
         <Link to="/" className="flex items-center gap-2.5">
           <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
             <Layers className="text-black w-4 h-4" />
@@ -177,9 +184,9 @@ export const Dashboard = () => {
 
       </div>
 
-      <div className="border-t border-white/[0.05] p-3">
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: 'rgba(0,0,0,0.2)', backdropFilter: 'blur(10px)' }} className="p-3">
         <div className="flex items-center gap-3 px-2 py-2 mb-1">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-400 flex items-center justify-center text-black text-xs font-bold flex-shrink-0">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-black text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', boxShadow: '0 0 12px rgba(59,130,246,0.4)' }}>
             {userEmail ? userEmail[0].toUpperCase() : 'K'}
           </div>
           <div className="flex-1 min-w-0">
@@ -200,7 +207,7 @@ export const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-black text-white flex font-sans">
+    <div className="min-h-screen text-white flex font-sans" style={{ background: 'linear-gradient(135deg, #050508 0%, #080810 50%, #050508 100%)' }}>
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
@@ -234,7 +241,7 @@ export const Dashboard = () => {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className="w-64 bg-[#050505] border-r border-white/[0.06] flex flex-col hidden lg:flex">
+      <aside className="w-64 flex flex-col hidden lg:flex relative" style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(20px)', borderRight: '1px solid rgba(255,255,255,0.08)', boxShadow: '4px 0 24px rgba(0,0,0,0.4), inset -1px 0 0 rgba(255,255,255,0.05)' }}>
         <SidebarContent />
       </aside>
 
