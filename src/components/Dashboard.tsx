@@ -121,7 +121,7 @@ export const Dashboard = () => {
   const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, label: string, active?: boolean, to?: string }) => (
     <Link
       to={to}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all w-full mb-0.5"
+      className="flex items-center gap-3 px-3 py-1.5 rounded-xl transition-all w-full mb-1"
       style={active ? {
         background: 'rgba(255,255,255,0.07)',
         backdropFilter: 'blur(12px)',
@@ -138,8 +138,8 @@ export const Dashboard = () => {
         color: 'rgba(255,255,255,0.45)'
       }}
     >
-      <Icon className="w-4 h-4 flex-shrink-0" style={active ? { color: '#60a5fa' } : { color: 'rgba(255,255,255,0.4)' }} />
-      <span className="text-[13px] font-medium">{label}</span>
+      <Icon className="w-3.5 h-3.5 flex-shrink-0" style={active ? { color: '#60a5fa' } : { color: 'rgba(255,255,255,0.4)' }} />
+      <span className="text-[12px] font-medium">{label}</span>
     </Link>
   );
 
