@@ -243,14 +243,16 @@ async def login(data: dict):
     except Exception as e:
         return {"error": str(e)}
 
-@app.post("/route", response_model=RouteResponse)
-async def route_prompt(request: RouteRequest):
-    sub_key = request.subscription_key
+@app.post("/route")
+async def route_prompt(data: dict):
+    subscription_key = data.get("subscription_key", "")
+    prompt = data.get("prompt", "")
+    print(f"Route called with key: '{subscription_key}' and prompt: '{prompt[:50]}'")
 
-    if not request.prompt.strip():
+    if not prompt.strip():
         raise HTTPException(status_code=400, detail="Prompt cannot be empty")
 
-    user_data = supabase.table("users").select("*").eq("subscription_key", sub_key).execute()
+    user_data = supabase.table("users").select("*").eq("subscription_key", subscription_key).execute()
     
     if not user_data.data:
         raise HTTPException(status_code=401, detail="Invalid subscription key")
@@ -265,7 +267,7 @@ async def route_prompt(request: RouteRequest):
             detail=f"Token limit reached. Used {tokens_used}/{token_limit} tokens."
         )
 
-    if is_simple(request.prompt):
+    if is_simple(prompt):
         model = "google/gemma-3-4b-it:free"
         print("[CLASSIFY] Prompt classified as: SIMPLE -> using google/gemma-3-4b-it:free")
     else:
@@ -273,34 +275,35 @@ async def route_prompt(request: RouteRequest):
         print("[CLASSIFY] Prompt classified as: COMPLEX -> using stepfun/step-3.5-flash:free")
 
     response_text, prompt_tokens, completion_tokens, total_tokens = call_openrouter(
-        request.prompt, model
+        prompt, model
     )
 
     new_tokens_used = tokens_used + total_tokens
-    supabase.table("users").update({"tokens_used": new_tokens_used}).eq("subscription_key", sub_key).execute()
+    supabase.table("users").update({"tokens_used": new_tokens_used}).eq("subscription_key", subscription_key).execute()
     
     cost = calculate_cost(model, prompt_tokens, completion_tokens)
     tokens_remaining = token_limit - new_tokens_used
 
-    prompt_type = "simple" if is_simple(request.prompt) else "complex"
+    prompt_type = "simple" if is_simple(prompt) else "complex"
     model_used = model
     cost_usd = cost
 
     supabase.table("requests").insert({
-        "subscription_key": sub_key,
+        "subscription_key": subscription_key,
         "prompt_type": prompt_type,
         "model_used": model_used,
         "tokens_used": total_tokens,
         "cost_usd": cost_usd
     }).execute()
+    print(f"Saved to Supabase with key: '{subscription_key}'")
 
-    return RouteResponse(
-        response=response_text,
-        model_used=model,
-        tokens_used=total_tokens,
-        cost_usd=cost,
-        requests_remaining=tokens_remaining
-    )
+    return {
+        "response": response_text,
+        "model_used": model,
+        "tokens_used": total_tokens,
+        "cost_usd": cost,
+        "requests_remaining": tokens_remaining
+    }
 
 @app.get("/subscription/{subscription_key}")
 async def get_subscription_info(subscription_key: str):
