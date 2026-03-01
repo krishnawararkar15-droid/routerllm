@@ -195,14 +195,22 @@ async def signup(data: dict):
         if not email:
             return {"error": "Email is required"}
         
+        # Check if email already exists
+        existing = supabase.table("users").select("*").eq("email", email).execute()
+        if existing.data:
+            # Return existing key - never create a new one
+            return {
+                "subscription_key": existing.data[0]["subscription_key"],
+                "plan": existing.data[0].get("plan", "free"),
+                "token_limit": existing.data[0].get("token_limit", 500000),
+                "message": "existing_account"
+            }
+        
+        # Only create new key if email does not exist at all
         key = "sk-rl-" + secrets.token_hex(16)
         password_hash = None
         if password:
             password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        
-        existing = supabase.table("users").select("subscription_key").eq("email", email).execute()
-        if existing.data:
-            return {"error": "Email already registered"}
         
         supabase.table("users").insert({
             "email": email,
