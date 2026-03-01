@@ -8,8 +8,6 @@ import {
   FileText, 
   Bell, 
   Search, 
-  ChevronRight, 
-  ChevronDown,
   ArrowUpRight, 
   ArrowDownRight,
   ArrowRight,
@@ -17,10 +15,8 @@ import {
   Zap,
   Layers,
   LogOut,
-  Shield,
   CreditCard,
   Code2,
-  Cpu,
   Menu,
   X,
   RefreshCw
@@ -90,39 +86,6 @@ const StatCard = ({ title, value, change, trend, id }: { title: string, value: s
   </div>
 );
 
-const SidebarItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, label: string, active?: boolean, to?: string }) => (
-  <Link 
-    to={to}
-    className={cn(
-      "flex items-center gap-3 px-4 py-2.5 transition-all group relative rounded-xl mb-1.5 border",
-      active 
-        ? "bg-[#3b82f6]/10 text-white border-[#3b82f6]/30 backdrop-blur-xl shadow-[0_0_20px_rgba(59,130,246,0.1)]" 
-        : "text-white/40 hover:text-white hover:bg-white/5 border-transparent hover:border-white/10 backdrop-blur-sm"
-    )}
-  >
-    <Icon className={cn("w-4 h-4", active ? "text-[#3b82f6]" : "group-hover:text-[#3b82f6] transition-colors")} />
-    <span className="text-[13px] font-bold">{label}</span>
-  </Link>
-);
-
-const FeatureCard = ({ title, features }: { title: string, features: { icon: string, name: string, desc?: string }[] }) => (
-  <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] rounded-xl p-3 mb-3 hover:bg-white/[0.05] transition-all group relative overflow-hidden">
-    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50" />
-    <div className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em] mb-2.5 px-1">{title}</div>
-    <div className="space-y-3">
-      {features.map((f, i) => (
-        <div key={i} className="flex items-start gap-2.5 px-1">
-          <span className="text-xs mt-0.5">{f.icon}</span>
-          <div>
-            <div className="text-[11px] font-bold text-white group-hover:text-[#3b82f6] transition-colors leading-none mb-1">{f.name}</div>
-            {f.desc && <div className="text-[9px] text-white/30 leading-tight">{f.desc}</div>}
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
 export const Dashboard = () => {
   const navigate = useNavigate();
   const [openSection, setOpenSection] = useState<string | null>(null);
@@ -153,105 +116,82 @@ export const Dashboard = () => {
     setOpenSection(openSection === section ? null : section);
   };
 
+  const NavItem = ({ icon: Icon, label, active = false, to = "#", onClick }: { icon: any, label: string, active?: boolean, to?: string, onClick?: () => void }) => (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-3 px-3 py-[9px] rounded-lg transition-all w-full text-left",
+        active ? "bg-white/10 text-white" : "text-white/50 hover:text-white hover:bg-white/5"
+      )}
+    >
+      <Icon className="w-[15px] h-[15px] flex-shrink-0" />
+      <span className="text-[13px] font-medium">{label}</span>
+    </Link>
+  );
+
+  const SectionLabel = ({ label }: { label: string }) => (
+    <div className="px-3 pt-5 pb-1">
+      <span className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em]">{label}</span>
+    </div>
+  );
+
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      <div className="p-8">
-        <Link to="/" className="flex items-center gap-2 mb-10">
-          <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center">
+      {/* Logo */}
+      <div className="px-5 py-6 border-b border-white/[0.05]">
+        <Link to="/" className="flex items-center gap-2.5">
+          <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
             <Layers className="text-black w-4 h-4" />
           </div>
-          <span className="text-lg font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
         </Link>
-
-        <div className="space-y-7">
-          <div>
-            <div className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em] mb-3 px-4">Navigation</div>
-            <nav className="space-y-0.5">
-              <SidebarItem icon={LayoutDashboard} label="Dashboard" active />
-              <SidebarItem icon={Key} label="API Keys" />
-              <SidebarItem icon={BarChart3} label="Usage" />
-              <SidebarItem icon={FileText} label="Documentation" />
-            </nav>
-          </div>
-
-          <div>
-            <div className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em] mb-4 px-4">Platform Features</div>
-            <div className="px-2">
-              <FeatureCard 
-                title="Routing" 
-                features={[
-                  { icon: '⚡', name: 'Auto Routing', desc: 'Cheapest capable model' },
-                  { icon: '🎛', name: 'Manual Override', desc: 'Force specific models' }
-                ]} 
-              />
-              <FeatureCard 
-                title="Cost Control" 
-                features={[
-                  { icon: '💰', name: 'Savings Dashboard', desc: 'Track every cent saved' },
-                  { icon: '🔔', name: 'Budget Alerts', desc: 'Spending limit notifications' }
-                ]} 
-              />
-              <FeatureCard 
-                title="Model Access" 
-                features={[
-                  { icon: '🌐', name: '100+ Models', desc: 'GPT-4, Claude, Llama' },
-                  { icon: '🔀', name: 'Real-time Routing', desc: 'Instant classification' }
-                ]} 
-              />
-              <FeatureCard 
-                title="Developer Tools" 
-                features={[
-                  { icon: '🔌', name: 'Simple Integration', desc: '2 lines of code' },
-                  { icon: '📋', name: 'Cost Transparency', desc: 'Exact token tracking' }
-                ]} 
-              />
-              <FeatureCard 
-                title="Key Management" 
-                features={[
-                  { icon: '🔑', name: 'Multiple Keys', desc: 'Per-project access' },
-                  { icon: '📊', name: 'Usage Tracking', desc: 'Detailed key analytics' }
-                ]} 
-              />
-              <FeatureCard 
-                title="Plans & Security" 
-                features={[
-                  { icon: '🆓', name: 'Free Tier', desc: '500K tokens included' },
-                  { icon: '🔒', name: 'Secure & Private', desc: 'No prompt storage' },
-                  { icon: '⚙️', name: 'Custom Rules', desc: 'Enterprise logic' }
-                ]} 
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em] mb-3 px-4">Account</div>
-            <nav className="space-y-0.5">
-              <SidebarItem icon={Settings} label="Settings" />
-              <SidebarItem icon={CreditCard} label="Billing" />
-            </nav>
-          </div>
-        </div>
       </div>
 
-      <div className="mt-auto p-6 border-t border-white/[0.06]">
-        <div className="flex items-center gap-3 mb-6 px-2">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#60a5fa] flex items-center justify-center text-black font-bold">
-            {userEmail && userEmail !== 'Guest' ? userEmail.charAt(0).toUpperCase() : 'G'}
+      {/* Nav items */}
+      <div className="flex-1 overflow-y-auto px-2 py-3">
+
+        <SectionLabel label="Navigation" />
+        <NavItem icon={LayoutDashboard} label="Dashboard" active to="/dashboard" />
+        <NavItem icon={Key} label="API Keys" to="/dashboard/keys" />
+        <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" />
+        <NavItem icon={FileText} label="Documentation" to="#" />
+
+        <SectionLabel label="Routing" />
+        <NavItem icon={Zap} label="Auto Routing" to="#" />
+        <NavItem icon={Settings} label="Manual Override" to="#" />
+        <NavItem icon={Bell} label="Budget Alerts" to="#" />
+
+        <SectionLabel label="Models" />
+        <NavItem icon={Layers} label="100+ Models" to="#" />
+        <NavItem icon={ArrowRight} label="Real-time Routing" to="#" />
+
+        <SectionLabel label="Developer Tools" />
+        <NavItem icon={Code2} label="Simple Integration" to="#" />
+        <NavItem icon={Search} label="Cost Transparency" to="#" />
+
+        <SectionLabel label="Account" />
+        <NavItem icon={CreditCard} label="Billing & Plans" to="#" />
+        <NavItem icon={Settings} label="Settings" to="#" />
+
+      </div>
+
+      {/* Bottom user section */}
+      <div className="border-t border-white/[0.05] p-3">
+        <div className="flex items-center gap-3 px-2 py-2 mb-1">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-400 flex items-center justify-center text-black text-xs font-bold flex-shrink-0">
+            {userEmail ? userEmail[0].toUpperCase() : 'K'}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold truncate">{userEmail}</div>
-            <div className="inline-flex px-1.5 py-0.5 rounded bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[8px] font-bold text-[#3b82f6] uppercase tracking-widest">
-              {userKey ? 'free Plan' : 'Guest Mode'}
-            </div>
+            <div className="text-[12px] font-bold text-white truncate">{userEmail || 'User'}</div>
+            <div className="text-[9px] text-white/30 uppercase tracking-wider">Free Plan</div>
           </div>
         </div>
-        <button 
-          onClick={() => navigate('/')}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/40 hover:text-white hover:bg-white/5 transition-all w-full text-left"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="text-sm font-bold">Log out</span>
-        </button>
+        <NavItem
+          icon={LogOut}
+          label="Logout"
+          onClick={() => { localStorage.clear(); navigate('/login'); }}
+        />
       </div>
     </div>
   );
