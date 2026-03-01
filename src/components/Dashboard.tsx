@@ -19,7 +19,8 @@ import {
   Code2,
   Menu,
   X,
-  RefreshCw
+  RefreshCw,
+  Shield
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -88,7 +89,6 @@ const StatCard = ({ title, value, change, trend, id }: { title: string, value: s
 
 export const Dashboard = () => {
   const navigate = useNavigate();
-  const [openSection, setOpenSection] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -112,33 +112,27 @@ export const Dashboard = () => {
     setLoading(false);
   };
 
-  const toggleSection = (section: string) => {
-    setOpenSection(openSection === section ? null : section);
-  };
-
-  const NavItem = ({ icon: Icon, label, active = false, to = "#", onClick }: { icon: any, label: string, active?: boolean, to?: string, onClick?: () => void }) => (
+  const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, label: string, active?: boolean, to?: string }) => (
     <Link
       to={to}
-      onClick={onClick}
       className={cn(
-        "flex items-center gap-3 px-3 py-[9px] rounded-lg transition-all w-full text-left",
+        "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all w-full",
         active ? "bg-white/10 text-white" : "text-white/50 hover:text-white hover:bg-white/5"
       )}
     >
-      <Icon className="w-[15px] h-[15px] flex-shrink-0" />
+      <Icon className="w-4 h-4 flex-shrink-0" />
       <span className="text-[13px] font-medium">{label}</span>
     </Link>
   );
 
   const SectionLabel = ({ label }: { label: string }) => (
-    <div className="px-3 pt-5 pb-1">
+    <div className="px-3 pt-5 pb-1.5">
       <span className="text-[9px] font-bold text-white/20 uppercase tracking-[0.2em]">{label}</span>
     </div>
   );
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      {/* Logo */}
       <div className="px-5 py-6 border-b border-white/[0.05]">
         <Link to="/" className="flex items-center gap-2.5">
           <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
@@ -148,7 +142,6 @@ export const Dashboard = () => {
         </Link>
       </div>
 
-      {/* Nav items */}
       <div className="flex-1 overflow-y-auto px-2 py-3">
 
         <SectionLabel label="Navigation" />
@@ -160,23 +153,30 @@ export const Dashboard = () => {
         <SectionLabel label="Routing" />
         <NavItem icon={Zap} label="Auto Routing" to="#" />
         <NavItem icon={Settings} label="Manual Override" to="#" />
+
+        <SectionLabel label="Cost Control" />
+        <NavItem icon={BarChart3} label="Savings Dashboard" to="#" />
         <NavItem icon={Bell} label="Budget Alerts" to="#" />
 
-        <SectionLabel label="Models" />
+        <SectionLabel label="Model Access" />
         <NavItem icon={Layers} label="100+ Models" to="#" />
-        <NavItem icon={ArrowRight} label="Real-time Routing" to="#" />
+        <NavItem icon={Zap} label="Real-time Routing" to="#" />
 
         <SectionLabel label="Developer Tools" />
         <NavItem icon={Code2} label="Simple Integration" to="#" />
-        <NavItem icon={Search} label="Cost Transparency" to="#" />
+        <NavItem icon={FileText} label="Cost Transparency" to="#" />
 
-        <SectionLabel label="Account" />
-        <NavItem icon={CreditCard} label="Billing & Plans" to="#" />
-        <NavItem icon={Settings} label="Settings" to="#" />
+        <SectionLabel label="Key Management" />
+        <NavItem icon={Key} label="Multiple Keys" to="#" />
+        <NavItem icon={BarChart3} label="Usage Tracking" to="#" />
+
+        <SectionLabel label="Plans & Security" />
+        <NavItem icon={CreditCard} label="Free Tier" to="#" />
+        <NavItem icon={Shield} label="Secure & Private" to="#" />
+        <NavItem icon={Settings} label="Custom Rules" to="#" />
 
       </div>
 
-      {/* Bottom user section */}
       <div className="border-t border-white/[0.05] p-3">
         <div className="flex items-center gap-3 px-2 py-2 mb-1">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-400 flex items-center justify-center text-black text-xs font-bold flex-shrink-0">
@@ -187,11 +187,14 @@ export const Dashboard = () => {
             <div className="text-[9px] text-white/30 uppercase tracking-wider">Free Plan</div>
           </div>
         </div>
-        <NavItem
-          icon={LogOut}
-          label="Logout"
-          onClick={() => { localStorage.clear(); navigate('/login'); }}
-        />
+        <Link
+          to="/login"
+          onClick={() => localStorage.clear()}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all w-full"
+        >
+          <LogOut className="w-4 h-4" />
+          <span className="text-[13px] font-medium">Logout</span>
+        </Link>
       </div>
     </div>
   );
