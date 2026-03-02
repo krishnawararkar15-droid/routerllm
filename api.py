@@ -190,8 +190,7 @@ async def root():
 async def signup(data: dict):
     try:
         email = data.get("email", "")
-        password_raw = data.get("password") or ""
-        password_bytes = password_raw.encode("utf-8")[:72].decode("utf-8", errors="ignore")
+        password = (data.get("password") or "")[:72]
         if not email:
             return {"error": "Email required"}
         from supabase import create_client
@@ -201,10 +200,10 @@ async def signup(data: dict):
         if existing.data:
             user = existing.data[0]
             # Update password if provided
-            if password_bytes:
+            if password:
                 from passlib.context import CryptContext
                 pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12, truncate_error=False)
-                sb.table("users").update({"password_hash": pwd_context.hash(password_bytes)}).eq("email", email).execute()
+                sb.table("users").update({"password_hash": pwd_context.hash(password)}).eq("email", email).execute()
             return {
                 "subscription_key": user["subscription_key"],
                 "plan": user.get("plan", "free"),
@@ -216,7 +215,7 @@ async def signup(data: dict):
         from passlib.context import CryptContext
         pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12, truncate_error=False)
         new_key = "sk-rl-" + secrets.token_hex(16)
-        password_hash = pwd_context.hash(password_bytes) if password_bytes else None
+        password_hash = pwd_context.hash(password) if password else None
         sb.table("users").insert({
             "email": email,
             "subscription_key": new_key,
@@ -238,8 +237,7 @@ async def signup(data: dict):
 async def login(data: dict):
     try:
         email = data.get("email", "")
-        password_raw = data.get("password") or ""
-        password_bytes = password_raw.encode("utf-8")[:72].decode("utf-8", errors="ignore")
+        password = (data.get("password") or "")[:72]
         if not email:
             return {"error": "Email required"}
         from supabase import create_client
@@ -248,10 +246,10 @@ async def login(data: dict):
         if not result.data:
             return {"error": "No account found with this email"}
         user = result.data[0]
-        if user.get("password_hash") and password_bytes:
+        if user.get("password_hash") and password:
             from passlib.context import CryptContext
             pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12, truncate_error=False)
-            if not pwd_context.verify(password_bytes, user["password_hash"]):
+            if not pwd_context.verify(password, user["password_hash"]):
                 return {"error": "Invalid password"}
         return {
             "subscription_key": user["subscription_key"],
