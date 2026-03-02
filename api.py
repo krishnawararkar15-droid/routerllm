@@ -263,7 +263,8 @@ async def login(data: dict):
 async def route_prompt(data: dict):
     subscription_key = data.get("subscription_key", "")
     prompt = data.get("prompt", "")
-    print(f"Route called with key: '{subscription_key}' and prompt: '{prompt[:50]}'")
+    model_override = data.get("model_override", None)
+    print(f"Route called - key: {subscription_key[:20]}, model_override: {model_override}")
 
     if not prompt.strip():
         raise HTTPException(status_code=400, detail="Prompt cannot be empty")
@@ -283,12 +284,20 @@ async def route_prompt(data: dict):
             detail=f"Token limit reached. Used {tokens_used}/{token_limit} tokens."
         )
 
-    if is_simple(prompt):
-        model = "google/gemma-3-4b-it:free"
-        print("[CLASSIFY] Prompt classified as: SIMPLE -> using google/gemma-3-4b-it:free")
+    # If model_override provided skip classification
+    if model_override:
+        model = model_override
+        prompt_type = "MANUAL"
     else:
-        model = "stepfun/step-3.5-flash:free"
-        print("[CLASSIFY] Prompt classified as: COMPLEX -> using stepfun/step-3.5-flash:free")
+        # existing classification logic stays here
+        if is_simple(prompt):
+            model = "google/gemma-3-4b-it:free"
+            print("[CLASSIFY] Prompt classified as: SIMPLE -> using google/gemma-3-4b-it:free")
+            prompt_type = "SIMPLE"
+        else:
+            model = "stepfun/step-3.5-flash:free"
+            print("[CLASSIFY] Prompt classified as: COMPLEX -> using stepfun/step-3.5-flash:free")
+            prompt_type = "COMPLEX"
 
     response_text, prompt_tokens, completion_tokens, total_tokens = call_openrouter(
         prompt, model
@@ -307,7 +316,6 @@ async def route_prompt(data: dict):
     cost = calculate_cost(model, prompt_tokens, completion_tokens)
     tokens_remaining = token_limit - new_tokens_used
 
-    prompt_type = "simple" if is_simple(prompt) else "complex"
     model_used = model
     cost_usd = cost
 

@@ -42,6 +42,7 @@ import { ApiKeys } from './components/ApiKeys';
 import { Usage } from './components/Usage';
 import { Docs } from './components/Docs';
 import { AutoRouting } from './components/AutoRouting';
+import { ManualOverride } from './components/ManualOverride';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -784,6 +785,7 @@ export default function App() {
           <Route path="/dashboard/keys" element={<ApiKeys />} />
           <Route path="/dashboard/usage" element={<Usage />} />
           <Route path="/dashboard/routing" element={<AutoRouting />} />
+          <Route path="/dashboard/override" element={<ManualOverride />} />
           <Route path="/docs" element={<Docs />} />
         </Routes>
       </div>
