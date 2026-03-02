@@ -152,7 +152,7 @@ export const Dashboard = () => {
         <NavItem icon={LayoutDashboard} label="Dashboard" active to="/dashboard" />
         <NavItem icon={Key} label="API Keys" to="/dashboard/keys" />
         <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" />
-        <NavItem icon={FileText} label="Documentation" to="#" />
+        <NavItem icon={FileText} label="Documentation" to="/docs" />
 
         <SectionLabel label="Routing" />
         <NavItem icon={Zap} label="Auto Routing" to="#" />

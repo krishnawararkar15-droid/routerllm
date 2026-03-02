@@ -129,7 +129,7 @@ console.log(data);`,
         <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" />
         <NavItem icon={Key} label="API Keys" active to="/dashboard/keys" />
         <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" />
-        <NavItem icon={FileText} label="Documentation" to="#" />
+        <NavItem icon={FileText} label="Documentation" to="/docs" />
 
         <SectionLabel label="Routing" />
         <NavItem icon={Zap} label="Auto Routing" to="#" />
