@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Key, Copy, Check, Eye, EyeOff, Code2, RefreshCw } from 'lucide-react';
+import { Key, Copy, Check, Eye, EyeOff, Code2, RefreshCw, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const ApiKeys = () => {
@@ -11,6 +11,9 @@ export const ApiKeys = () => {
   const [copiedCode, setCopiedCode] = useState(false);
   const [activeTab, setActiveTab] = useState('python');
   const [stats, setStats] = useState<any>(null);
+  const [testPrompt, setTestPrompt] = useState('');
+  const [testResult, setTestResult] = useState<any>(null);
+  const [testLoading, setTestLoading] = useState(false);
 
   useEffect(() => {
     if (!userKey) {
@@ -26,6 +29,21 @@ export const ApiKeys = () => {
     navigator.clipboard.writeText(userKey);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const runTest = async () => {
+    if (!testPrompt) return;
+    setTestLoading(true);
+    try {
+      const res = await fetch('https://routerllm.onrender.com/route', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: testPrompt, subscription_key: userKey })
+      });
+      const data = await res.json();
+      setTestResult(data);
+    } catch(e) { console.error(e); }
+    setTestLoading(false);
   };
 
   const codeExamples = {
@@ -58,7 +76,7 @@ console.log(data);`,
 
   return (
     <div className="flex-1 overflow-y-auto p-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Section 1 — Page Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-extrabold mb-1">API Keys</h1>
@@ -92,17 +110,17 @@ console.log(data);`,
 
         {/* Section 3 — Key Stats row */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4">
+          <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
             <div className="text-[9px] text-white/30 uppercase tracking-widest mb-1">Total Requests</div>
-            <div className="text-2xl font-bold">{stats?.total_requests ?? 0}</div>
+            <div className="text-3xl font-bold">{stats?.total_requests ?? 0}</div>
           </div>
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4">
+          <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
             <div className="text-[9px] text-white/30 uppercase tracking-widest mb-1">Tokens Used</div>
-            <div className="text-2xl font-bold">{(stats?.total_tokens ?? 0).toLocaleString()}</div>
+            <div className="text-3xl font-bold">{(stats?.total_tokens ?? 0).toLocaleString()}</div>
           </div>
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4">
+          <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
             <div className="text-[9px] text-white/30 uppercase tracking-widest mb-1">Tokens Left</div>
-            <div className="text-2xl font-bold text-green-400">{((stats?.token_limit ?? 500000) - (stats?.total_tokens ?? 0)).toLocaleString()}</div>
+            <div className="text-3xl font-bold text-green-400">{((stats?.token_limit ?? 500000) - (stats?.total_tokens ?? 0)).toLocaleString()}</div>
           </div>
         </div>
 
@@ -139,6 +157,63 @@ console.log(data);`,
             className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 font-bold px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2">
             <RefreshCw className="w-4 h-4" /> Regenerate Key
           </button>
+        </div>
+
+        {/* Quick Test Card */}
+        <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6 mt-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Zap className="w-4 h-4 text-yellow-400" />
+            <span className="text-sm font-bold">Quick Test</span>
+            <span className="text-xs text-white/30 ml-2">Send a test request right now</span>
+          </div>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={testPrompt}
+              onChange={e => setTestPrompt(e.target.value)}
+              placeholder="Type any prompt here..."
+              className="flex-1 bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            />
+            <button onClick={runTest} disabled={testLoading}
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg text-sm transition-all flex-shrink-0 flex items-center gap-2">
+              {testLoading ? 'Running...' : '▶ Run Test'}
+            </button>
+          </div>
+          {testResult && (
+            <div className="mt-4 bg-black/40 border border-white/10 rounded-lg p-4">
+              <div className="flex gap-4 mb-2 text-xs">
+                <span className="text-white/40">Model: <span className="text-blue-400 font-bold">{testResult.model_used}</span></span>
+                <span className="text-white/40">Type: <span className="text-white font-bold">{testResult.prompt_type}</span></span>
+                <span className="text-white/40">Tokens: <span className="text-white font-bold">{testResult.tokens_used}</span></span>
+                <span className="text-white/40">Cost: <span className="text-green-400 font-bold">${testResult.cost_usd}</span></span>
+              </div>
+              <p className="text-sm text-white/70 leading-relaxed">{testResult.response}</p>
+            </div>
+          )}
+        </div>
+
+        {/* How it works Card */}
+        <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6 mt-4">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-sm font-bold">How RouteLLM Routes Your Requests</span>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-black/30 rounded-xl border border-white/[0.06]">
+              <div className="text-2xl mb-2">📥</div>
+              <div className="text-xs font-bold text-white mb-1">1. You Send Prompt</div>
+              <div className="text-[10px] text-white/30">Your app calls RouteLLM API with your key</div>
+            </div>
+            <div className="text-center p-4 bg-black/30 rounded-xl border border-white/[0.06]">
+              <div className="text-2xl mb-2">🧠</div>
+              <div className="text-xs font-bold text-white mb-1">2. We Classify</div>
+              <div className="text-[10px] text-white/30">Simple or Complex — decided in milliseconds</div>
+            </div>
+            <div className="text-center p-4 bg-black/30 rounded-xl border border-white/[0.06]">
+              <div className="text-2xl mb-2">💰</div>
+              <div className="text-xs font-bold text-white mb-1">3. Cheapest Model Responds</div>
+              <div className="text-[10px] text-white/30">You save 30-80% vs always using GPT-4</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
