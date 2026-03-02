@@ -38,6 +38,7 @@ import { GlowingEffectDemo } from './components/glowing-effect-demo';
 import { CursorFollower } from './components/ui/cursor-follower';
 import { Login, Signup } from './components/Auth';
 import { Dashboard } from './components/Dashboard';
+import { ApiKeys } from './components/ApiKeys';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -777,6 +778,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/keys" element={<ApiKeys />} />
         </Routes>
       </div>
     </Router>
