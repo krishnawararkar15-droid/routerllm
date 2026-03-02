@@ -3,6 +3,7 @@ import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers,
 import { Link, useNavigate } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { motion, AnimatePresence } from 'motion/react';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -181,9 +182,36 @@ console.log(data);`,
   return (
     <div className="min-h-screen bg-black text-white flex font-sans">
       {/* Mobile Sidebar */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/80 z-40 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
-      )}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 lg:hidden"
+            />
+            <motion.aside 
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 w-64 bg-[#050505] border-r border-white/[0.06] z-50 lg:hidden overflow-y-auto"
+            >
+              <div className="absolute top-4 right-4">
+                <button 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 text-white/40 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <SidebarContent />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Desktop Sidebar */}
       <aside className="w-64 bg-[#050505] border-r border-white/[0.06] flex-col hidden lg:flex">
@@ -194,10 +222,12 @@ console.log(data);`,
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
         <header className="h-14 border-b border-white/[0.06] flex items-center justify-between px-8 bg-black/50 backdrop-blur-xl sticky top-0 z-20">
-          <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-white/40">
-            <Menu className="w-5 h-5" />
-          </button>
-          <h1 className="text-sm font-bold text-white/60">API Keys</h1>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 -ml-2 text-white/40 hover:text-white transition-colors">
+              <Menu className="w-5 h-5" />
+            </button>
+            <h1 className="text-sm font-bold text-white/60">API Keys</h1>
+          </div>
         </header>
 
         {/* Page Content */}
