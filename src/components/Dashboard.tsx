@@ -155,7 +155,7 @@ export const Dashboard = () => {
         <NavItem icon={FileText} label="Documentation" to="/docs" />
 
         <SectionLabel label="Routing" />
-        <NavItem icon={Zap} label="Auto Routing" to="#" />
+        <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" />
         <NavItem icon={Settings} label="Manual Override" to="#" />
 
         <SectionLabel label="Cost Control" />
