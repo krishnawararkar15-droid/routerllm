@@ -39,6 +39,7 @@ import { CursorFollower } from './components/ui/cursor-follower';
 import { Login, Signup } from './components/Auth';
 import { Dashboard } from './components/Dashboard';
 import { ApiKeys } from './components/ApiKeys';
+import { Usage } from './components/Usage';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -779,6 +780,7 @@ export default function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/keys" element={<ApiKeys />} />
+          <Route path="/dashboard/usage" element={<Usage />} />
         </Routes>
       </div>
     </Router>
