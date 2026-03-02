@@ -189,48 +189,55 @@ async def root():
 @app.post("/signup")
 async def signup(data: dict):
     try:
-        email = data.get("email")
-        password = data.get("password")
-        
+        email = data.get("email", "")
+        password = data.get("password", "")[:72]
         if not email:
-            return {"error": "Email is required"}
-        
-        # Check if email already exists
-        existing = supabase.table("users").select("*").eq("email", email).execute()
+            return {"error": "Email required"}
+        from supabase import create_client
+        sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+        # Always check existing first
+        existing = sb.table("users").select("*").eq("email", email).execute()
         if existing.data:
-            # Return existing key - never create a new one
+            user = existing.data[0]
+            # Update password if provided
+            if password:
+                from passlib.context import CryptContext
+                pwd_context = CryptContext(schemes=["bcrypt"])
+                sb.table("users").update({"password_hash": pwd_context.hash(password)}).eq("email", email).execute()
             return {
-                "subscription_key": existing.data[0]["subscription_key"],
-                "plan": existing.data[0].get("plan", "free"),
-                "token_limit": existing.data[0].get("token_limit", 500000),
-                "message": "existing_account"
+                "subscription_key": user["subscription_key"],
+                "plan": user.get("plan", "free"),
+                "token_limit": user.get("token_limit", 500000),
+                "email": email
             }
-        
-        # Only create new key if email does not exist at all
-        key = "sk-rl-" + secrets.token_hex(16)
-        password_hash = None
-        if password:
-            password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        
-        supabase.table("users").insert({
+        # New user — create fresh key
+        import secrets
+        from passlib.context import CryptContext
+        pwd_context = CryptContext(schemes=["bcrypt"])
+        new_key = "sk-rl-" + secrets.token_hex(16)
+        password_hash = pwd_context.hash(password) if password else None
+        sb.table("users").insert({
             "email": email,
-            "subscription_key": key,
+            "subscription_key": new_key,
             "plan": "free",
             "tokens_used": 0,
             "token_limit": 500000,
             "password_hash": password_hash
         }).execute()
-        
-        return {"subscription_key": key, "plan": "free", "token_limit": 500000}
-    
+        return {
+            "subscription_key": new_key,
+            "plan": "free",
+            "token_limit": 500000,
+            "email": email
+        }
     except Exception as e:
-        return {"error": f"Signup failed: {str(e)}"}
+        return {"error": str(e)}
 
 @app.post("/login")
 async def login(data: dict):
     try:
-        email = data.get("email")
-        password = data.get("password")
+        email = data.get("email", "")
+        password = data.get("password", "")[:72]
         if not email:
             return {"error": "Email required"}
         from supabase import create_client
@@ -239,15 +246,16 @@ async def login(data: dict):
         if not result.data:
             return {"error": "No account found with this email"}
         user = result.data[0]
-        if not user.get("password_hash"):
-            return {"subscription_key": user["subscription_key"], "plan": user.get("plan", "free"), "email": email}
-        if not password:
-            return {"error": "Password required"}
-        from passlib.context import CryptContext
-        pwd_context = CryptContext(schemes=["bcrypt"])
-        if not pwd_context.verify(password, user["password_hash"]):
-            return {"error": "Invalid email or password"}
-        return {"subscription_key": user["subscription_key"], "plan": user.get("plan", "free"), "email": email}
+        if user.get("password_hash") and password:
+            from passlib.context import CryptContext
+            pwd_context = CryptContext(schemes=["bcrypt"])
+            if not pwd_context.verify(password, user["password_hash"]):
+                return {"error": "Invalid password"}
+        return {
+            "subscription_key": user["subscription_key"],
+            "plan": user.get("plan", "free"),
+            "email": email
+        }
     except Exception as e:
         return {"error": str(e)}
 
