@@ -203,7 +203,7 @@ async def signup(data: dict):
             # Update password if provided
             if password_bytes:
                 from passlib.context import CryptContext
-                pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+                pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12, truncate_error=False)
                 sb.table("users").update({"password_hash": pwd_context.hash(password_bytes)}).eq("email", email).execute()
             return {
                 "subscription_key": user["subscription_key"],
@@ -214,7 +214,7 @@ async def signup(data: dict):
         # New user — create fresh key
         import secrets
         from passlib.context import CryptContext
-        pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12, truncate_error=False)
         new_key = "sk-rl-" + secrets.token_hex(16)
         password_hash = pwd_context.hash(password_bytes) if password_bytes else None
         sb.table("users").insert({
@@ -250,7 +250,7 @@ async def login(data: dict):
         user = result.data[0]
         if user.get("password_hash") and password_bytes:
             from passlib.context import CryptContext
-            pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+            pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12, truncate_error=False)
             if not pwd_context.verify(password_bytes, user["password_hash"]):
                 return {"error": "Invalid password"}
         return {
