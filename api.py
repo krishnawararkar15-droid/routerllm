@@ -295,7 +295,14 @@ async def route_prompt(data: dict):
     )
 
     new_tokens_used = tokens_used + total_tokens
-    supabase.table("users").update({"tokens_used": new_tokens_used}).eq("subscription_key", subscription_key).execute()
+    try:
+        user_result = supabase.table("users").select("tokens_used").eq("subscription_key", subscription_key).execute()
+        current_tokens = user_result.data[0].get("tokens_used", 0) if user_result.data else 0
+        supabase.table("users").update({
+            "tokens_used": current_tokens + total_tokens
+        }).eq("subscription_key", subscription_key).execute()
+    except Exception as update_err:
+        print(f"Failed to update tokens_used: {update_err}")
     
     cost = calculate_cost(model, prompt_tokens, completion_tokens)
     tokens_remaining = token_limit - new_tokens_used

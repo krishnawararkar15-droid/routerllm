@@ -138,11 +138,11 @@ export const Usage = () => {
     return last7;
   };
 
-  const tokensUsed = stats?.tokens_used ?? 0;
+  const tokensUsed = stats?.total_tokens ?? stats?.tokens_used ?? 0;
   const tokenLimit = stats?.token_limit ?? 500000;
   const pct = Math.min(100, Math.round((tokensUsed / tokenLimit) * 100));
-  const simpleCount = (stats?.recent_requests || []).filter((r: any) => r.prompt_type === 'SIMPLE').length;
-  const complexCount = (stats?.recent_requests || []).filter((r: any) => r.prompt_type === 'COMPLEX').length;
+  const simpleCount = (stats?.recent_requests || []).filter((r: any) => r.prompt_type?.toUpperCase() === 'SIMPLE').length;
+  const complexCount = (stats?.recent_requests || []).filter((r: any) => r.prompt_type?.toUpperCase() === 'COMPLEX').length;
   const gpt4oCost = (tokensUsed * 0.000005).toFixed(4);
   const actualCost = (stats?.total_cost ?? 0).toFixed(4);
   const saved = ((tokensUsed * 0.000005) - (stats?.total_cost ?? 0)).toFixed(4);

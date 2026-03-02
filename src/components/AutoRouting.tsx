@@ -139,8 +139,8 @@ export const AutoRouting = () => {
     setTestLoading(false);
   };
 
-  const simpleCount = (stats?.recent_requests || []).filter((r: any) => r.prompt_type === 'SIMPLE').length;
-  const complexCount = (stats?.recent_requests || []).filter((r: any) => r.prompt_type === 'COMPLEX').length;
+  const simpleCount = (stats?.recent_requests || []).filter((r: any) => r.prompt_type?.toUpperCase() === 'SIMPLE').length;
+  const complexCount = (stats?.recent_requests || []).filter((r: any) => r.prompt_type?.toUpperCase() === 'COMPLEX').length;
   const total = simpleCount + complexCount;
   const simplePct = total > 0 ? Math.round((simpleCount / total) * 100) : 70;
   const complexPct = total > 0 ? Math.round((complexCount / total) * 100) : 30;
