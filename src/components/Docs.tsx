@@ -336,6 +336,166 @@ export const Docs = () => {
             </div>
           )}
 
+          {/* GET STATS */}
+          {activeSection === 'api-stats' && (
+            <div className="space-y-6">
+              <div>
+                <div className="text-xs text-blue-400 font-bold uppercase tracking-widest mb-2">API Reference</div>
+                <h1 className="text-3xl font-extrabold mb-2">GET /stats</h1>
+                <p className="text-white/40 text-sm">Returns usage statistics for a subscription key.</p>
+              </div>
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl overflow-hidden">
+                <div className="px-5 py-3 border-b border-white/[0.06] flex items-center gap-3">
+                  <span className="bg-green-600 text-white text-[10px] font-black px-2 py-0.5 rounded">GET</span>
+                  <span className="font-mono text-sm text-white/70">https://routerllm.onrender.com/stats/{'{subscription_key}'}</span>
+                </div>
+                <div className="p-5">
+                  <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">URL Parameters</h4>
+                  <table className="w-full text-left">
+                    <thead><tr className="border-b border-white/[0.06]">
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Parameter</th>
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Type</th>
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Description</th>
+                    </tr></thead>
+                    <tbody>
+                      <tr>
+                        <td className="py-2.5 font-mono text-xs text-blue-400">subscription_key</td>
+                        <td className="py-2.5 font-mono text-xs text-purple-400">string</td>
+                        <td className="py-2.5 text-xs text-white/40">Your sk-rl- key in the URL path</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl overflow-hidden">
+                <div className="px-5 py-3 border-b border-white/[0.06]">
+                  <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest">Response Fields</h4>
+                </div>
+                <div className="p-5">
+                  <table className="w-full text-left">
+                    <thead><tr className="border-b border-white/[0.06]">
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Field</th>
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Type</th>
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Description</th>
+                    </tr></thead>
+                    <tbody className="divide-y divide-white/[0.04]">
+                      {[
+                        { field: 'total_requests', type: 'number', desc: 'Total API calls made with this key' },
+                        { field: 'total_tokens', type: 'number', desc: 'Total tokens consumed across all requests' },
+                        { field: 'total_cost', type: 'number', desc: 'Total cost in USD paid' },
+                        { field: 'total_savings', type: 'number', desc: 'Money saved vs using GPT-4o for everything' },
+                        { field: 'tokens_used', type: 'number', desc: 'Tokens used against your plan limit' },
+                        { field: 'token_limit', type: 'number', desc: 'Your plan token limit (500000 for free)' },
+                        { field: 'plan', type: 'string', desc: 'Your current plan: free, starter, or pro' },
+                        { field: 'recent_requests', type: 'array', desc: 'Last 10 requests with model, tokens, cost, time' },
+                      ].map((r, i) => (
+                        <tr key={i}>
+                          <td className="py-2.5 font-mono text-xs text-green-400">{r.field}</td>
+                          <td className="py-2.5 font-mono text-xs text-purple-400">{r.type}</td>
+                          <td className="py-2.5 text-xs text-white/40">{r.desc}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <CodeBlock id="stats-example" title="Example" code={`# Replace YOUR_KEY with your actual sk-rl- key
+import requests
+
+response = requests.get(
+    "https://routerllm.onrender.com/stats/${userKey}"
+)
+
+data = response.json()
+print(data["total_requests"])  # e.g. 42
+print(data["total_savings"])   # e.g. 1.24
+print(data["plan"])            # e.g. "free"`} copied={copied} onCopy={copyCode} />
+            </div>
+          )}
+
+          {/* POST SIGNUP */}
+          {activeSection === 'api-signup' && (
+            <div className="space-y-6">
+              <div>
+                <div className="text-xs text-blue-400 font-bold uppercase tracking-widest mb-2">API Reference</div>
+                <h1 className="text-3xl font-extrabold mb-2">POST /signup</h1>
+                <p className="text-white/40 text-sm">Creates a new account and returns a subscription key. If email already exists returns the existing key.</p>
+              </div>
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl overflow-hidden">
+                <div className="px-5 py-3 border-b border-white/[0.06] flex items-center gap-3">
+                  <span className="bg-blue-600 text-white text-[10px] font-black px-2 py-0.5 rounded">POST</span>
+                  <span className="font-mono text-sm text-white/70">https://routerllm.onrender.com/signup</span>
+                </div>
+                <div className="p-5">
+                  <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Request Body</h4>
+                  <table className="w-full text-left">
+                    <thead><tr className="border-b border-white/[0.06]">
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Parameter</th>
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Type</th>
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Required</th>
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Description</th>
+                    </tr></thead>
+                    <tbody className="divide-y divide-white/[0.04]">
+                      {[
+                        { param: 'email', type: 'string', req: 'Yes', desc: 'User email address' },
+                        { param: 'password', type: 'string', req: 'Yes', desc: 'Password — max 72 characters' },
+                      ].map((r, i) => (
+                        <tr key={i}>
+                          <td className="py-2.5 font-mono text-xs text-blue-400">{r.param}</td>
+                          <td className="py-2.5 font-mono text-xs text-purple-400">{r.type}</td>
+                          <td className="py-2.5 text-xs text-white/40">{r.req}</td>
+                          <td className="py-2.5 text-xs text-white/40">{r.desc}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl overflow-hidden">
+                <div className="px-5 py-3 border-b border-white/[0.06]">
+                  <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest">Response Fields</h4>
+                </div>
+                <div className="p-5">
+                  <table className="w-full text-left">
+                    <thead><tr className="border-b border-white/[0.06]">
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Field</th>
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Type</th>
+                      <th className="pb-2 text-[9px] text-white/30 uppercase tracking-widest">Description</th>
+                    </tr></thead>
+                    <tbody className="divide-y divide-white/[0.04]">
+                      {[
+                        { field: 'subscription_key', type: 'string', desc: 'Your sk-rl- key to use in all requests' },
+                        { field: 'plan', type: 'string', desc: 'Your plan: free, starter, or pro' },
+                        { field: 'token_limit', type: 'number', desc: 'Token limit for your plan' },
+                        { field: 'email', type: 'string', desc: 'Your registered email' },
+                      ].map((r, i) => (
+                        <tr key={i}>
+                          <td className="py-2.5 font-mono text-xs text-green-400">{r.field}</td>
+                          <td className="py-2.5 font-mono text-xs text-purple-400">{r.type}</td>
+                          <td className="py-2.5 text-xs text-white/40">{r.desc}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <CodeBlock id="signup-example" title="Example" code={`import requests
+
+response = requests.post(
+    "https://routerllm.onrender.com/signup",
+    json={
+        "email": "you@yourcompany.com",
+        "password": "yourpassword"
+    }
+)
+
+data = response.json()
+print(data["subscription_key"])  # sk-rl-xxxxx
+print(data["plan"])              # free
+print(data["token_limit"])       # 500000`} copied={copied} onCopy={copyCode} />
+            </div>
+          )}
+
           {/* MODELS */}
           {activeSection === 'models' && (
             <div className="space-y-6">
