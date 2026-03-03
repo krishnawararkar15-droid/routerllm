@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, TrendingUp, Clock, Activity } from 'lucide-react';
+import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Menu, X } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -111,9 +111,11 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
 export const Usage = () => {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const userKey = localStorage.getItem('routellm_key') || '';
   const userEmail = localStorage.getItem('routellm_email') || '';
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!userKey) { navigate('/login'); return; }
@@ -141,7 +143,6 @@ export const Usage = () => {
     return last7;
   };
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const tokensUsed = stats?.total_tokens ?? stats?.tokens_used ?? 0;
   const tokenLimit = stats?.token_limit ?? 500000;
   const pct = Math.min(100, Math.round((tokensUsed / tokenLimit) * 100));
@@ -154,61 +155,37 @@ export const Usage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white flex font-sans">
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-          <div className="absolute left-0 top-0 bottom-0 w-72 bg-[#050505] border-r border-white/[0.08] overflow-y-auto z-50">
-            <div className="flex items-center justify-between p-5 border-b border-white/[0.06]">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-xs font-black">R</div>
-                <span className="font-black text-white">RouteLLM</span>
+      {/* Mobile Sidebar */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 lg:hidden"
+            />
+            <motion.aside 
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 w-64 bg-[#050505] border-r border-white/[0.06] z-50 lg:hidden overflow-y-auto"
+            >
+              <div className="absolute top-4 right-4">
+                <button 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 text-white/40 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button onClick={() => setMobileMenuOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.05] border border-white/[0.08]">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
-              </button>
-            </div>
-            <div className="p-4 space-y-1">
-              <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest px-3 mb-2">Navigation</p>
-              {[
-                { label: 'Dashboard', path: '/dashboard', icon: '🏠' },
-                { label: 'API Keys', path: '/dashboard/keys', icon: '🔑' },
-                { label: 'Usage', path: '/dashboard/usage', icon: '📊' },
-                { label: 'Documentation', path: '/docs', icon: '📄' },
-              ].map(item => (
-                <Link key={item.path} to={item.path} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${location.pathname === item.path ? 'bg-white/10 text-white border border-white/10' : 'text-white/50 hover:text-white hover:bg-white/5'}`}>
-                  <span>{item.icon}</span><span>{item.label}</span>
-                </Link>
-              ))}
-              <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest px-3 mb-2 mt-4">Routing</p>
-              {[
-                { label: 'Auto Routing', path: '/dashboard/routing', icon: '⚡' },
-                { label: 'Manual Override', path: '/dashboard/override', icon: '⚙️' },
-              ].map(item => (
-                <Link key={item.path} to={item.path} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${location.pathname === item.path ? 'bg-white/10 text-white border border-white/10' : 'text-white/50 hover:text-white hover:bg-white/5'}`}>
-                  <span>{item.icon}</span><span>{item.label}</span>
-                </Link>
-              ))}
-              <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest px-3 mb-2 mt-4">Cost Control</p>
-              {[
-                { label: 'Savings Dashboard', path: '/dashboard/savings', icon: '💰' },
-                { label: 'Budget Alerts', path: '/dashboard/alerts', icon: '🔔' },
-              ].map(item => (
-                <Link key={item.path} to={item.path} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${location.pathname === item.path ? 'bg-white/10 text-white border border-white/10' : 'text-white/50 hover:text-white hover:bg-white/5'}`}>
-                  <span>{item.icon}</span><span>{item.label}</span>
-                </Link>
-              ))}
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/[0.06]">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-black">{(localStorage.getItem('routellm_email') || 'U')[0].toUpperCase()}</div>
-                <div className="flex-1 min-w-0"><div className="text-xs font-bold truncate">{localStorage.getItem('routellm_email') || 'User'}</div><div className="text-[10px] text-white/30">FREE PLAN</div></div>
-                <button onClick={() => { localStorage.clear(); window.location.href = '/login'; }} className="text-[10px] text-white/30 hover:text-red-400">Logout</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+              <SidebarContent userEmail={userEmail} stats={stats} />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Desktop Sidebar */}
       <aside className="w-64 bg-[#050505] border-r border-white/[0.06] flex-col hidden lg:flex">
@@ -217,10 +194,12 @@ export const Usage = () => {
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="h-14 border-b border-white/[0.06] flex items-center px-4 lg:px-8 bg-black/50 backdrop-blur-xl sticky top-0 z-20">
-          <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-white/[0.05] border border-white/[0.08] mr-3 flex-shrink-0">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
-          </button>
-          <h1 className="text-sm font-bold text-white/60">Usage Analytics</h1>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 -ml-2 text-white/40 hover:text-white transition-colors">
+              <Menu className="w-5 h-5" />
+            </button>
+            <h1 className="text-sm font-bold text-white/60">Usage Analytics</h1>
+          </div>
         </header>
 
         <div className="flex-1 overflow-y-auto p-4 lg:p-8 pb-24 lg:pb-8">

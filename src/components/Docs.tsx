@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Copy, Check, BookOpen, Terminal, AlertCircle } from 'lucide-react';
+import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Copy, Check, BookOpen, Terminal, AlertCircle, Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { motion, AnimatePresence } from 'motion/react';
 
 function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
 
@@ -109,6 +110,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
 export const Docs = () => {
   const [activeSection, setActiveSection] = useState('quickstart');
   const [copied, setCopied] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const userKey = localStorage.getItem('routellm_key') || 'sk-rl-your-key-here';
   const userEmail = localStorage.getItem('routellm_email') || '';
 
@@ -132,15 +134,56 @@ export const Docs = () => {
 
   return (
     <div className="min-h-screen bg-black text-white flex font-sans">
+      {/* Mobile Sidebar */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 lg:hidden"
+            />
+            <motion.aside 
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 w-64 bg-[#050505] border-r border-white/[0.06] z-50 lg:hidden overflow-y-auto"
+            >
+              <div className="absolute top-4 right-4">
+                <button 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 text-white/40 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <SidebarContent userEmail={userEmail} stats={null} />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* Desktop Sidebar */}
       <aside className="w-64 bg-[#050505] border-r border-white/[0.06] flex-col hidden lg:flex">
         <SidebarContent userEmail={userEmail} stats={null} />
       </aside>
 
-      <main className="flex-1 flex min-w-0 overflow-hidden">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <header className="h-14 border-b border-white/[0.06] flex items-center px-4 lg:px-8 bg-black/50 backdrop-blur-xl sticky top-0 z-20">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 -ml-2 text-white/40 hover:text-white transition-colors">
+              <Menu className="w-5 h-5" />
+            </button>
+            <h1 className="text-sm font-bold text-white/60">Documentation</h1>
+          </div>
+        </header>
 
-        {/* Docs Nav — left inner sidebar */}
-        <div className="w-52 border-r border-white/[0.06] bg-[#030303] flex-col hidden lg:flex overflow-y-auto">
+        <div className="flex-1 flex min-w-0 overflow-hidden">
+          {/* Docs Nav — left inner sidebar */}
+          <div className="w-52 border-r border-white/[0.06] bg-[#030303] flex-col hidden lg:flex overflow-y-auto">
           <div className="p-4">
             <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest mb-3">Getting Started</p>
             {[
@@ -176,6 +219,7 @@ export const Docs = () => {
               </button>
             ))}
           </div>
+        </div>
         </div>
 
         {/* Main Content */}
