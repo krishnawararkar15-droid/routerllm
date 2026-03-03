@@ -43,6 +43,7 @@ import { Usage } from './components/Usage';
 import { Docs } from './components/Docs';
 import { AutoRouting } from './components/AutoRouting';
 import { ManualOverride } from './components/ManualOverride';
+import { BudgetAlerts } from './components/BudgetAlerts';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -786,6 +787,7 @@ export default function App() {
           <Route path="/dashboard/usage" element={<Usage />} />
           <Route path="/dashboard/routing" element={<AutoRouting />} />
           <Route path="/dashboard/override" element={<ManualOverride />} />
+          <Route path="/dashboard/alerts" element={<BudgetAlerts />} />
           <Route path="/docs" element={<Docs />} />
         </Routes>
       </div>
