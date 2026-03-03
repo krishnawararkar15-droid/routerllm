@@ -171,7 +171,7 @@ export const Docs = () => {
         <SidebarContent userEmail={userEmail} stats={null} />
       </aside>
 
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <main className="flex-1 flex min-w-0 overflow-hidden">
         <header className="h-14 border-b border-white/[0.06] flex items-center px-4 lg:px-8 bg-black/50 backdrop-blur-xl sticky top-0 z-20">
           <div className="flex items-center gap-3">
             <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 -ml-2 text-white/40 hover:text-white transition-colors">
@@ -181,9 +181,33 @@ export const Docs = () => {
           </div>
         </header>
 
-        <div className="flex-1 flex min-w-0 overflow-hidden">
-          {/* Docs Nav — left inner sidebar */}
-          <div className="w-52 border-r border-white/[0.06] bg-[#030303] flex-col hidden lg:flex overflow-y-auto">
+        {/* Mobile section switcher - only shows on small screens */}
+        <div className="md:hidden mb-6">
+          <select
+            value={activeSection}
+            onChange={e => setActiveSection(e.target.value)}
+            className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+          >
+            <optgroup label="Getting Started">
+              <option value="quickstart">🚀 Quick Start</option>
+              <option value="auth">🔑 Authentication</option>
+              <option value="integration">🔌 Integration</option>
+            </optgroup>
+            <optgroup label="API Reference">
+              <option value="api-route">📡 POST /route</option>
+              <option value="api-stats">📊 GET /stats</option>
+              <option value="api-signup">✍️ POST /signup</option>
+            </optgroup>
+            <optgroup label="Reference">
+              <option value="models">🤖 Models List</option>
+              <option value="errors">❌ Error Codes</option>
+              <option value="faq">❓ FAQ</option>
+            </optgroup>
+          </select>
+        </div>
+
+        {/* Inner Docs Navigation */}
+        <div className="w-48 flex-shrink-0 border-r border-white/[0.06] bg-[#030303] overflow-y-auto hidden md:flex flex-col">
           <div className="p-4">
             <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest mb-3">Getting Started</p>
             {[
@@ -220,10 +244,10 @@ export const Docs = () => {
             ))}
           </div>
         </div>
-        </div>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-y-auto p-10 max-w-3xl">
+        <div className="flex-1 overflow-y-auto p-6 lg:p-10 pb-24 lg:pb-10">
+          <div className="max-w-2xl mx-auto">
 
           {/* QUICK START */}
           {activeSection === 'quickstart' && (
@@ -641,6 +665,7 @@ print(data["token_limit"])       # 500000`} copied={copied} onCopy={copyCode} />
             </div>
           )}
 
+          </div>
         </div>
       </main>
     </div>
