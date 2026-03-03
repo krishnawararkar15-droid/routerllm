@@ -309,7 +309,7 @@ export const BudgetAlerts = () => {
                   Monthly Cost Limit: <span className="text-green-400 font-black">${costLimit}</span>
                 </label>
                 <input type="range" min="1" max="100" step="1"
-                  value={costLimit}
+                  value={Math.min(costLimit, 100)}
                   onChange={e => setCostLimit(Number(e.target.value))}
                   className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer"
                   style={{ accentColor: '#22c55e' }}
@@ -317,13 +317,46 @@ export const BudgetAlerts = () => {
                 <div className="flex justify-between text-[10px] text-white/20 mt-1">
                   <span>$1</span><span>$25</span><span>$50</span><span>$75</span><span>$100</span>
                 </div>
-                <div className="flex gap-2 mt-3">
-                  {[5, 10, 25, 50].map(val => (
+                <div className="flex gap-2 mt-3 flex-wrap">
+                  {[5, 10, 25, 50, 100].map(val => (
                     <button key={val} onClick={() => setCostLimit(val)}
                       className={cn("px-3 py-1.5 rounded-lg text-xs font-bold transition-all border", costLimit === val ? "bg-green-500/20 border-green-500/40 text-green-400" : "bg-white/[0.03] border-white/[0.08] text-white/40 hover:text-white")}>
                       ${val}
                     </button>
                   ))}
+                </div>
+                {/* Manual input for custom amount */}
+                <div className="mt-4">
+                  <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2 block">
+                    Or enter custom amount:
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center bg-black/40 border border-white/10 rounded-xl overflow-hidden flex-1">
+                      <span className="px-4 text-white/40 font-bold text-sm border-r border-white/10 py-3">$</span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100000"
+                        value={costLimit}
+                        onChange={e => {
+                          const val = Number(e.target.value);
+                          if (val >= 1) setCostLimit(val);
+                        }}
+                        className="flex-1 bg-transparent px-4 py-3 text-sm text-white focus:outline-none"
+                        placeholder="Enter any amount..."
+                      />
+                      <span className="px-4 text-white/30 text-xs">/month</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const input = document.querySelector('input[type="number"]') as HTMLInputElement;
+                        if (input && Number(input.value) >= 1) setCostLimit(Number(input.value));
+                      }}
+                      className="bg-green-600 hover:bg-green-500 text-white font-black px-4 py-3 rounded-xl text-xs flex-shrink-0">
+                      Set
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-white/20 mt-1.5">You can set any amount from $1 to $100,000 per month</p>
                 </div>
               </div>
 
