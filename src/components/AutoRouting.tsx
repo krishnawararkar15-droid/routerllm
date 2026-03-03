@@ -175,17 +175,37 @@ export const AutoRouting = () => {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8">
           <div className="max-w-5xl mx-auto space-y-6">
 
-            {/* Page Title */}
-            <div>
-              <h1 className="text-2xl font-extrabold mb-1">Auto Routing</h1>
-              <p className="text-white/40 text-sm">Every prompt is automatically classified and sent to the cheapest model that can handle it</p>
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
+              <h3 className="text-sm font-bold mb-6">How Auto Routing Works</h3>
+              <div className="flex flex-col lg:flex-row items-center gap-3">
+                <div className="flex-1 bg-black/40 border border-white/[0.08] rounded-xl p-4 lg:p-5 text-center">
+                  <div className="text-3xl mb-3">📥</div>
+                  <div className="text-xs font-black text-white uppercase tracking-wider mb-2">Step 1</div>
+                  <div className="text-sm font-bold mb-1">Your Prompt Arrives</div>
+                  <div className="text-[11px] text-white/30 leading-relaxed">Your app sends a prompt to RouteLLM API with your subscription key</div>
+                </div>
+                <ArrowRight className="w-6 h-6 text-white/20 flex-shrink-0 rotate-90 lg:rotate-0" />
+                <div className="flex-1 bg-black/40 border border-blue-500/20 rounded-xl p-4 lg:p-5 text-center">
+                  <div className="text-3xl mb-3">🧠</div>
+                  <div className="text-xs font-black text-blue-400 uppercase tracking-wider mb-2">Step 2</div>
+                  <div className="text-sm font-bold mb-1">Instant Classification</div>
+                  <div className="text-[11px] text-white/30 leading-relaxed">Classified as SIMPLE or COMPLEX in milliseconds using a lightweight AI classifier</div>
+                </div>
+                <ArrowRight className="w-6 h-6 text-white/20 flex-shrink-0 rotate-90 lg:rotate-0" />
+                <div className="flex-1 bg-black/40 border border-green-500/20 rounded-xl p-4 lg:p-5 text-center">
+                  <div className="text-3xl mb-3">💰</div>
+                  <div className="text-xs font-black text-green-400 uppercase tracking-wider mb-2">Step 3</div>
+                  <div className="text-sm font-bold mb-1">Cheapest Model Responds</div>
+                  <div className="text-[11px] text-white/30 leading-relaxed">Simple → Free model. Complex → Powerful model. You save 30-80%.</div>
+                </div>
+              </div>
             </div>
 
-            {/* How it works — 3 step visual */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
+            {/* LIVE ROUTING TESTER — most important section */}
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
               <h3 className="text-sm font-bold mb-6">How Auto Routing Works</h3>
               <div className="flex items-center gap-3">
                 <div className="flex-1 bg-black/40 border border-white/[0.08] rounded-xl p-5 text-center">
@@ -212,7 +232,7 @@ export const AutoRouting = () => {
             </div>
 
             {/* LIVE ROUTING TESTER — most important section */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
               <div className="flex items-center gap-2 mb-2">
                 <Play className="w-4 h-4 text-green-400" />
                 <h3 className="text-sm font-bold">Live Routing Tester</h3>
@@ -280,8 +300,8 @@ export const AutoRouting = () => {
             </div>
 
             {/* Stats + Pie chart */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-1 bg-white/[0.03] border border-white/[0.08] rounded-xl p-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="col-span-2 lg:col-span-1 bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-5">
                 <h3 className="text-sm font-bold mb-4">Your Routing Split</h3>
                 <div className="h-[160px]">
                   <ResponsiveContainer width="100%" height="100%">
@@ -309,33 +329,33 @@ export const AutoRouting = () => {
 
               <div className="col-span-2 grid grid-rows-2 gap-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-blue-500/[0.05] border border-blue-500/20 rounded-xl p-5">
+                  <div className="bg-blue-500/[0.05] border border-blue-500/20 rounded-xl p-4 lg:p-5">
                     <div className="text-[9px] text-blue-400 uppercase tracking-widest mb-2">Simple Requests</div>
-                    <div className="text-3xl font-black text-blue-400">{simpleCount || 0}</div>
+                    <div className="text-2xl lg:text-3xl font-black text-blue-400">{simpleCount || 0}</div>
                     <div className="text-[10px] text-white/30 mt-1">Routed to free models → $0.00</div>
                   </div>
-                  <div className="bg-purple-500/[0.05] border border-purple-500/20 rounded-xl p-5">
+                  <div className="bg-purple-500/[0.05] border border-purple-500/20 rounded-xl p-4 lg:p-5">
                     <div className="text-[9px] text-purple-400 uppercase tracking-widest mb-2">Complex Requests</div>
-                    <div className="text-3xl font-black text-purple-400">{complexCount || 0}</div>
+                    <div className="text-2xl lg:text-3xl font-black text-purple-400">{complexCount || 0}</div>
                     <div className="text-[10px] text-white/30 mt-1">Routed to powerful models</div>
                   </div>
                 </div>
-                <div className="bg-green-500/[0.05] border border-green-500/20 rounded-xl p-5 flex items-center justify-between">
+                <div className="bg-green-500/[0.05] border border-green-500/20 rounded-xl p-4 lg:p-5 flex items-center justify-between">
                   <div>
                     <div className="text-[9px] text-green-400 uppercase tracking-widest mb-1">Total Saved by Routing</div>
-                    <div className="text-3xl font-black text-green-400">${Number(stats?.total_savings ?? 0).toFixed(4)}</div>
+                    <div className="text-2xl lg:text-3xl font-black text-green-400">${Number(stats?.total_savings ?? 0).toFixed(4)}</div>
                     <div className="text-[10px] text-white/30 mt-1">vs sending everything to GPT-4o</div>
                   </div>
-                  <div className="text-5xl">💰</div>
+                  <div className="hidden lg:block text-5xl">💰</div>
                 </div>
               </div>
             </div>
 
             {/* Simple vs Complex examples */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
               <h3 className="text-sm font-bold mb-2">What Makes a Prompt SIMPLE vs COMPLEX?</h3>
               <p className="text-white/30 text-xs mb-5">Click any example to test it live</p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
                   <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                     <CheckCircle className="w-3.5 h-3.5" /> Simple — Goes to Free Model

@@ -265,18 +265,18 @@ console.log(data);`,
             </div>
 
             {/* Section 3 — Key Stats row */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
                 <div className="text-[9px] text-white/30 uppercase tracking-widest mb-1">Total Requests</div>
-                <div className="text-3xl font-bold">{stats?.total_requests ?? 0}</div>
+                <div className="text-2xl lg:text-3xl font-bold">{stats?.total_requests ?? 0}</div>
               </div>
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
                 <div className="text-[9px] text-white/30 uppercase tracking-widest mb-1">Tokens Used</div>
-                <div className="text-3xl font-bold">{(stats?.total_tokens ?? 0).toLocaleString()}</div>
+                <div className="text-2xl lg:text-3xl font-bold">{(stats?.total_tokens ?? 0).toLocaleString()}</div>
               </div>
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
                 <div className="text-[9px] text-white/30 uppercase tracking-widest mb-1">Tokens Left</div>
-                <div className="text-3xl font-bold text-green-400">{((stats?.token_limit ?? 500000) - (stats?.total_tokens ?? 0)).toLocaleString()}</div>
+                <div className="text-2xl lg:text-3xl font-bold text-green-400">{((stats?.token_limit ?? 500000) - (stats?.total_tokens ?? 0)).toLocaleString()}</div>
               </div>
             </div>
 
@@ -349,11 +349,11 @@ console.log(data);`,
             </div>
 
             {/* How it works Card */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6 mt-4">
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6 mt-4">
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-sm font-bold">How RouteLLM Routes Your Requests</span>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-black/30 rounded-xl border border-white/[0.06]">
                   <div className="text-2xl mb-2">📥</div>
                   <div className="text-xs font-bold text-white mb-1">1. You Send Prompt</div>

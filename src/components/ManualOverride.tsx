@@ -195,7 +195,7 @@ export const ManualOverride = () => {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8">
           <div className="max-w-5xl mx-auto space-y-6">
 
             {/* Header */}
@@ -214,7 +214,7 @@ export const ManualOverride = () => {
             </div>
 
             {/* Model Selector + Test Console */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
               <div className="flex items-center gap-2 mb-2">
                 <Play className="w-4 h-4 text-green-400" />
                 <h3 className="text-sm font-bold">Test Console</h3>
@@ -225,7 +225,7 @@ export const ManualOverride = () => {
               {/* Model picker */}
               <div className="mb-4">
                 <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2 block">Select Model</label>
-                <div className="grid grid-cols-2 gap-2 max-h-[280px] overflow-y-auto pr-1">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 max-h-[280px] overflow-y-auto pr-1">
                   {models.map(m => (
                     <button key={m.id} onClick={() => setSelectedModel(m.id)}
                       className={cn("flex items-center gap-3 p-3 rounded-xl border text-left transition-all",
@@ -292,14 +292,14 @@ export const ManualOverride = () => {
             </div>
 
             {/* Model Comparison */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-base">⚖️</span>
                 <h3 className="text-sm font-bold">Model Comparison</h3>
               </div>
               <p className="text-white/30 text-xs mb-5">Send the same prompt to two models and compare quality and cost side by side</p>
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 {[
                   { label: 'Model A', value: compareModel1, set: setCompareModel1, result: compareResult1 },
                   { label: 'Model B', value: compareModel2, set: setCompareModel2, result: compareResult2 },

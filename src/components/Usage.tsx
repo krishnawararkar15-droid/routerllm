@@ -188,22 +188,22 @@ export const Usage = () => {
             </div>
 
             {/* 4 Stats Cards */}
-            <div className="grid grid-cols-4 gap-4">
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-5">
                 <div className="text-[9px] text-white/30 uppercase tracking-widest mb-2">Total Requests</div>
-                <div className="text-3xl font-black">{stats?.total_requests ?? 0}</div>
+                <div className="text-2xl lg:text-3xl font-black">{stats?.total_requests ?? 0}</div>
               </div>
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5">
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-5">
                 <div className="text-[9px] text-white/30 uppercase tracking-widest mb-2">Simple Requests</div>
-                <div className="text-3xl font-black text-blue-400">{simpleCount}</div>
+                <div className="text-2xl lg:text-3xl font-black text-blue-400">{simpleCount}</div>
               </div>
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5">
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-5">
                 <div className="text-[9px] text-white/30 uppercase tracking-widest mb-2">Complex Requests</div>
-                <div className="text-3xl font-black text-purple-400">{complexCount}</div>
+                <div className="text-2xl lg:text-3xl font-black text-purple-400">{complexCount}</div>
               </div>
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5">
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-5">
                 <div className="text-[9px] text-white/30 uppercase tracking-widest mb-2">Total Saved</div>
-                <div className="text-3xl font-black text-green-400">${saved}</div>
+                <div className="text-2xl lg:text-3xl font-black text-green-400">${saved}</div>
               </div>
             </div>
 
@@ -225,28 +225,29 @@ export const Usage = () => {
             </div>
 
             {/* Cost Breakdown */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-5">
                 <div className="text-[9px] text-white/30 uppercase tracking-widest mb-2">GPT-4o Would Cost</div>
-                <div className="text-2xl font-black text-white/40 line-through">${gpt4oCost}</div>
+                <div className="text-xl lg:text-2xl font-black text-white/40 line-through">${gpt4oCost}</div>
               </div>
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5">
+              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-5">
                 <div className="text-[9px] text-white/30 uppercase tracking-widest mb-2">Actual Cost</div>
-                <div className="text-2xl font-black text-white">${actualCost}</div>
+                <div className="text-xl lg:text-2xl font-black text-white">${actualCost}</div>
               </div>
-              <div className="bg-green-500/[0.05] border border-green-500/20 rounded-xl p-5">
+              <div className="bg-green-500/[0.05] border border-green-500/20 rounded-xl p-4 lg:p-5">
                 <div className="text-[9px] text-green-400/60 uppercase tracking-widest mb-2">You Saved</div>
-                <div className="text-2xl font-black text-green-400">${saved}</div>
+                <div className="text-xl lg:text-2xl font-black text-green-400">${saved}</div>
               </div>
             </div>
 
             {/* Full Request History Table */}
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl overflow-hidden">
-              <div className="p-5 border-b border-white/[0.06]">
+              <div className="p-4 lg:p-5 border-b border-white/[0.06]">
                 <h3 className="text-sm font-bold">Full Request History</h3>
                 <p className="text-white/30 text-xs mt-0.5">All your recent API requests</p>
               </div>
-              <table className="w-full text-left">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left min-w-[600px]">
                 <thead>
                   <tr className="border-b border-white/[0.06]">
                     <th className="px-6 py-3 text-[9px] font-bold text-white/30 uppercase tracking-widest">Model</th>
@@ -281,6 +282,7 @@ export const Usage = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
 
           </div>
