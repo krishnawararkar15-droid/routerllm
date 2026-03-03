@@ -308,14 +308,18 @@ export const BudgetAlerts = () => {
                 <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2 block">
                   Monthly Cost Limit: <span className="text-green-400 font-black">${costLimit}</span>
                 </label>
-                <input type="range" min="1" max="100" step="1"
-                  value={Math.min(costLimit, 100)}
+                <input type="range" min="1" max={Math.max(100, costLimit)} step={costLimit > 100 ? 10 : 1}
+                  value={costLimit}
                   onChange={e => setCostLimit(Number(e.target.value))}
                   className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer"
                   style={{ accentColor: '#22c55e' }}
                 />
                 <div className="flex justify-between text-[10px] text-white/20 mt-1">
-                  <span>$1</span><span>$25</span><span>$50</span><span>$75</span><span>$100</span>
+                  <span>$1</span>
+                  <span>${Math.round(Math.max(100, costLimit) * 0.25)}</span>
+                  <span>${Math.round(Math.max(100, costLimit) * 0.5)}</span>
+                  <span>${Math.round(Math.max(100, costLimit) * 0.75)}</span>
+                  <span>${Math.max(100, costLimit)}</span>
                 </div>
                 <div className="flex gap-2 mt-3 flex-wrap">
                   {[5, 10, 25, 50, 100].map(val => (
