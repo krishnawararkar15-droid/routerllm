@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Settings, Play, RefreshCw, Zap, Copy, Check } from 'lucide-react';
 import { LayoutDashboard, Key, BarChart3, FileText, Bell, Layers, Code2, CreditCard, Shield, LogOut } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -38,7 +38,9 @@ const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, l
   </Link>
 );
 
-const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any }) => (
+const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any }) => {
+  const location = useLocation();
+  return (
   <div className="flex flex-col h-full" style={{ background: 'transparent' }}>
     <div className="px-5 py-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'transparent' }}>
       <Link to="/" className="flex items-center gap-2.5">
@@ -51,30 +53,30 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
 
     <div className="flex-1 overflow-y-auto px-2 py-3">
       <SectionLabel label="Navigation" />
-      <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" />
-      <NavItem icon={Key} label="API Keys" to="/dashboard/keys" />
-      <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" />
-      <NavItem icon={FileText} label="Documentation" to="/docs" />
+      <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" active={location.pathname === '/dashboard'} />
+      <NavItem icon={Key} label="API Keys" to="/dashboard/keys" active={location.pathname === '/dashboard/keys'} />
+      <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" active={location.pathname === '/dashboard/usage'} />
+      <NavItem icon={FileText} label="Documentation" to="/docs" active={location.pathname === '/docs'} />
 
       <SectionLabel label="Routing" />
-      <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" />
-      <NavItem icon={Settings} label="Manual Override" active to="/dashboard/override" />
+      <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" active={location.pathname === '/dashboard/routing'} />
+      <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" active={location.pathname === '/dashboard/override'} />
 
       <SectionLabel label="Cost Control" />
-      <NavItem icon={BarChart3} label="Savings Dashboard" to="#" />
-      <NavItem icon={Bell} label="Budget Alerts" to="#" />
+      <NavItem icon={BarChart3} label="Savings Dashboard" to="/dashboard/savings" />
+      <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" />
 
       <SectionLabel label="Model Access" />
-      <NavItem icon={Layers} label="100+ Models" to="#" />
-      <NavItem icon={Zap} label="Real-time Routing" to="#" />
+      <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" />
+      <NavItem icon={Zap} label="Real-time Routing" to="/dashboard/routing" />
 
       <SectionLabel label="Developer Tools" />
-      <NavItem icon={Code2} label="Simple Integration" to="#" />
-      <NavItem icon={FileText} label="Cost Transparency" to="#" />
+      <NavItem icon={Code2} label="Simple Integration" to="/docs" />
+      <NavItem icon={FileText} label="Cost Transparency" to="/dashboard/savings" />
 
       <SectionLabel label="Key Management" />
-      <NavItem icon={Key} label="Multiple Keys" to="#" />
-      <NavItem icon={BarChart3} label="Usage Tracking" to="#" />
+      <NavItem icon={Key} label="Multiple Keys" to="/dashboard/keys" />
+      <NavItem icon={BarChart3} label="Usage Tracking" to="/dashboard/usage" />
 
       <SectionLabel label="Plans & Security" />
       <NavItem icon={CreditCard} label="Free Tier" to="#" />
@@ -102,7 +104,8 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
       </Link>
     </div>
   </div>
-);
+  );
+};
 
 const models = [
   { id: 'auto', name: 'Auto Route', desc: 'Let RouteLLM decide', cost: 'Optimized', badge: 'RECOMMENDED', color: 'blue', icon: '⚡' },

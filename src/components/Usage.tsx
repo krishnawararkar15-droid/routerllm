@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, TrendingUp, Clock, Activity } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'motion/react';
@@ -39,7 +39,9 @@ const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, l
   </Link>
 );
 
-const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any }) => (
+const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any }) => {
+  const location = useLocation();
+  return (
   <div className="flex flex-col h-full" style={{ background: 'transparent' }}>
     <div className="px-5 py-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'transparent' }}>
       <Link to="/" className="flex items-center gap-2.5">
@@ -52,30 +54,30 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
 
     <div className="flex-1 overflow-y-auto px-2 py-3">
       <SectionLabel label="Navigation" />
-      <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" />
-      <NavItem icon={Key} label="API Keys" to="/dashboard/keys" />
-      <NavItem icon={BarChart3} label="Usage" active to="/dashboard/usage" />
-      <NavItem icon={FileText} label="Documentation" to="/docs" />
+      <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" active={location.pathname === '/dashboard'} />
+      <NavItem icon={Key} label="API Keys" to="/dashboard/keys" active={location.pathname === '/dashboard/keys'} />
+      <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" active={location.pathname === '/dashboard/usage'} />
+      <NavItem icon={FileText} label="Documentation" to="/docs" active={location.pathname === '/docs'} />
 
       <SectionLabel label="Routing" />
-      <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" />
-      <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" />
+      <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" active={location.pathname === '/dashboard/routing'} />
+      <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" active={location.pathname === '/dashboard/override'} />
 
       <SectionLabel label="Cost Control" />
-      <NavItem icon={BarChart3} label="Savings Dashboard" to="#" />
-      <NavItem icon={Bell} label="Budget Alerts" to="#" />
+      <NavItem icon={BarChart3} label="Savings Dashboard" to="/dashboard/savings" />
+      <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" />
 
       <SectionLabel label="Model Access" />
-      <NavItem icon={Layers} label="100+ Models" to="#" />
-      <NavItem icon={Zap} label="Real-time Routing" to="#" />
+      <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" />
+      <NavItem icon={Zap} label="Real-time Routing" to="/dashboard/routing" />
 
       <SectionLabel label="Developer Tools" />
-      <NavItem icon={Code2} label="Simple Integration" to="#" />
-      <NavItem icon={FileText} label="Cost Transparency" to="#" />
+      <NavItem icon={Code2} label="Simple Integration" to="/docs" />
+      <NavItem icon={FileText} label="Cost Transparency" to="/dashboard/savings" />
 
       <SectionLabel label="Key Management" />
-      <NavItem icon={Key} label="Multiple Keys" to="#" />
-      <NavItem icon={BarChart3} label="Usage Tracking" to="#" />
+      <NavItem icon={Key} label="Multiple Keys" to="/dashboard/keys" />
+      <NavItem icon={BarChart3} label="Usage Tracking" to="/dashboard/usage" />
 
       <SectionLabel label="Plans & Security" />
       <NavItem icon={CreditCard} label="Free Tier" to="#" />
@@ -103,7 +105,8 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
       </Link>
     </div>
   </div>
-);
+  );
+};
 
 export const Usage = () => {
   const [stats, setStats] = useState<any>(null);
@@ -138,6 +141,7 @@ export const Usage = () => {
     return last7;
   };
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const tokensUsed = stats?.total_tokens ?? stats?.tokens_used ?? 0;
   const tokenLimit = stats?.token_limit ?? 500000;
   const pct = Math.min(100, Math.round((tokensUsed / tokenLimit) * 100));
@@ -150,17 +154,76 @@ export const Usage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white flex font-sans">
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+          <div className="absolute left-0 top-0 bottom-0 w-72 bg-[#050505] border-r border-white/[0.08] overflow-y-auto z-50">
+            <div className="flex items-center justify-between p-5 border-b border-white/[0.06]">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-xs font-black">R</div>
+                <span className="font-black text-white">RouteLLM</span>
+              </div>
+              <button onClick={() => setMobileMenuOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.05] border border-white/[0.08]">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
+              </button>
+            </div>
+            <div className="p-4 space-y-1">
+              <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest px-3 mb-2">Navigation</p>
+              {[
+                { label: 'Dashboard', path: '/dashboard', icon: '🏠' },
+                { label: 'API Keys', path: '/dashboard/keys', icon: '🔑' },
+                { label: 'Usage', path: '/dashboard/usage', icon: '📊' },
+                { label: 'Documentation', path: '/docs', icon: '📄' },
+              ].map(item => (
+                <Link key={item.path} to={item.path} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${location.pathname === item.path ? 'bg-white/10 text-white border border-white/10' : 'text-white/50 hover:text-white hover:bg-white/5'}`}>
+                  <span>{item.icon}</span><span>{item.label}</span>
+                </Link>
+              ))}
+              <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest px-3 mb-2 mt-4">Routing</p>
+              {[
+                { label: 'Auto Routing', path: '/dashboard/routing', icon: '⚡' },
+                { label: 'Manual Override', path: '/dashboard/override', icon: '⚙️' },
+              ].map(item => (
+                <Link key={item.path} to={item.path} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${location.pathname === item.path ? 'bg-white/10 text-white border border-white/10' : 'text-white/50 hover:text-white hover:bg-white/5'}`}>
+                  <span>{item.icon}</span><span>{item.label}</span>
+                </Link>
+              ))}
+              <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest px-3 mb-2 mt-4">Cost Control</p>
+              {[
+                { label: 'Savings Dashboard', path: '/dashboard/savings', icon: '💰' },
+                { label: 'Budget Alerts', path: '/dashboard/alerts', icon: '🔔' },
+              ].map(item => (
+                <Link key={item.path} to={item.path} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${location.pathname === item.path ? 'bg-white/10 text-white border border-white/10' : 'text-white/50 hover:text-white hover:bg-white/5'}`}>
+                  <span>{item.icon}</span><span>{item.label}</span>
+                </Link>
+              ))}
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/[0.06]">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-black">{(localStorage.getItem('routellm_email') || 'U')[0].toUpperCase()}</div>
+                <div className="flex-1 min-w-0"><div className="text-xs font-bold truncate">{localStorage.getItem('routellm_email') || 'User'}</div><div className="text-[10px] text-white/30">FREE PLAN</div></div>
+                <button onClick={() => { localStorage.clear(); window.location.href = '/login'; }} className="text-[10px] text-white/30 hover:text-red-400">Logout</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Desktop Sidebar */}
       <aside className="w-64 bg-[#050505] border-r border-white/[0.06] flex-col hidden lg:flex">
         <SidebarContent userEmail={userEmail} stats={stats} />
       </aside>
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="h-14 border-b border-white/[0.06] flex items-center px-8 bg-black/50 backdrop-blur-xl sticky top-0 z-20">
+        <header className="h-14 border-b border-white/[0.06] flex items-center px-4 lg:px-8 bg-black/50 backdrop-blur-xl sticky top-0 z-20">
+          <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-white/[0.05] border border-white/[0.08] mr-3 flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          </button>
           <h1 className="text-sm font-bold text-white/60">Usage Analytics</h1>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8 pb-24 lg:pb-8">
           <div className="max-w-5xl mx-auto space-y-6">
 
             {/* Page Title */}
@@ -288,6 +351,24 @@ export const Usage = () => {
           </div>
         </div>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[#050505]/95 backdrop-blur-xl border-t border-white/[0.08]">
+        <div className="flex items-center justify-around px-2 py-2">
+          {[
+            { label: 'Home', path: '/dashboard', icon: '🏠' },
+            { label: 'Routing', path: '/dashboard/routing', icon: '⚡' },
+            { label: 'Savings', path: '/dashboard/savings', icon: '💰' },
+            { label: 'Usage', path: '/dashboard/usage', icon: '📊' },
+            { label: 'Docs', path: '/docs', icon: '📄' },
+          ].map(item => (
+            <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${location.pathname === item.path ? 'bg-white/10' : ''}`}>
+              <span className="text-lg leading-none">{item.icon}</span>
+              <span className={`text-[9px] font-bold ${location.pathname === item.path ? 'text-white' : 'text-white/30'}`}>{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
