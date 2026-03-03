@@ -322,7 +322,7 @@ console.log(data);`,
                 <span className="text-sm font-bold">Quick Test</span>
                 <span className="text-xs text-white/30 ml-2">Send a test request right now</span>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="text"
                   value={testPrompt}
@@ -331,7 +331,7 @@ console.log(data);`,
                   className="flex-1 bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 />
                 <button onClick={runTest} disabled={testLoading}
-                  className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg text-sm transition-all flex-shrink-0 flex items-center gap-2">
+                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-3 rounded-xl text-sm transition-all flex-shrink-0 flex items-center justify-center gap-2">
                   {testLoading ? 'Running...' : '▶ Run Test'}
                 </button>
               </div>

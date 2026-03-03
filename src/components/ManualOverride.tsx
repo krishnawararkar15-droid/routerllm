@@ -341,11 +341,12 @@ export const ManualOverride = () => {
 
             {/* All Models Reference Table */}
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl overflow-hidden">
-              <div className="p-5 border-b border-white/[0.06]">
+              <div className="p-4 lg:p-5 border-b border-white/[0.06]">
                 <h3 className="text-sm font-bold">All Available Models</h3>
                 <p className="text-white/30 text-xs mt-0.5">Complete list of models you can route to</p>
               </div>
-              <table className="w-full text-left">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left min-w-[700px]">
                 <thead>
                   <tr className="border-b border-white/[0.06]">
                     <th className="px-6 py-3 text-[9px] font-bold text-white/30 uppercase tracking-widest">Model</th>
@@ -381,6 +382,7 @@ export const ManualOverride = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
 
           </div>

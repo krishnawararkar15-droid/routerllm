@@ -206,33 +206,6 @@ export const AutoRouting = () => {
 
             {/* LIVE ROUTING TESTER — most important section */}
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
-              <h3 className="text-sm font-bold mb-6">How Auto Routing Works</h3>
-              <div className="flex items-center gap-3">
-                <div className="flex-1 bg-black/40 border border-white/[0.08] rounded-xl p-5 text-center">
-                  <div className="text-3xl mb-3">📥</div>
-                  <div className="text-xs font-black text-white uppercase tracking-wider mb-2">Step 1</div>
-                  <div className="text-sm font-bold mb-1">Your Prompt Arrives</div>
-                  <div className="text-[11px] text-white/30 leading-relaxed">Your app sends a prompt to RouteLLM API with your subscription key</div>
-                </div>
-                <ArrowRight className="w-6 h-6 text-white/20 flex-shrink-0" />
-                <div className="flex-1 bg-black/40 border border-blue-500/20 rounded-xl p-5 text-center">
-                  <div className="text-3xl mb-3">🧠</div>
-                  <div className="text-xs font-black text-blue-400 uppercase tracking-wider mb-2">Step 2</div>
-                  <div className="text-sm font-bold mb-1">Instant Classification</div>
-                  <div className="text-[11px] text-white/30 leading-relaxed">Classified as SIMPLE or COMPLEX in milliseconds using a lightweight AI classifier</div>
-                </div>
-                <ArrowRight className="w-6 h-6 text-white/20 flex-shrink-0" />
-                <div className="flex-1 bg-black/40 border border-green-500/20 rounded-xl p-5 text-center">
-                  <div className="text-3xl mb-3">💰</div>
-                  <div className="text-xs font-black text-green-400 uppercase tracking-wider mb-2">Step 3</div>
-                  <div className="text-sm font-bold mb-1">Cheapest Model Responds</div>
-                  <div className="text-[11px] text-white/30 leading-relaxed">Simple → Free model. Complex → Powerful model. You save 30-80%.</div>
-                </div>
-              </div>
-            </div>
-
-            {/* LIVE ROUTING TESTER — most important section */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
               <div className="flex items-center gap-2 mb-2">
                 <Play className="w-4 h-4 text-green-400" />
                 <h3 className="text-sm font-bold">Live Routing Tester</h3>
