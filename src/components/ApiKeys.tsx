@@ -140,7 +140,7 @@ console.log(data);`,
         <NavItem icon={Bell} label="Budget Alerts" to="#" />
 
         <SectionLabel label="Model Access" />
-        <NavItem icon={Layers} label="100+ Models" to="#" />
+        <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" />
         <NavItem icon={Zap} label="Real-time Routing" to="#" />
 
         <SectionLabel label="Developer Tools" />

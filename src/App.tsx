@@ -44,6 +44,7 @@ import { Docs } from './components/Docs';
 import { AutoRouting } from './components/AutoRouting';
 import { ManualOverride } from './components/ManualOverride';
 import { BudgetAlerts } from './components/BudgetAlerts';
+import { ModelsPage } from './components/ModelsPage';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -788,6 +789,7 @@ export default function App() {
           <Route path="/dashboard/routing" element={<AutoRouting />} />
           <Route path="/dashboard/override" element={<ManualOverride />} />
           <Route path="/dashboard/alerts" element={<BudgetAlerts />} />
+          <Route path="/dashboard/models" element={<ModelsPage />} />
           <Route path="/docs" element={<Docs />} />
         </Routes>
       </div>
