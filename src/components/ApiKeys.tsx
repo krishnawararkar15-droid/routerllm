@@ -149,7 +149,7 @@ console.log(data);`,
         <NavItem icon={BarChart3} label="Usage Tracking" to="#" />
 
         <SectionLabel label="Plans & Security" />
-        <NavItem icon={CreditCard} label="Free Tier" to="#" />
+        <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" />
         <NavItem icon={Shield} label="Secure & Private" to="#" />
         <NavItem icon={Settings} label="Custom Rules" to="#" />
       </div>

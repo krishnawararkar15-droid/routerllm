@@ -77,7 +77,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
       <NavItem icon={BarChart3} label="Usage Tracking" to="/dashboard/usage" />
 
       <SectionLabel label="Plans & Security" />
-      <NavItem icon={CreditCard} label="Free Tier" to="#" />
+      <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" active={location.pathname === '/dashboard/freetier'} />
       <NavItem icon={Shield} label="Secure & Private" to="#" />
       <NavItem icon={Settings} label="Custom Rules" to="#" />
     </div>

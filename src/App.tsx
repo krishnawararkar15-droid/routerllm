@@ -47,6 +47,7 @@ import { BudgetAlerts } from './components/BudgetAlerts';
 import { ModelsPage } from './components/ModelsPage';
 import { RealTimeRouting } from './components/RealTimeRouting';
 import { CostTransparency } from './components/CostTransparency';
+import { FreeTier } from './components/FreeTier';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -794,6 +795,7 @@ export default function App() {
           <Route path="/dashboard/models" element={<ModelsPage />} />
           <Route path="/dashboard/realtime" element={<RealTimeRouting />} />
           <Route path="/dashboard/cost" element={<CostTransparency />} />
+          <Route path="/dashboard/freetier" element={<FreeTier />} />
           <Route path="/docs" element={<Docs />} />
         </Routes>
       </div>
