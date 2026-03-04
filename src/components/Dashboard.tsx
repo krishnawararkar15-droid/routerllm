@@ -164,7 +164,7 @@ export const Dashboard = () => {
 
         <SectionLabel label="Model Access" />
         <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" />
-        <NavItem icon={Zap} label="Real-time Routing" to="#" />
+        <NavItem icon={Zap} label="Real-time Routing" to="/dashboard/realtime" />
 
         <SectionLabel label="Developer Tools" />
         <NavItem icon={Code2} label="Simple Integration" to="#" />

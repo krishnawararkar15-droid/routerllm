@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Search, Copy, Check, X, ChevronUp, ChevronDown, CheckCircle2, AlertTriangle, Menu } from 'lucide-react';
+import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Search, Copy, Check, X, ChevronUp, ChevronDown, CheckCircle2, AlertTriangle, Menu, Activity } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -61,6 +61,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
       <SectionLabel label="Routing" />
       <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" active={location.pathname === '/dashboard/routing'} />
       <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" active={location.pathname === '/dashboard/override'} />
+      <NavItem icon={Activity} label="Real-time Routing" to="/dashboard/realtime" active={location.pathname === '/dashboard/realtime'} />
 
       <SectionLabel label="Cost Control" />
       <NavItem icon={BarChart3} label="Savings Dashboard" to="/dashboard/savings" />
