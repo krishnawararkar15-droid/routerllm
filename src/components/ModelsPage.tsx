@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Search, Copy, Check, X, ChevronUp, ChevronDown, CheckCircle2, AlertTriangle, Menu, Activity } from 'lucide-react';
+import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Search, Copy, Check, X, ChevronUp, ChevronDown, CheckCircle2, AlertTriangle, Menu, Activity, DollarSign } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -64,6 +64,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
 
       <SectionLabel label="Cost Control" />
       <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" active={location.pathname === '/dashboard/alerts'} />
+      <NavItem icon={DollarSign} label="Cost Transparency" to="/dashboard/cost" />
 
       <SectionLabel label="Model Access" />
       <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" active={location.pathname === '/dashboard/models'} />

@@ -64,6 +64,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
 
       <SectionLabel label="Cost Control" />
       <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" active={location.pathname === '/dashboard/alerts'} />
+      <NavItem icon={DollarSign} label="Cost Transparency" to="/dashboard/cost" />
 
       <SectionLabel label="Model Access" />
       <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" />
