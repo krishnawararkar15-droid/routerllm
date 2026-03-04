@@ -71,7 +71,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
 
       <SectionLabel label="Plans & Security" />
       <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" active={location.pathname === '/dashboard/freetier'} />
-      <NavItem icon={Shield} label="Secure & Private" to="#" />
+      <NavItem icon={Shield} label="Secure & Private" to="/dashboard/security" active={location.pathname === '/dashboard/security'} />
     </div>
 
     <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3">

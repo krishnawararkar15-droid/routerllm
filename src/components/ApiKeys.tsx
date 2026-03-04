@@ -150,7 +150,7 @@ console.log(data);`,
 
         <SectionLabel label="Plans & Security" />
         <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" />
-        <NavItem icon={Shield} label="Secure & Private" to="#" />
+        <NavItem icon={Shield} label="Secure & Private" to="/dashboard/security" />
         <NavItem icon={Settings} label="Custom Rules" to="#" />
       </div>
 

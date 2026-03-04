@@ -173,7 +173,7 @@ export const Dashboard = () => {
 
         <SectionLabel label="Plans & Security" />
         <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" active={location.pathname === '/dashboard/freetier'} />
-        <NavItem icon={Shield} label="Secure & Private" to="#" />
+        <NavItem icon={Shield} label="Secure & Private" to="/dashboard/security" active={location.pathname === '/dashboard/security'} />
         <NavItem icon={Settings} label="Custom Rules" to="#" />
 
       </div>
