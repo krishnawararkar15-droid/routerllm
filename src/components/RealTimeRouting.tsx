@@ -61,17 +61,12 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
       <SectionLabel label="Routing" />
       <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" active={location.pathname === '/dashboard/routing'} />
       <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" active={location.pathname === '/dashboard/override'} />
-      <NavItem icon={Activity} label="Real-time Routing" to="/dashboard/realtime" active={location.pathname === '/dashboard/realtime'} />
 
       <SectionLabel label="Cost Control" />
-      <NavItem icon={BarChart3} label="Savings Dashboard" to="/dashboard/savings" />
       <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" active={location.pathname === '/dashboard/alerts'} />
 
       <SectionLabel label="Model Access" />
       <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" />
-
-      <SectionLabel label="Developer Tools" />
-      <NavItem icon={Code2} label="Simple Integration" to="/docs" />
 
       <SectionLabel label="Plans & Security" />
       <NavItem icon={CreditCard} label="Free Tier" to="#" />

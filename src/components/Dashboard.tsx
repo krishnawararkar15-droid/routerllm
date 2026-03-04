@@ -159,15 +159,12 @@ export const Dashboard = () => {
         <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" />
 
         <SectionLabel label="Cost Control" />
-        <NavItem icon={BarChart3} label="Savings Dashboard" to="#" />
         <NavItem icon={Bell} label="Budget Alerts" to="#" />
 
         <SectionLabel label="Model Access" />
         <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" />
-        <NavItem icon={Zap} label="Real-time Routing" to="/dashboard/realtime" />
 
         <SectionLabel label="Developer Tools" />
-        <NavItem icon={Code2} label="Simple Integration" to="#" />
         <NavItem icon={FileText} label="Cost Transparency" to="/dashboard/cost" />
 
         <SectionLabel label="Key Management" />
