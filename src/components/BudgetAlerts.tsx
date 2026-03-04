@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Bell, BellOff, Mail, Shield, AlertTriangle, CheckCircle, TrendingUp, Zap } from 'lucide-react';
-import { LayoutDashboard, Key, BarChart3, FileText, Settings, Layers, Code2, CreditCard, LogOut } from 'lucide-react';
+import { LayoutDashboard, Key, BarChart3, FileText, Settings, Layers, Code2, CreditCard, LogOut, Menu, X } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { motion, AnimatePresence } from 'motion/react';
 
 function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
 
@@ -13,61 +14,90 @@ const SectionLabel = ({ label }: { label: string }) => (
   </div>
 );
 
-const SidebarItem = ({ icon: Icon, label, to = "#", active = false }: { icon: any, label: string, to?: string, active?: boolean }) => (
-  <Link to={to} className={`flex items-center gap-3 px-3 py-1.5 rounded-xl transition-all w-full mb-1 ${active ? 'bg-white/10 text-white border border-white/10' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>
-    <Icon className="w-3.5 h-3.5" />
+const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, label: string, active?: boolean, to?: string }) => (
+  <Link
+    to={to}
+    className="flex items-center gap-3 px-3 py-1.5 rounded-xl transition-all w-full mb-1"
+    style={active ? {
+      background: 'rgba(255,255,255,0.07)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
+      border: '1px solid rgba(255,255,255,0.12)',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
+      color: '#ffffff'
+    } : {
+      background: 'rgba(255,255,255,0.03)',
+      backdropFilter: 'blur(8px)',
+      WebkitBackdropFilter: 'blur(8px)',
+      border: '1px solid rgba(255,255,255,0.06)',
+      boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+      color: 'rgba(255,255,255,0.45)'
+    }}
+  >
+    <Icon className="w-3.5 h-3.5 flex-shrink-0" style={active ? { color: '#60a5fa' } : { color: 'rgba(255,255,255,0.4)' }} />
     <span className="text-[12px] font-medium">{label}</span>
   </Link>
 );
 
-const SidebarContent = () => {
+const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any }) => {
   const location = useLocation();
   return (
-    <div className="flex flex-col h-full" style={{ background: 'transparent' }}>
-      <div className="px-5 py-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'transparent' }}>
-        <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-            <Layers className="text-black w-4 h-4" />
-          </div>
-          <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
-        </Link>
-      </div>
-      <div className="flex-1 overflow-y-auto px-2 py-3">
-        <SectionLabel label="Navigation" />
-        <SidebarItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" active={location.pathname === '/dashboard'} />
-        <SidebarItem icon={Key} label="API Keys" to="/dashboard/keys" active={location.pathname === '/dashboard/keys'} />
-        <SidebarItem icon={BarChart3} label="Usage" to="/dashboard/usage" active={location.pathname === '/dashboard/usage'} />
-        <SidebarItem icon={FileText} label="Documentation" to="/docs" active={location.pathname === '/docs'} />
-        <SectionLabel label="Routing" />
-        <SidebarItem icon={Zap} label="Auto Routing" to="/dashboard/routing" active={location.pathname === '/dashboard/routing'} />
-        <SidebarItem icon={Settings} label="Manual Override" to="/dashboard/override" active={location.pathname === '/dashboard/override'} />
-        <SectionLabel label="Cost Control" />
-        <SidebarItem icon={BarChart3} label="Savings Dashboard" to="/dashboard/savings" />
-        <SidebarItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" active={location.pathname === '/dashboard/alerts'} />
-        <SectionLabel label="Model Access" />
-        <SidebarItem icon={Layers} label="100+ Models" to="/dashboard/models" />
-        <SectionLabel label="Developer Tools" />
-        <SidebarItem icon={Code2} label="Simple Integration" to="/docs" />
-        <SectionLabel label="Plans & Security" />
-        <SidebarItem icon={CreditCard} label="Free Tier" to="#" />
-        <SidebarItem icon={Shield} label="Secure & Private" to="#" />
-      </div>
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3">
-        <div className="flex items-center gap-3 px-2 py-2 mb-1">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-black text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', boxShadow: '0 0 12px rgba(59,130,246,0.4)' }}>
-            {(localStorage.getItem('routellm_email') || 'U')[0].toUpperCase()}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-[12px] font-bold text-white truncate">{localStorage.getItem('routellm_email') || 'User'}</div>
-            <div className="text-[9px] text-white/30 uppercase tracking-wider">FREE PLAN</div>
-          </div>
+  <div className="flex flex-col h-full" style={{ background: 'transparent' }}>
+    <div className="px-5 py-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'transparent' }}>
+      <Link to="/" className="flex items-center gap-2.5">
+        <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
+          <Layers className="text-black w-4 h-4" />
         </div>
-        <Link to="/login" onClick={() => localStorage.clear()} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all w-full">
-          <LogOut className="w-4 h-4" />
-          <span className="text-[13px] font-medium">Logout</span>
-        </Link>
-      </div>
+        <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+      </Link>
     </div>
+
+    <div className="flex-1 overflow-y-auto px-2 py-3">
+      <SectionLabel label="Navigation" />
+      <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" active={location.pathname === '/dashboard'} />
+      <NavItem icon={Key} label="API Keys" to="/dashboard/keys" active={location.pathname === '/dashboard/keys'} />
+      <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" active={location.pathname === '/dashboard/usage'} />
+      <NavItem icon={FileText} label="Documentation" to="/docs" active={location.pathname === '/docs'} />
+
+      <SectionLabel label="Routing" />
+      <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" active={location.pathname === '/dashboard/routing'} />
+      <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" active={location.pathname === '/dashboard/override'} />
+
+      <SectionLabel label="Cost Control" />
+      <NavItem icon={BarChart3} label="Savings Dashboard" to="/dashboard/savings" />
+      <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" active={location.pathname === '/dashboard/alerts'} />
+
+      <SectionLabel label="Model Access" />
+      <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" />
+
+      <SectionLabel label="Developer Tools" />
+      <NavItem icon={Code2} label="Simple Integration" to="/docs" />
+
+      <SectionLabel label="Plans & Security" />
+      <NavItem icon={CreditCard} label="Free Tier" to="#" />
+      <NavItem icon={Shield} label="Secure & Private" to="#" />
+    </div>
+
+    <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3">
+      <div className="flex items-center gap-3 px-2 py-2 mb-1">
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-black text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', boxShadow: '0 0 12px rgba(59,130,246,0.4)' }}>
+          {userEmail ? userEmail[0].toUpperCase() : 'K'}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[12px] font-bold text-white truncate">{userEmail || 'User'}</div>
+          <div className="text-[9px] text-white/30 uppercase tracking-wider">{(stats?.plan ?? 'free').charAt(0).toUpperCase() + (stats?.plan ?? 'free').slice(1)} Plan</div>
+        </div>
+      </div>
+      <Link
+        to="/login"
+        onClick={() => localStorage.clear()}
+        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all w-full"
+      >
+        <LogOut className="w-4 h-4" />
+        <span className="text-[13px] font-medium">Logout</span>
+      </Link>
+    </div>
+  </div>
   );
 };
 
@@ -132,37 +162,53 @@ export const BudgetAlerts = () => {
     <div className="min-h-screen bg-black text-white flex font-sans">
 
       {/* Mobile menu overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-          <div className="absolute left-0 top-0 bottom-0 w-72 bg-[#050505] border-r border-white/[0.08] overflow-y-auto z-50">
-            <div className="flex items-center justify-between p-5 border-b border-white/[0.06]">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-xs font-black">R</div>
-                <span className="font-black text-white">RouteLLM</span>
+      {/* Mobile menu overlay */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 lg:hidden"
+            />
+            <motion.aside 
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 w-64 bg-[#050505] border-r border-white/[0.06] z-50 lg:hidden overflow-y-auto"
+            >
+              <div className="absolute top-4 right-4">
+                <button 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 text-white/40 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button onClick={() => setMobileMenuOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.05]">✕</button>
-            </div>
-            <div className="p-4">
-              <SidebarContent />
-            </div>
-          </div>
-        </div>
-      )}
+              <SidebarContent userEmail={userEmail} stats={stats} />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Desktop Sidebar */}
       <aside className="w-64 bg-[#050505] border-r border-white/[0.06] flex-col hidden lg:flex">
-        <SidebarContent />
+        <SidebarContent userEmail={userEmail} stats={stats} />
       </aside>
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="h-14 border-b border-white/[0.06] flex items-center px-4 lg:px-8 bg-black/50 backdrop-blur-xl sticky top-0 z-20">
-          <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-white/[0.05] border border-white/[0.08] mr-3">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
-          </button>
-          <div className="flex items-center gap-2">
-            <Bell className="w-4 h-4 text-orange-400" />
-            <h1 className="text-sm font-bold text-white/60">Budget Alerts</h1>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 -ml-2 text-white/40 hover:text-white transition-colors">
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2">
+              <Bell className="w-4 h-4 text-orange-400" />
+              <h1 className="text-sm font-bold text-white/60">Budget Alerts</h1>
+            </div>
           </div>
         </header>
 
