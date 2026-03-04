@@ -46,6 +46,7 @@ import { ManualOverride } from './components/ManualOverride';
 import { BudgetAlerts } from './components/BudgetAlerts';
 import { ModelsPage } from './components/ModelsPage';
 import { RealTimeRouting } from './components/RealTimeRouting';
+import { CostTransparency } from './components/CostTransparency';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -792,6 +793,7 @@ export default function App() {
           <Route path="/dashboard/alerts" element={<BudgetAlerts />} />
           <Route path="/dashboard/models" element={<ModelsPage />} />
           <Route path="/dashboard/realtime" element={<RealTimeRouting />} />
+          <Route path="/dashboard/cost" element={<CostTransparency />} />
           <Route path="/docs" element={<Docs />} />
         </Routes>
       </div>

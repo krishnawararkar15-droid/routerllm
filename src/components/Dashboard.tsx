@@ -168,7 +168,7 @@ export const Dashboard = () => {
 
         <SectionLabel label="Developer Tools" />
         <NavItem icon={Code2} label="Simple Integration" to="#" />
-        <NavItem icon={FileText} label="Cost Transparency" to="#" />
+        <NavItem icon={FileText} label="Cost Transparency" to="/dashboard/cost" />
 
         <SectionLabel label="Key Management" />
         <NavItem icon={Key} label="Multiple Keys" to="#" />
