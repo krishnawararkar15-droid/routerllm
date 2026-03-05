@@ -49,6 +49,10 @@ import { RealTimeRouting } from './components/RealTimeRouting';
 import { CostTransparency } from './components/CostTransparency';
 import { FreeTier } from './components/FreeTier';
 import { SecurePrivate } from './components/SecurePrivate';
+import { TermsOfService } from './components/TermsOfService';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { RefundPolicy } from './components/RefundPolicy';
+import { Pricing } from './components/Pricing';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -721,11 +725,13 @@ const Footer = () => {
             </div>
           </div>
 
-          <div>
+<div>
             <h4 className="text-[10px] md:text-sm font-bold text-white mb-4 md:mb-6 uppercase tracking-widest">Legal</h4>
             <ul className="space-y-3 md:space-y-4">
-              <li><a href="#" className="text-xs md:text-sm text-white/50 hover:text-white">Privacy Policy</a></li>
-              <li><a href="#" className="text-xs md:text-sm text-white/50 hover:text-white">Terms of Service</a></li>
+              <li><Link to="/privacy" className="text-xs md:text-sm text-white/50 hover:text-white">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="text-xs md:text-sm text-white/50 hover:text-white">Terms of Service</Link></li>
+              <li><Link to="/refund" className="text-xs md:text-sm text-white/50 hover:text-white">Refund Policy</Link></li>
+              <li><Link to="/pricing" className="text-xs md:text-sm text-white/50 hover:text-white">Pricing</Link></li>
             </ul>
           </div>
 
@@ -798,6 +804,10 @@ export default function App() {
           <Route path="/dashboard/cost" element={<CostTransparency />} />
           <Route path="/dashboard/freetier" element={<FreeTier />} />
           <Route path="/dashboard/security" element={<SecurePrivate />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/refund" element={<RefundPolicy />} />
+          <Route path="/pricing" element={<Pricing />} />
           <Route path="/docs" element={<Docs />} />
         </Routes>
       </div>

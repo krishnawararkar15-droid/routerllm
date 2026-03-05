@@ -10,8 +10,9 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const AuthLayout = ({ children, rightContent }: { children: React.ReactNode, rightContent: React.ReactNode }) => {
+  const currentYear = new Date().getFullYear();
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4 md:p-8">
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 md:p-8">
       <div className="w-full max-w-[1100px] bg-[#0a0a0a] rounded-3xl border border-white/5 overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-white/5">
         {/* Left Side - Form */}
         <div className="w-full md:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col">
@@ -19,6 +20,7 @@ const AuthLayout = ({ children, rightContent }: { children: React.ReactNode, rig
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
               <Layers className="text-black w-5 h-5" />
             </div>
+            <span className="text-lg font-bold">LLMLite</span>
           </Link>
           {children}
         </div>
@@ -38,6 +40,16 @@ const AuthLayout = ({ children, rightContent }: { children: React.ReactNode, rig
           </div>
         </div>
       </div>
+
+      <footer className="mt-8">
+        <div className="flex flex-wrap justify-center gap-6 text-sm">
+          <Link to="/terms" className="text-white/40 hover:text-white transition-colors">Terms</Link>
+          <Link to="/privacy" className="text-white/40 hover:text-white transition-colors">Privacy</Link>
+          <Link to="/refund" className="text-white/40 hover:text-white transition-colors">Refund</Link>
+          <Link to="/pricing" className="text-white/40 hover:text-white transition-colors">Pricing</Link>
+        </div>
+        <p className="text-center text-xs text-white/20 mt-4">© {currentYear} LLMLite. All rights reserved.</p>
+      </footer>
     </div>
   );
 };
