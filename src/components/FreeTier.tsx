@@ -47,7 +47,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
         <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
           <Layers className="text-black w-4 h-4" />
         </div>
-        <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">LLMLite</span>
       </Link>
     </div>
 
@@ -142,7 +142,7 @@ export const FreeTier = () => {
   };
 
   const handleUpgrade = () => {
-    alert('Email us at upgrade@routellm.com to upgrade your plan');
+    alert('Email us at upgrade@llmlite.com to upgrade your plan');
   };
 
   return (
@@ -216,7 +216,7 @@ export const FreeTier = () => {
               {usagePercent > 95 && (
                 <div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-red-400" />
-                  <span className="text-sm font-bold text-red-400">Almost at limit — upgrade now to continue using RouteLLM</span>
+                  <span className="text-sm font-bold text-red-400">Almost at limit — upgrade now to continue using LLMLite</span>
                 </div>
               )}
               {usagePercent > 80 && usagePercent <= 95 && (

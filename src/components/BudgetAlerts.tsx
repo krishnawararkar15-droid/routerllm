@@ -48,7 +48,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
         <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
           <Layers className="text-black w-4 h-4" />
         </div>
-        <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">LLMLite</span>
       </Link>
     </div>
 
@@ -440,7 +440,7 @@ export const BudgetAlerts = () => {
               <h3 className="text-sm font-bold mb-4">How Budget Alerts Work</h3>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {[
-                  { icon: '📊', title: 'We Monitor Usage', desc: 'RouteLLM tracks every token you use in real time after each API call' },
+                  { icon: '📊', title: 'We Monitor Usage', desc: 'LLMLite tracks every token you use in real time after each API call' },
                   { icon: '⚡', title: 'Threshold Crossed', desc: `When usage hits ${tokenThreshold}% of your limit or cost hits $${(costLimit * 0.8).toFixed(0)}, alert is triggered` },
                   { icon: '📧', title: 'You Get Notified', desc: `Email sent to ${alertEmail || 'your email'} so you can take action before hitting the hard limit` },
                 ].map((item, i) => (

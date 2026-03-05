@@ -47,7 +47,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
         <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
           <Layers className="text-black w-4 h-4" />
         </div>
-        <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">LLMLite</span>
       </Link>
     </div>
 
@@ -388,7 +388,7 @@ export const RealTimeRouting = () => {
                 type="text"
                 value={testPrompt}
                 onChange={e => setTestPrompt(e.target.value)}
-                placeholder="Type a prompt to see how RouteLLM would classify it..."
+                placeholder="Type a prompt to see how LLMLite would classify it..."
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 mb-4"
               />
 
@@ -457,7 +457,7 @@ export const RealTimeRouting = () => {
             {/* Section 4: Routing Rules Panel */}
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
               <h3 className="text-sm font-bold mb-2">Current Routing Rules</h3>
-              <p className="text-xs text-white/30 mb-4">These are the exact rules RouteLLM uses to classify every prompt</p>
+              <p className="text-xs text-white/30 mb-4">These are the exact rules LLMLite uses to classify every prompt</p>
               
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl border border-green-500/30 bg-green-500/5">

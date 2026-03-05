@@ -48,7 +48,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
         <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
           <Layers className="text-black w-4 h-4" />
         </div>
-        <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">LLMLite</span>
       </Link>
     </div>
 
@@ -106,7 +106,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
 };
 
 const models = [
-  { id: 'auto', name: 'Auto Route', desc: 'Let RouteLLM decide', cost: 'Optimized', badge: 'RECOMMENDED', color: 'blue', icon: '⚡' },
+  { id: 'auto', name: 'Auto Route', desc: 'Let LLMLite decide', cost: 'Optimized', badge: 'RECOMMENDED', color: 'blue', icon: '⚡' },
   { id: 'google/gemma-3-4b-it:free', name: 'Gemma 3 4B', desc: 'Google — Fast and free', cost: '$0.00', badge: 'FREE', color: 'green', icon: '🟢' },
   { id: 'meta-llama/llama-3.1-8b-instruct:free', name: 'Llama 3.1 8B', desc: 'Meta — Great for general tasks', cost: '$0.00', badge: 'FREE', color: 'green', icon: '🟢' },
   { id: 'mistralai/mistral-7b-instruct:free', name: 'Mistral 7B', desc: 'Mistral — Strong reasoning', cost: '$0.00', badge: 'FREE', color: 'green', icon: '🟢' },

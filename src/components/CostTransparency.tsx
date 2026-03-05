@@ -47,7 +47,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
         <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
           <Layers className="text-black w-4 h-4" />
         </div>
-        <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">LLMLite</span>
       </Link>
     </div>
 
@@ -406,7 +406,7 @@ export const CostTransparency = () => {
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/5">
-                  <div className="text-sm font-bold text-red-400 mb-3">Without RouteLLM (all GPT-4o)</div>
+                  <div className="text-sm font-bold text-red-400 mb-3">Without LLMLite (all GPT-4o)</div>
                   <div className="space-y-2 text-xs">
                     <div>Simple: {simplePrompts} × {avgTokens} × $0.000005 = <span className="text-red-400 font-bold">${(simplePrompts * avgTokens * 0.000005).toFixed(2)}</span></div>
                     <div>Complex: {complexPrompts} × {avgTokens} × $0.000005 = <span className="text-red-400 font-bold">${(complexPrompts * avgTokens * 0.000005).toFixed(2)}</span></div>
@@ -414,7 +414,7 @@ export const CostTransparency = () => {
                   </div>
                 </div>
                 <div className="p-4 rounded-xl border border-green-500/30 bg-green-500/5">
-                  <div className="text-sm font-bold text-green-400 mb-3">With RouteLLM</div>
+                  <div className="text-sm font-bold text-green-400 mb-3">With LLMLite</div>
                   <div className="space-y-2 text-xs">
                     <div>Simple: {simplePrompts} × {avgTokens} × $0.00 = <span className="text-green-400 font-bold">$0.00</span></div>
                     <div>Complex: {complexPrompts} × {avgTokens} × $0.000001 = <span className="text-green-400 font-bold">${routeLLMCost.toFixed(2)}</span></div>
@@ -427,7 +427,7 @@ export const CostTransparency = () => {
                 <div className="text-4xl font-black text-green-400">${monthlySavings.toFixed(2)}</div>
                 {proCost > 0 && (
                   <div className="mt-2 text-xs text-white/40">
-                    After RouteLLM Pro ($99/mo): <span className={netSavings > 0 ? "text-green-400" : "text-white/60"}>${netSavings.toFixed(2)}</span>
+                    After LLMLite Pro ($99/mo): <span className={netSavings > 0 ? "text-green-400" : "text-white/60"}>${netSavings.toFixed(2)}</span>
                   </div>
                 )}
               </div>
@@ -490,7 +490,7 @@ export const CostTransparency = () => {
               <div className="flex items-center justify-center gap-2 md:gap-4 text-xs md:text-sm flex-wrap">
                 <div className="px-3 py-2 bg-blue-500/20 rounded-lg">Your Prompt</div>
                 <div className="text-white/40">→</div>
-                <div className="px-3 py-2 bg-purple-500/20 rounded-lg">RouteLLM Classifier</div>
+                <div className="px-3 py-2 bg-purple-500/20 rounded-lg">LLMLite Classifier</div>
                 <div className="text-white/40">→</div>
                 <div className="flex gap-2">
                   <div className="px-3 py-2 bg-green-500/20 border border-green-500/30 rounded-lg">SIMPLE → Free Model</div>

@@ -79,7 +79,7 @@ export const Login = () => {
     <div className="min-h-screen bg-black flex items-center justify-center">
       <div className="bg-white/5 border border-white/10 rounded-2xl p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold text-white mb-2">Welcome back</h2>
-        <p className="text-white/40 text-sm mb-6">Sign in to your RouteLLM account</p>
+        <p className="text-white/40 text-sm mb-6">Sign in to your LLMLite account</p>
         {error && <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg p-3 mb-4">{error}</div>}
         <div className="space-y-4">
           <div>

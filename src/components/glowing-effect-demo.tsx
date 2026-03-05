@@ -16,7 +16,7 @@ export function GlowingEffectDemo() {
         area="md:[grid-area:1/7/2/13] xl:[grid-area:2/1/3/5]"
         icon={<Settings className="h-4 w-4" />}
         title="The Simplest AI Router Ever"
-        description="Two lines of code. That's all it takes to integrate RouteLLM into any existing project."
+        description="Two lines of code. That's all it takes to integrate LLMLite into any existing project."
       />
       <GridItem
         area="md:[grid-area:2/1/3/7] xl:[grid-area:1/5/3/8]"
@@ -28,7 +28,7 @@ export function GlowingEffectDemo() {
         area="md:[grid-area:2/7/3/13] xl:[grid-area:1/8/2/13]"
         icon={<Sparkles className="h-4 w-4" />}
         title="Intelligent Automation"
-        description="Set your budget, define your limits, and let RouteLLM handle everything automatically."
+        description="Set your budget, define your limits, and let LLMLite handle everything automatically."
       />
       <GridItem
         area="md:[grid-area:3/1/4/13] xl:[grid-area:2/8/3/13]"

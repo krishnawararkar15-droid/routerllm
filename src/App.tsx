@@ -67,7 +67,7 @@ const Navbar = () => {
             <div className="w-7 h-7 md:w-8 md:h-8 bg-white rounded-lg flex items-center justify-center">
               <Layers className="text-black w-4 h-4 md:w-5 md:h-5" />
             </div>
-            <span className="text-lg md:text-xl font-extrabold font-display tracking-tight text-white">RouteLLM</span>
+<span className="text-lg md:text-xl font-extrabold font-display tracking-tight text-white">LLMLite</span>
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -141,7 +141,7 @@ const Hero = () => {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="inline-flex items-center gap-2 px-3 md:px-4 py-1 md:py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-xs md:text-sm font-medium mb-6 md:mb-8 hover:bg-white/10 transition-colors cursor-pointer"
           >
-            <span className="text-white/60">Introducing RouteLLM 1.0</span>
+            <span className="text-white/60">Introducing LLMLite 1.0</span>
             <ArrowRight className="w-3 h-3 md:w-4 md:h-4 text-white/40" />
           </motion.div>
 
@@ -160,7 +160,7 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
             className="text-sm md:text-lg text-white/60 mb-8 md:mb-10 leading-relaxed max-w-2xl mx-auto"
           >
-            RouteLLM automatically routes every prompt to the cheapest AI model that can handle it. Simple questions go to free models. Complex tasks go to powerful ones. Save 30–80% on every API bill — automatically.
+            LLMLite automatically routes every prompt to the cheapest AI model that can handle it. Simple questions go to free models. Complex tasks go to powerful ones. Save 30–80% on every API bill — automatically.
           </motion.p>
 
           <motion.div 
@@ -221,11 +221,11 @@ const Hero = () => {
                 <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-yellow-500/50" />
                 <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-green-500/50" />
               </div>
-              <div className="text-[8px] md:text-[10px] text-white/40 font-mono ml-3 md:ml-4 uppercase tracking-[0.2em] font-bold">ROUTELLM DASHBOARD V1.0</div>
+<div className="text-[8px] md:text-[10px] text-white/40 font-mono ml-3 md:ml-4 uppercase tracking-[0.2em] font-bold">LLMLITE DASHBOARD V1.0</div>
             </div>
             <img 
               src="https://picsum.photos/seed/gantt/1600/900" 
-              alt="RouteLLM Dashboard" 
+              alt="LLMLite Dashboard"
               className="w-full h-auto opacity-95"
               referrerPolicy="no-referrer"
             />
@@ -302,7 +302,7 @@ const FeaturesSection1 = () => {
     },
     {
       title: "Manual Model Override",
-      description: "Need GPT-4o for a specific request? Just pass the model name. RouteLLM skips classification and calls exactly what you asked for.",
+      description: "Need GPT-4o for a specific request? Just pass the model name. LLMLite skips classification and calls exactly what you asked for.",
       icon: <Zap className="w-5 h-5" />,
       image: "https://picsum.photos/seed/workflow/800/500"
     },
@@ -335,7 +335,7 @@ const FeaturesSection1 = () => {
           </span>
           <h2 className="text-2xl md:text-4xl font-extrabold font-display tracking-tight text-white mb-4 md:mb-6">Everything Your API Was Missing</h2>
           <p className="text-sm md:text-base text-white/50 max-w-2xl leading-relaxed font-medium">
-            RouteLLM's intelligent routing handles any type of AI workload. And we never stop improving.
+            LLMLite's intelligent routing handles any type of AI workload. And we never stop improving.
           </p>
         </motion.div>
 
@@ -385,7 +385,7 @@ const FeaturesSection2 = () => {
     },
     {
       title: "Real Cost Savings",
-      description: "Developers using RouteLLM save 30–80% on monthly AI API bills. You pay us less than you save.",
+      description: "Developers using LLMLite save 30–80% on monthly AI API bills. You pay us less than you save.",
       icon: <Zap className="w-5 h-5 md:w-6 md:h-6 text-amber-400" />,
       bg: "bg-amber-500/10"
     },
@@ -407,12 +407,12 @@ const FeaturesSection2 = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 md:mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">
-            <Zap className="w-3 h-3" /> Why RouteLLM
+<span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">
+            <Zap className="w-3 h-3" /> Why LLMLite
           </span>
           <h2 className="text-2xl md:text-4xl font-extrabold font-display tracking-tight text-white mb-4 md:mb-6">Cut Costs and Ship Faster</h2>
           <p className="text-sm md:text-base text-white/50 max-w-2xl mx-auto leading-relaxed font-medium">
-            Stop thinking about which model to use. Let RouteLLM decide. Spend your energy building, not optimising.
+            Stop thinking about which model to use. Let LLMLite decide. Spend your energy building, not optimising.
           </p>
         </motion.div>
 
@@ -706,7 +706,7 @@ const Footer = () => {
             <div className="w-7 h-7 md:w-8 md:h-8 bg-white rounded-lg flex items-center justify-center">
               <Layers className="text-black w-4 h-4 md:w-5 md:h-5" />
             </div>
-            <span className="text-lg md:text-xl font-extrabold font-display tracking-tight text-white">RouteLLM</span>
+<span className="text-lg md:text-xl font-extrabold font-display tracking-tight text-white">LLMLite</span>
           </div>
             <div className="flex items-center gap-3 md:gap-4">
               <a href="#" className="p-2 bg-white/5 rounded-lg text-white/60 hover:bg-white hover:text-black transition-all">
@@ -752,7 +752,7 @@ const Footer = () => {
             United States
           </button>
           <p className="text-[10px] md:text-sm text-white/30 text-center">
-            © RouteLLM 2024. All Rights Reserved
+            © LLMLite 2024. All Rights Reserved
           </p>
         </div>
       </div>

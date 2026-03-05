@@ -47,7 +47,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
         <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
           <Layers className="text-black w-4 h-4" />
         </div>
-        <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">LLMLite</span>
       </Link>
     </div>
 
@@ -248,7 +248,7 @@ export const Docs = () => {
               <div>
                 <div className="text-xs text-blue-400 font-bold uppercase tracking-widest mb-2">Getting Started</div>
                 <h1 className="text-3xl font-extrabold mb-2">Quick Start</h1>
-                <p className="text-white/40 text-sm leading-relaxed">Get your first AI response routed through RouteLLM in under 2 minutes. No configuration needed.</p>
+                <p className="text-white/40 text-sm leading-relaxed">Get your first AI response routed through LLMLite in under 2 minutes. No configuration needed.</p>
               </div>
               <div className="space-y-4">
                 {[
@@ -277,14 +277,14 @@ export const Docs = () => {
               <div>
                 <div className="text-xs text-blue-400 font-bold uppercase tracking-widest mb-2">Authentication</div>
                 <h1 className="text-3xl font-extrabold mb-2">Authentication</h1>
-                <p className="text-white/40 text-sm leading-relaxed">Every request to RouteLLM must include your subscription key. Never expose it in frontend code.</p>
+                <p className="text-white/40 text-sm leading-relaxed">Every request to LLMLite must include your subscription key. Never expose it in frontend code.</p>
               </div>
               <div className="bg-orange-500/[0.08] border border-orange-500/20 rounded-xl p-5">
                 <div className="flex gap-3">
                   <span className="text-orange-400 text-lg">⚠️</span>
                   <div>
                     <div className="text-sm font-bold text-orange-400 mb-1">Security Warning</div>
-                    <div className="text-xs text-white/50 leading-relaxed">Always make RouteLLM calls from your backend server. Never put your subscription key in frontend JavaScript that users can see.</div>
+                    <div className="text-xs text-white/50 leading-relaxed">Always make LLMLite calls from your backend server. Never put your subscription key in frontend JavaScript that users can see.</div>
                   </div>
                 </div>
               </div>
@@ -306,8 +306,8 @@ export const Docs = () => {
             <div className="space-y-6">
               <div>
                 <div className="text-xs text-blue-400 font-bold uppercase tracking-widest mb-2">Integration</div>
-                <h1 className="text-3xl font-extrabold mb-2">Integrating RouteLLM</h1>
-                <p className="text-white/40 text-sm leading-relaxed">Replace your existing AI API calls with RouteLLM in minutes. Works as a drop-in replacement.</p>
+                <h1 className="text-3xl font-extrabold mb-2">Integrating LLMLite</h1>
+                <p className="text-white/40 text-sm leading-relaxed">Replace your existing AI API calls with LLMLite in minutes. Works as a drop-in replacement.</p>
               </div>
               <CodeBlock id="nodejs" title="Node.js / Express Example" code={codes.nodejs} copied={copied} onCopy={copyCode} />
               <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5">
@@ -315,7 +315,7 @@ export const Docs = () => {
                 <div className="space-y-3">
                   {[
                     { before: 'openai.chat.completions.create()', after: 'fetch("routerllm.onrender.com/route")' },
-                    { before: 'model: "gpt-4o"', after: 'Automatically selected by RouteLLM' },
+                    { before: 'model: "gpt-4o"', after: 'Automatically selected by LLMLite' },
                     { before: '$5 per million tokens', after: '$0.00 for simple prompts' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 text-xs">
@@ -566,7 +566,7 @@ print(data["token_limit"])       # 500000`} copied={copied} onCopy={copyCode} />
               <div>
                 <div className="text-xs text-blue-400 font-bold uppercase tracking-widest mb-2">Reference</div>
                 <h1 className="text-3xl font-extrabold mb-2">Models</h1>
-                <p className="text-white/40 text-sm leading-relaxed">RouteLLM automatically selects the best model for each prompt. Here are the models we route to.</p>
+                <p className="text-white/40 text-sm leading-relaxed">LLMLite automatically selects the best model for each prompt. Here are the models we route to.</p>
               </div>
               <div className="space-y-3">
                 <div className="bg-blue-500/[0.05] border border-blue-500/20 rounded-xl p-4">
@@ -642,11 +642,11 @@ print(data["token_limit"])       # 500000`} copied={copied} onCopy={copyCode} />
               </div>
               <div className="space-y-3">
                 {[
-                  { q: 'How does RouteLLM decide which model to use?', a: 'Every prompt is classified as SIMPLE or COMPLEX using a fast classifier. Simple prompts go to free models. Complex prompts go to powerful paid models. This classification happens in milliseconds before the main request.' },
+                  { q: 'How does LLMLite decide which model to use?', a: 'Every prompt is classified as SIMPLE or COMPLEX using a fast classifier. Simple prompts go to free models. Complex prompts go to powerful paid models. This classification happens in milliseconds before the main request.' },
                   { q: 'Is my prompt data stored?', a: 'We store metadata only — model used, token count, cost, timestamp. We do NOT store the content of your prompts. Your data stays private.' },
-                  { q: 'What if I always need GPT-4o quality?', a: 'RouteLLM is best for apps where a mix of simple and complex queries exist. If every single prompt needs GPT-4o level quality, the savings will be smaller. But most apps have 60-80% simple prompts.' },
+                  { q: 'What if I always need GPT-4o quality?', a: 'LLMLite is best for apps where a mix of simple and complex queries exist. If every single prompt needs GPT-4o level quality, the savings will be smaller. But most apps have 60-80% simple prompts.' },
                   { q: 'What happens when I hit my token limit?', a: 'Requests will fail with a 429 error. You will receive an email warning at 80% usage. Upgrade your plan to increase your limit.' },
-                  { q: 'Can I use this from the frontend directly?', a: 'No. Always call RouteLLM from your backend. Never expose your subscription key in frontend code that users can inspect.' },
+                  { q: 'Can I use this from the frontend directly?', a: 'No. Always call LLMLite from your backend. Never expose your subscription key in frontend code that users can inspect.' },
                   { q: 'How is savings calculated?', a: 'We calculate what your tokens would have cost if all requests went to GPT-4o at $5 per million tokens. Actual cost is what you paid for the models used. The difference is your savings.' },
                 ].map((item, i) => (
                   <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5">

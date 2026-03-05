@@ -47,7 +47,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
         <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
           <Layers className="text-black w-4 h-4" />
         </div>
-        <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">LLMLite</span>
       </Link>
     </div>
 
@@ -260,7 +260,7 @@ export const ModelsPage = () => {
             {/* Header */}
             <div>
               <h1 className="text-2xl font-extrabold mb-1">100+ Models</h1>
-              <p className="text-white/40 text-sm">Browse, filter and compare all models available via RouteLLM</p>
+              <p className="text-white/40 text-sm">Browse, filter and compare all models available via LLMLite</p>
             </div>
 
             {/* Search */}

@@ -49,7 +49,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
         <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
           <Layers className="text-black w-4 h-4" />
         </div>
-        <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">LLMLite</span>
       </Link>
     </div>
 
@@ -222,7 +222,7 @@ export const AutoRouting = () => {
                   <div className="text-3xl mb-3">📥</div>
                   <div className="text-xs font-black text-white uppercase tracking-wider mb-2">Step 1</div>
                   <div className="text-sm font-bold mb-1">Your Prompt Arrives</div>
-                  <div className="text-[11px] text-white/30 leading-relaxed">Your app sends a prompt to RouteLLM API with your subscription key</div>
+                  <div className="text-[11px] text-white/30 leading-relaxed">Your app sends a prompt to LLMLite API with your subscription key</div>
                 </div>
                 <ArrowRight className="w-6 h-6 text-white/20 flex-shrink-0 rotate-90 lg:rotate-0" />
                 <div className="flex-1 bg-black/40 border border-blue-500/20 rounded-xl p-4 lg:p-5 text-center">
@@ -248,7 +248,7 @@ export const AutoRouting = () => {
                 <h3 className="text-sm font-bold">Live Routing Tester</h3>
                 <span className="ml-2 text-[9px] bg-green-500/20 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full font-bold uppercase">Live</span>
               </div>
-              <p className="text-white/30 text-xs mb-5">Type any prompt and see exactly which model RouteLLM picks and why</p>
+              <p className="text-white/30 text-xs mb-5">Type any prompt and see exactly which model LLMLite picks and why</p>
 
               <div className="flex gap-3 mb-4">
                 <input
@@ -401,7 +401,7 @@ export const AutoRouting = () => {
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl overflow-hidden">
               <div className="p-5 border-b border-white/[0.06]">
                 <h3 className="text-sm font-bold">Recent Routing Decisions</h3>
-                <p className="text-white/30 text-xs mt-0.5">How RouteLLM handled your last requests</p>
+                <p className="text-white/30 text-xs mt-0.5">How LLMLite handled your last requests</p>
               </div>
               <table className="w-full text-left">
                 <thead>

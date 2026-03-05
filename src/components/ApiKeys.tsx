@@ -120,7 +120,7 @@ console.log(data);`,
           <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
             <Layers className="text-black w-4 h-4" />
           </div>
-          <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">LLMLite</span>
         </Link>
       </div>
 
@@ -243,7 +243,7 @@ console.log(data);`,
                 <span className="text-sm font-bold">Your Subscription Key</span>
                 <span className="ml-auto text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full font-bold uppercase">{stats?.plan || 'free'} plan</span>
               </div>
-              <p className="text-white/30 text-xs mb-4">Use this key in every API request you make to RouteLLM</p>
+              <p className="text-white/30 text-xs mb-4">Use this key in every API request you make to LLMLite</p>
               <div className="flex items-center gap-3 mb-3">
                 <div className="flex-1 bg-black/40 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm text-white/70 truncate">
                   {showKey ? userKey : 'sk-rl-••••••••••••••••••••••••••••••••'}
@@ -348,13 +348,13 @@ console.log(data);`,
             {/* How it works Card */}
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6 mt-4">
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-sm font-bold">How RouteLLM Routes Your Requests</span>
+                <span className="text-sm font-bold">How LLMLite Routes Your Requests</span>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-black/30 rounded-xl border border-white/[0.06]">
                   <div className="text-2xl mb-2">📥</div>
                   <div className="text-xs font-bold text-white mb-1">1. You Send Prompt</div>
-                  <div className="text-[10px] text-white/30">Your app calls RouteLLM API with your key</div>
+                  <div className="text-[10px] text-white/30">Your app calls LLMLite API with your key</div>
                 </div>
                 <div className="text-center p-4 bg-black/30 rounded-xl border border-white/[0.06]">
                   <div className="text-2xl mb-2">🧠</div>

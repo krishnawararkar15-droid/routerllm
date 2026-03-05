@@ -47,7 +47,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
         <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
           <Layers className="text-black w-4 h-4" />
         </div>
-        <span className="text-[15px] font-extrabold tracking-tight">RouteLLM</span>
+          <span className="text-[15px] font-extrabold tracking-tight">LLMLite</span>
       </Link>
     </div>
 
@@ -99,7 +99,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
 
 const dataFlowSteps = [
   { step: 1, title: 'Your App', description: 'Sends prompt', icon: '📱' },
-  { step: 2, title: 'RouteLLM', description: 'Receives prompt, NEVER stores it', icon: '🔄' },
+  { step: 2, title: 'LLMLite', description: 'Receives prompt, NEVER stores it', icon: '🔄' },
   { step: 3, title: 'Classifier', description: 'Reads prompt type (SIMPLE/COMPLEX)', icon: '🔍' },
   { step: 4, title: 'AI Model', description: 'Processes and returns answer', icon: '🤖' },
   { step: 5, title: 'Your App', description: 'Gets response', icon: '✅' },
@@ -108,7 +108,7 @@ const dataFlowSteps = [
 const securityFeatures = [
   { title: 'Bcrypt Password Hashing', icon: '🔐', description: 'Your password is never stored as plain text. We use bcrypt hashing — even we cannot see your password.' },
   { title: 'Unique Subscription Keys', icon: '🔑', description: 'Every account gets a unique sk-rl- key. Revoke it anytime. Your key is never shared.' },
-  { title: 'HTTPS Only', icon: '🔒', description: 'All communication between your app and RouteLLM is encrypted with HTTPS/TLS. No plain HTTP.' },
+  { title: 'HTTPS Only', icon: '🔒', description: 'All communication between your app and LLMLite is encrypted with HTTPS/TLS. No plain HTTP.' },
   { title: 'CORS Protection', icon: '🛡️', description: 'Cross-origin requests are controlled. Your subscription key is the only authentication needed.' },
   { title: 'Supabase Database Security', icon: '🗄️', description: 'Your data is stored in Supabase — enterprise grade PostgreSQL with row level security enabled.' },
   { title: 'No Third Party Data Sharing', icon: '🚫', description: 'We never sell, share, or transfer your data to any third party for any reason.' },
@@ -117,7 +117,7 @@ const securityFeatures = [
 const thirdPartyServices = [
   { service: 'Supabase', whatItDoes: 'Stores user accounts and request metadata', whatItSees: 'Email, subscription key, token counts', link: 'https://supabase.com' },
   { service: 'OpenRouter', whatItDoes: 'Routes prompts to AI models', whatItSees: 'Your prompt text (not stored by us)', link: 'https://openrouter.ai' },
-  { service: 'Render.com', whatItDoes: 'Hosts the RouteLLM backend server', whatItSees: 'Network traffic only', link: 'https://render.com' },
+  { service: 'Render.com', whatItDoes: 'Hosts the LLMLite backend server', whatItSees: 'Network traffic only', link: 'https://render.com' },
   { service: 'Vercel', whatItDoes: 'Hosts the dashboard frontend', whatItSees: 'None', link: 'https://vercel.com' },
   { service: 'Resend', whatItDoes: 'Sends emails', whatItSees: 'Your email address only', link: 'https://resend.com' },
 ];
@@ -129,7 +129,7 @@ const doNotSend = ['Passwords or API keys', 'Credit card numbers', 'Personal hea
 const securityChecklist = [
   'Never expose your subscription key in frontend JavaScript code',
   'Store your sk-rl- key in environment variables only',
-  'Call RouteLLM from your backend server, not from the browser',
+  'Call LLMLite from your backend server, not from the browser',
   'Rotate your key every 90 days',
   'Set up budget alerts so you know if your key is being misused',
   'Monitor your usage dashboard for unexpected spikes',
@@ -226,7 +226,7 @@ export const SecurePrivate = () => {
             {/* Section 1: Trust Header */}
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6 lg:p-8 text-center">
               <h1 className="text-2xl lg:text-3xl font-black mb-3">Your Data Is Private. Always.</h1>
-              <p className="text-white/50 max-w-2xl mx-auto mb-6">RouteLLM never reads, stores, or logs your prompts. Your data flows directly to the AI model and back to you.</p>
+              <p className="text-white/50 max-w-2xl mx-auto mb-6">LLMLite never reads, stores, or logs your prompts. Your data flows directly to the AI model and back to you.</p>
               <div className="grid md:grid-cols-3 gap-4 mt-8">
                 <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
                   <div className="text-2xl mb-2">🔒</div>
@@ -271,11 +271,11 @@ export const SecurePrivate = () => {
               <div className="mt-6 space-y-3">
                 <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex items-start gap-2">
                   <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-xs text-yellow-400">RouteLLM only reads your prompt to classify it as SIMPLE or COMPLEX. It is never saved anywhere.</span>
+                  <span className="text-xs text-yellow-400">LLMLite only reads your prompt to classify it as SIMPLE or COMPLEX. It is never saved anywhere.</span>
                 </div>
                 <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex items-start gap-2">
                   <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-xs text-yellow-400">After classification, your prompt goes directly to the AI model. RouteLLM never sees the response.</span>
+                  <span className="text-xs text-yellow-400">After classification, your prompt goes directly to the AI model. LLMLite never sees the response.</span>
                 </div>
               </div>
             </div>
@@ -399,7 +399,7 @@ export const SecurePrivate = () => {
                     <div className="text-sm font-bold">Right to Delete</div>
                   </div>
                   <p className="text-xs text-white/50 mb-4">You can request complete deletion of your account and all associated data at any time.</p>
-                  <button onClick={() => alert('Email delete@routellm.com with subject: Delete My Account')} className="w-full py-2 bg-red-600/20 border border-red-600/30 text-red-400 text-xs font-bold rounded-lg hover:bg-red-600/30 transition-colors">
+                  <button onClick={() => alert('Email delete@llmlite.com with subject: Delete My Account')} className="w-full py-2 bg-red-600/20 border border-red-600/30 text-red-400 text-xs font-bold rounded-lg hover:bg-red-600/30 transition-colors">
                     Request Deletion
                   </button>
                 </div>
@@ -434,7 +434,7 @@ export const SecurePrivate = () => {
                     <div className="text-sm font-bold">Right to Correct</div>
                   </div>
                   <p className="text-xs text-white/50 mb-4">If any data about your account is incorrect, contact us and we will fix it immediately.</p>
-                  <button onClick={() => alert('Email support@routellm.com')} className="w-full py-2 bg-green-600/20 border border-green-600/30 text-green-400 text-xs font-bold rounded-lg hover:bg-green-600/30 transition-colors">
+                  <button onClick={() => alert('Email support@llmlite.com')} className="w-full py-2 bg-green-600/20 border border-green-600/30 text-green-400 text-xs font-bold rounded-lg hover:bg-green-600/30 transition-colors">
                     Contact Us
                   </button>
                 </div>
@@ -474,8 +474,8 @@ export const SecurePrivate = () => {
               <h2 className="text-lg font-bold mb-2">Security Concern or Question?</h2>
               <p className="text-sm text-white/50 mb-4">If you find a security vulnerability or have questions about our security practices, contact us immediately.</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="mailto:security@routellm.com" className="px-4 py-2 bg-red-600/20 border border-red-600/30 text-red-400 text-sm font-bold rounded-lg hover:bg-red-600/30 transition-colors">
-                  security@routellm.com
+                <a href="mailto:security@llmlite.com" className="px-4 py-2 bg-red-600/20 border border-red-600/30 text-red-400 text-sm font-bold rounded-lg hover:bg-red-600/30 transition-colors">
+                  security@llmlite.com
                 </a>
                 <span className="text-xs text-white/40">We respond to security reports within 24 hours</span>
               </div>
