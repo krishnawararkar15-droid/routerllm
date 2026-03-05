@@ -242,7 +242,7 @@ export const Dashboard = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-black">
         {/* Header */}
-        <header className="h-14 border-b border-white/[0.06] flex items-center justify-between px-4 sm:px-8 bg-black/50 backdrop-blur-xl sticky top-0 z-20">
+        <header className="h-14 border-b border-white/[0.06] flex items-center justify-between px-4 sm:px-8 bg-black/80 backdrop-blur-xl sticky top-0 z-20">
           <div className="flex items-center gap-3 sm:gap-4 flex-1 max-w-xl">
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
@@ -276,8 +276,8 @@ export const Dashboard = () => {
           </div>
         </header>
 
-        {/* Dashboard Content */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-[32px]">
+{/* Dashboard Content */}
+        <div className="flex-1 overflow-y-auto p-3 sm:p-[32px] bg-black">
           <div className="max-w-7xl mx-auto space-y-3 sm:space-y-[16px]">
             {/* Stats Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-[16px]">
