@@ -224,10 +224,10 @@ const Hero = () => {
                   </div>
                 </div>
               </div>
-              {/* Dashboard screenshot */}
+{/* Dashboard screenshot */}
               <img
-                src="/dashboard-preview.png"
-                alt="RouteLLM Dashboard"
+                src="https://image2url.com/r2/default/images/1772725866373-8c8e418d-363a-4403-82cf-7c90ad34b841.png"
+                alt="LLMLite Dashboard"
                 className="w-full"
               />
             </div>
