@@ -204,37 +204,35 @@ const Hero = () => {
           <FloatingIcon icon={<BarChart3 className="w-6 h-6" />} delay={3} x="15%" y="25%" />
         </motion.div>
 
-        {/* Main Visual */}
-        <motion.div 
-          initial={{ opacity: 0, y: 100, rotateX: 20, scale: 0.9 }}
-          whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          whileHover={{ 
-            rotateY: 2, 
-            rotateX: -2, 
-            scale: 1.02,
-            transition: { duration: 0.4 }
-          }}
-          className="mt-16 md:mt-24 relative perspective-1000"
-        >
-          <div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-black shadow-[0_0_80px_-15px_rgba(255,255,255,0.15)] ring-1 ring-white/10">
-            <div className="p-3 md:p-4 border-b border-white/10 flex items-center gap-2 bg-white/5 backdrop-blur-md">
-              <div className="flex gap-1">
-                <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-red-500/50" />
-                <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-yellow-500/50" />
-                <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-green-500/50" />
+{/* Dashboard Preview */}
+        <div className="mt-16 mx-auto max-w-5xl px-4">
+          <div className="relative">
+            {/* Glow effect behind the image */}
+            <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-3xl" />
+            {/* Browser frame */}
+            <div className="relative bg-[#1a1a1a] rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+              {/* Browser top bar */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-[#141414] border-b border-white/10">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                </div>
+                <div className="flex-1 mx-4">
+                  <div className="bg-[#0a0a0a] border border-white/10 rounded-md px-3 py-1 text-xs text-white/30 text-center">
+                    llmlite.vercel.app/dashboard
+                  </div>
+                </div>
               </div>
-<div className="text-[8px] md:text-[10px] text-white/40 font-mono ml-3 md:ml-4 uppercase tracking-[0.2em] font-bold">LLMLITE DASHBOARD V1.0</div>
+              {/* Dashboard screenshot */}
+              <img
+                src="/dashboard-preview.png"
+                alt="LLMLite Dashboard"
+                className="w-full"
+              />
             </div>
-            <img 
-              src="https://picsum.photos/seed/gantt/1600/900" 
-              alt="LLMLite Dashboard"
-              className="w-full h-auto opacity-95"
-              referrerPolicy="no-referrer"
-            />
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
