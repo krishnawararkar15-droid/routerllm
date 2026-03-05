@@ -224,12 +224,86 @@ const Hero = () => {
                   </div>
                 </div>
               </div>
-{/* Dashboard screenshot */}
-              <img
-                src="https://image2url.com/r2/default/images/1772725866373-8c8e418d-363a-4403-82cf-7c90ad34b841.png"
-                alt="LLMLite Dashboard"
-                className="w-full"
-              />
+{/* Fake Dashboard Preview - no image needed */}
+              <div className="w-full bg-[#050505] p-0 overflow-hidden">
+                <div className="flex h-[400px]">
+                  {/* Fake Sidebar */}
+                  <div className="w-[160px] bg-[#050505] border-r border-white/[0.06] p-3 flex-shrink-0">
+                    <div className="flex items-center gap-2 mb-6 px-1">
+                      <div className="w-5 h-5 bg-blue-600 rounded" />
+                      <span className="text-white text-xs font-black">LLMLite</span>
+                    </div>
+                    {['Dashboard','API Keys','Usage','Documentation'].map((item, i) => (
+                      <div key={i} className={`px-2 py-1.5 rounded-lg mb-1 text-[10px] font-medium ${i === 0 ? 'bg-white/10 text-white' : 'text-white/30'}`}>{item}</div>
+                    ))}
+                    <div className="text-[8px] text-white/20 uppercase tracking-widest px-2 mt-4 mb-2">Routing</div>
+                    {['Auto Routing','Manual Override'].map((item, i) => (
+                      <div key={i} className="px-2 py-1.5 rounded-lg mb-1 text-[10px] text-white/30">{item}</div>
+                    ))}
+                    <div className="text-[8px] text-white/20 uppercase tracking-widest px-2 mt-4 mb-2">Cost Control</div>
+                    {['Savings Dashboard','Budget Alerts'].map((item, i) => (
+                      <div key={i} className="px-2 py-1.5 rounded-lg mb-1 text-[10px] text-white/30">{item}</div>
+                    ))}
+                  </div>
+                  {/* Fake Main Content */}
+                  <div className="flex-1 bg-black p-4 overflow-hidden">
+                    {/* Stats Cards */}
+                    <div className="grid grid-cols-4 gap-2 mb-4">
+                      {[
+                        { label: 'TOTAL REQUESTS', value: '84,291', color: 'text-white' },
+                        { label: 'TOTAL TOKENS', value: '1.2M', color: 'text-white' },
+                        { label: 'TOTAL SAVINGS', value: '$1,242', color: 'text-green-400' },
+                        { label: 'AVG LATENCY', value: '142ms', color: 'text-white' },
+                      ].map((card, i) => (
+                        <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-3">
+                          <div className="text-[7px] text-white/30 uppercase tracking-widest mb-1">{card.label}</div>
+                          <div className={`text-lg font-black ${card.color}`}>{card.value}</div>
+                          <div className="flex gap-0.5 mt-2">
+                            {[...Array(8)].map((_, j) => (
+                              <div key={j} className="flex-1 h-1 bg-white/10 rounded-full" />
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Fake Chart */}
+                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-3 mb-4">
+                      <div className="text-[10px] font-bold text-white mb-1">Requests Overview</div>
+                      <div className="text-[8px] text-white/30 mb-3">Real-time traffic across all routed models</div>
+                      <div className="h-[100px] flex items-end gap-1 px-2">
+                        {[20, 25, 22, 35, 45, 55, 65, 70, 80, 75, 85, 95, 90, 100, 95].map((h, i) => (
+                          <div key={i} className="flex-1 bg-blue-500/30 rounded-t-sm border-t border-blue-400/50"
+                            style={{ height: h + '%' }} />
+                        ))}
+                      </div>
+                      <div className="flex justify-between mt-1">
+                        {['00:00','06:00','12:00','18:00','23:59'].map((t, i) => (
+                          <span key={i} className="text-[7px] text-white/20">{t}</span>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Fake Table */}
+                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-3">
+                      <div className="text-[10px] font-bold text-white mb-2">Recent Requests</div>
+                      {[
+                        { model: 'gemma-3-4b', type: 'SIMPLE', tokens: '124', cost: '$0.0000' },
+                        { model: 'gpt-4o-mini', type: 'COMPLEX', tokens: '891', cost: '$0.0001' },
+                        { model: 'gemma-3-4b', type: 'SIMPLE', tokens: '67', cost: '$0.0000' },
+                      ].map((row, i) => (
+                        <div key={i} className="flex items-center gap-3 py-1.5 border-t border-white/[0.04]">
+                          <div className="flex items-center gap-1 flex-1">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                            <span className="text-[9px] font-bold text-white">{row.model}</span>
+                          </div>
+                          <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${row.type === 'SIMPLE' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'}`}>{row.type}</span>
+                          <span className="text-[9px] text-white/40 w-8 text-right">{row.tokens}</span>
+                          <span className="text-[9px] font-bold text-green-400 w-12 text-right">{row.cost}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
