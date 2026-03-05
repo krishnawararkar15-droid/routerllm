@@ -201,7 +201,7 @@ export const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen text-white flex font-sans" style={{ background: 'linear-gradient(135deg, #050508 0%, #080810 50%, #050508 100%)' }}>
+    <div className="min-h-screen bg-black text-white flex font-sans">
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
@@ -240,7 +240,7 @@ export const Dashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-black">
         {/* Header */}
         <header className="h-14 border-b border-white/[0.06] flex items-center justify-between px-4 sm:px-8 bg-black/50 backdrop-blur-xl sticky top-0 z-20">
           <div className="flex items-center gap-3 sm:gap-4 flex-1 max-w-xl">
