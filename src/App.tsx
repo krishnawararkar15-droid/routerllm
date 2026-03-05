@@ -224,84 +224,151 @@ const Hero = () => {
                   </div>
                 </div>
               </div>
-{/* Fake Dashboard Preview - no image needed */}
-              <div className="w-full bg-[#050505] p-0 overflow-hidden">
-                <div className="flex h-[400px]">
-                  {/* Fake Sidebar */}
-                  <div className="w-[160px] bg-[#050505] border-r border-white/[0.06] p-3 flex-shrink-0">
-                    <div className="flex items-center gap-2 mb-6 px-1">
-                      <div className="w-5 h-5 bg-blue-600 rounded" />
-                      <span className="text-white text-xs font-black">LLMLite</span>
+{/* Exact Dashboard Preview */}
+              <div className="w-full bg-black overflow-hidden" style={{height: '420px'}}>
+                <div className="flex h-full">
+
+                  {/* Sidebar */}
+                  <div className="flex-shrink-0 bg-[#050505] border-r border-white/[0.06]" style={{width: '180px'}}>
+                    {/* Logo */}
+                    <div className="flex items-center gap-2 p-4 border-b border-white/[0.06]">
+                      <div className="w-6 h-6 bg-white rounded-md flex items-center justify-center">
+                        <div className="w-3 h-3 bg-black rounded-sm" />
+                      </div>
+                      <span className="text-white text-sm font-black">LLMLite</span>
                     </div>
-                    {['Dashboard','API Keys','Usage','Documentation'].map((item, i) => (
-                      <div key={i} className={`px-2 py-1.5 rounded-lg mb-1 text-[10px] font-medium ${i === 0 ? 'bg-white/10 text-white' : 'text-white/30'}`}>{item}</div>
-                    ))}
-                    <div className="text-[8px] text-white/20 uppercase tracking-widest px-2 mt-4 mb-2">Routing</div>
-                    {['Auto Routing','Manual Override'].map((item, i) => (
-                      <div key={i} className="px-2 py-1.5 rounded-lg mb-1 text-[10px] text-white/30">{item}</div>
-                    ))}
-                    <div className="text-[8px] text-white/20 uppercase tracking-widest px-2 mt-4 mb-2">Cost Control</div>
-                    {['Savings Dashboard','Budget Alerts'].map((item, i) => (
-                      <div key={i} className="px-2 py-1.5 rounded-lg mb-1 text-[10px] text-white/30">{item}</div>
-                    ))}
-                  </div>
-                  {/* Fake Main Content */}
-                  <div className="flex-1 bg-black p-4 overflow-hidden">
-                    {/* Stats Cards */}
-                    <div className="grid grid-cols-4 gap-2 mb-4">
+                    {/* Nav */}
+                    <div className="p-2">
+                      <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1">Navigation</div>
                       {[
-                        { label: 'TOTAL REQUESTS', value: '84,291', color: 'text-white' },
-                        { label: 'TOTAL TOKENS', value: '1.2M', color: 'text-white' },
-                        { label: 'TOTAL SAVINGS', value: '$1,242', color: 'text-green-400' },
-                        { label: 'AVG LATENCY', value: '142ms', color: 'text-white' },
+                        { label: 'Dashboard', active: true },
+                        { label: 'API Keys', active: false },
+                        { label: 'Usage', active: false },
+                        { label: 'Documentation', active: false },
+                      ].map((item, i) => (
+                        <div key={i} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] font-medium ${item.active ? 'bg-white/10 text-white border border-white/10' : 'text-white/40'}`}>
+                          <div className={`w-1.5 h-1.5 rounded-sm ${item.active ? 'bg-blue-400' : 'bg-white/20'}`} />
+                          {item.label}
+                        </div>
+                      ))}
+                      <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1 mt-2">Routing</div>
+                      {['Auto Routing', 'Manual Override'].map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] text-white/40">
+                          <div className="w-1.5 h-1.5 rounded-sm bg-white/20" />{item}
+                        </div>
+                      ))}
+                      <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1 mt-2">Cost Control</div>
+                      {['Budget Alerts'].map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] text-white/40">
+                          <div className="w-1.5 h-1.5 rounded-sm bg-white/20" />{item}
+                        </div>
+                      ))}
+                      <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1 mt-2">Model Access</div>
+                      {['100+ Models'].map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] text-white/40">
+                          <div className="w-1.5 h-1.5 rounded-sm bg-white/20" />{item}
+                        </div>
+                      ))}
+                      <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1 mt-2">Developer Tools</div>
+                      {['Cost Transparency'].map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] text-white/40">
+                          <div className="w-1.5 h-1.5 rounded-sm bg-white/20" />{item}
+                        </div>
+                      ))}
+                      <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1 mt-2">Key Management</div>
+                      {['Multiple Keys'].map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] text-white/40">
+                          <div className="w-1.5 h-1.5 rounded-sm bg-white/20" />{item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Main Content */}
+                  <div className="flex-1 bg-black overflow-hidden flex flex-col">
+
+                    {/* Top bar */}
+                    <div className="flex items-center gap-3 px-4 py-2 border-b border-white/[0.06]">
+                      <div className="flex-1 bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 flex items-center gap-2">
+                        <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="6" r="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5"/><path d="M10 10l4 4" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                        <span className="text-[9px] text-white/20">Search requests...</span>
+                      </div>
+                      <div className="w-6 h-6 flex items-center justify-center">
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2a6 6 0 100 12A6 6 0 008 2z" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5"/><path d="M8 5v3l2 2" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                      </div>
+                      <div className="bg-blue-600 text-white text-[9px] font-black px-3 py-1.5 rounded-lg">New Key</div>
+                    </div>
+
+                    {/* Stats Cards */}
+                    <div className="grid grid-cols-4 gap-2 px-4 pt-3 pb-2">
+                      {[
+                        { label: 'TOTAL REQUESTS', value: '4,571', badge: '+13.5%', color: 'text-white' },
+                        { label: 'TOTAL TOKENS', value: '3.2M', badge: '+8.2%', color: 'text-white' },
+                        { label: 'TOTAL SAVINGS', value: '$8,322', badge: '+34.7%', color: 'text-green-400' },
+                        { label: 'AVG. LATENCY', value: '142ms', badge: '-12ms', color: 'text-white' },
                       ].map((card, i) => (
-                        <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-3">
-                          <div className="text-[7px] text-white/30 uppercase tracking-widest mb-1">{card.label}</div>
-                          <div className={`text-lg font-black ${card.color}`}>{card.value}</div>
+                        <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[7px] text-white/30 uppercase tracking-widest">{card.label}</span>
+                            <span className="text-[7px] bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full font-bold">{card.badge}</span>
+                          </div>
+                          <div className={`text-xl font-black ${card.color}`}>{card.value}</div>
                           <div className="flex gap-0.5 mt-2">
-                            {[...Array(8)].map((_, j) => (
-                              <div key={j} className="flex-1 h-1 bg-white/10 rounded-full" />
+                            {[30,45,35,60,40,55,50,70].map((h, j) => (
+                              <div key={j} className="flex-1 bg-white/[0.08] rounded-sm" style={{height: '12px', opacity: h/100 + 0.3}} />
                             ))}
                           </div>
                         </div>
                       ))}
                     </div>
-                    {/* Fake Chart */}
-                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-3 mb-4">
-                      <div className="text-[10px] font-bold text-white mb-1">Requests Overview</div>
-                      <div className="text-[8px] text-white/30 mb-3">Real-time traffic across all routed models</div>
-                      <div className="h-[100px] flex items-end gap-1 px-2">
-                        {[20, 25, 22, 35, 45, 55, 65, 70, 80, 75, 85, 95, 90, 100, 95].map((h, i) => (
-                          <div key={i} className="flex-1 bg-blue-500/30 rounded-t-sm border-t border-blue-400/50"
-                            style={{ height: h + '%' }} />
-                        ))}
+
+                    {/* Chart */}
+                    <div className="mx-4 mb-2 bg-white/[0.03] border border-white/[0.06] rounded-xl p-3 flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <div>
+                          <div className="text-[11px] font-bold text-white">Requests Overview</div>
+                          <div className="text-[8px] text-white/30">Real-time traffic across all routed models</div>
+                        </div>
+                        <div className="flex gap-1">
+                          {['24h','7d','30d','All'].map((t, i) => (
+                            <div key={i} className={`text-[8px] px-2 py-0.5 rounded font-bold ${i === 0 ? 'bg-white/10 text-white border border-white/10' : 'text-white/30'}`}>{t}</div>
+                          ))}
+                        </div>
                       </div>
+                      {/* SVG Line Chart */}
+                      <div className="relative" style={{height: '80px'}}>
+                        <svg viewBox="0 0 400 80" preserveAspectRatio="none" className="w-full h-full">
+                          <defs>
+                            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3"/>
+                              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0"/>
+                            </linearGradient>
+                          </defs>
+                          <path d="M0,70 C20,70 30,65 50,60 C80,52 100,50 130,40 C160,30 180,25 200,22 C220,19 240,28 260,32 C280,36 300,30 330,20 C360,10 380,8 400,2" fill="none" stroke="#3b82f6" strokeWidth="2"/>
+                          <path d="M0,70 C20,70 30,65 50,60 C80,52 100,50 130,40 C160,30 180,25 200,22 C220,19 240,28 260,32 C280,36 300,30 330,20 C360,10 380,8 400,2 L400,80 L0,80 Z" fill="url(#chartGrad)"/>
+                        </svg>
+                        {/* Y axis labels */}
+                        <div className="absolute left-0 top-0 h-full flex flex-col justify-between">
+                          {['3600','2700','1800','900','0'].map((v, i) => (
+                            <span key={i} className="text-[7px] text-white/20">{v}</span>
+                          ))}
+                        </div>
+                      </div>
+                      {/* X axis labels */}
                       <div className="flex justify-between mt-1">
-                        {['00:00','06:00','12:00','18:00','23:59'].map((t, i) => (
+                        {['00:00','04:00','08:00','12:00','16:00','20:00','23:59'].map((t, i) => (
                           <span key={i} className="text-[7px] text-white/20">{t}</span>
                         ))}
                       </div>
                     </div>
-                    {/* Fake Table */}
-                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-3">
-                      <div className="text-[10px] font-bold text-white mb-2">Recent Requests</div>
-                      {[
-                        { model: 'gemma-3-4b', type: 'SIMPLE', tokens: '124', cost: '$0.0000' },
-                        { model: 'gpt-4o-mini', type: 'COMPLEX', tokens: '891', cost: '$0.0001' },
-                        { model: 'gemma-3-4b', type: 'SIMPLE', tokens: '67', cost: '$0.0000' },
-                      ].map((row, i) => (
-                        <div key={i} className="flex items-center gap-3 py-1.5 border-t border-white/[0.04]">
-                          <div className="flex items-center gap-1 flex-1">
-                            <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                            <span className="text-[9px] font-bold text-white">{row.model}</span>
-                          </div>
-                          <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${row.type === 'SIMPLE' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'}`}>{row.type}</span>
-                          <span className="text-[9px] text-white/40 w-8 text-right">{row.tokens}</span>
-                          <span className="text-[9px] font-bold text-green-400 w-12 text-right">{row.cost}</span>
-                        </div>
-                      ))}
+
+                    {/* Recent Requests Header */}
+                    <div className="flex items-center justify-between px-4 py-2 border-t border-white/[0.06]">
+                      <span className="text-[11px] font-bold text-white">Recent Requests</span>
+                      <span className="text-[9px] text-blue-400 font-bold">View All →</span>
                     </div>
-                  </div>
+
+</div>
                 </div>
               </div>
             </div>
