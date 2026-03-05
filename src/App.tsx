@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
-import { 
-  BrowserRouter as Router, 
-  Routes, 
-  Route, 
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
   Link,
   useNavigate
 } from 'react-router-dom';
-import { 
-  Calendar, 
-  CheckCircle2, 
-  Layout, 
-  Users, 
-  BarChart3, 
-  Zap, 
-  MessageSquare, 
-  FileText, 
-  ArrowRight, 
-  Menu, 
-  X, 
+import {
+  Calendar,
+  CheckCircle2,
+  Layout,
+  Users,
+  BarChart3,
+  Zap,
+  MessageSquare,
+  FileText,
+  ArrowRight,
+  Menu,
+  X,
   Star,
   Globe,
   Twitter,
@@ -71,9 +71,9 @@ const Navbar = () => {
             <div className="w-7 h-7 md:w-8 md:h-8 bg-white rounded-lg flex items-center justify-center">
               <Layers className="text-black w-4 h-4 md:w-5 md:h-5" />
             </div>
-<span className="text-lg md:text-xl font-extrabold font-display tracking-tight text-white">LLMLite</span>
+            <span className="text-lg md:text-xl font-extrabold font-display tracking-tight text-white">LLMLite</span>
           </Link>
-          
+
           <div className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-sm font-semibold text-white/60 hover:text-white transition-colors">Features</a>
             <a href="#how-it-works" className="text-sm font-semibold text-white/60 hover:text-white transition-colors">How It Works</a>
@@ -97,7 +97,7 @@ const Navbar = () => {
       {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -130,16 +130,16 @@ const Hero = () => {
     <section className="relative pt-24 md:pt-32 pb-16 md:pb-20 overflow-hidden bg-[#0a0a0a] text-white">
       {/* Premium White Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[600px] bg-white/[0.07] blur-[80px] md:blur-[120px] rounded-full -translate-y-1/2 pointer-events-none" />
-      
+
       {/* Background Glow */}
-      <motion.div 
+      <motion.div
         style={{ y: yGlow }}
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] md:h-[500px] bg-gradient-to-b from-white/5 to-transparent pointer-events-none" 
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] md:h-[500px] bg-gradient-to-b from-white/5 to-transparent pointer-events-none"
       />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
@@ -149,7 +149,7 @@ const Hero = () => {
             <ArrowRight className="w-3 h-3 md:w-4 md:h-4 text-white/40" />
           </motion.div>
 
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
@@ -158,7 +158,7 @@ const Hero = () => {
             One API To Cut Your <br className="hidden md:block" /> AI Costs Forever
           </motion.h1>
 
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
@@ -167,13 +167,13 @@ const Hero = () => {
             LLMLite automatically routes every prompt to the cheapest AI model that can handle it. Simple questions go to free models. Complex tasks go to powerful ones. Save 30–80% on every API bill — automatically.
           </motion.p>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
             className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4"
           >
-            <motion.button 
+            <motion.button
               onClick={() => navigate('/signup')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -181,7 +181,7 @@ const Hero = () => {
             >
               Get Started
             </motion.button>
-            <motion.button 
+            <motion.button
               whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.15)" }}
               whileTap={{ scale: 0.98 }}
               className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-white/10 text-white font-semibold rounded-full border border-white/20 transition-colors text-sm md:text-base"
@@ -192,7 +192,7 @@ const Hero = () => {
         </div>
 
         {/* Floating Icons */}
-        <motion.div 
+        <motion.div
           style={{ y: yIcons }}
           className="absolute top-1/2 left-0 w-full h-full pointer-events-none hidden lg:block"
         >
@@ -204,7 +204,7 @@ const Hero = () => {
           <FloatingIcon icon={<BarChart3 className="w-6 h-6" />} delay={3} x="15%" y="25%" />
         </motion.div>
 
-{/* Dashboard Preview */}
+        {/* Dashboard Preview */}
         <div className="mt-16 mx-auto max-w-5xl px-4">
           <div className="relative">
             {/* Glow effect behind the image */}
@@ -220,14 +220,14 @@ const Hero = () => {
                 </div>
                 <div className="flex-1 mx-4">
                   <div className="bg-[#0a0a0a] border border-white/10 rounded-md px-3 py-1 text-xs text-white/30 text-center">
-                    llmlite.vercel.app/dashboard
+                    routellm.vercel.app/dashboard
                   </div>
                 </div>
               </div>
               {/* Dashboard screenshot */}
               <img
                 src="/dashboard-preview.png"
-                alt="LLMLite Dashboard"
+                alt="RouteLLM Dashboard"
                 className="w-full"
               />
             </div>
@@ -241,12 +241,12 @@ const Hero = () => {
 const FloatingIcon = ({ icon, delay, x, y }: { icon: React.ReactNode, delay: number, x: string, y: string }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.8 }}
-    animate={{ 
+    animate={{
       opacity: [0.2, 0.4, 0.2],
       y: [0, -15, 0],
       scale: 1
     }}
-    transition={{ 
+    transition={{
       opacity: { duration: 4, repeat: Infinity, ease: "easeInOut", delay },
       y: { duration: 5, repeat: Infinity, ease: "easeInOut", delay },
       scale: { duration: 1, delay }
@@ -264,7 +264,7 @@ const SocialProof = () => {
   return (
     <section className="py-12 md:py-16 bg-[#0a0a0a] border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -272,7 +272,7 @@ const SocialProof = () => {
         >
           TRUSTED BY INDIE DEVELOPERS & BUILDERS
         </motion.p>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -280,8 +280,8 @@ const SocialProof = () => {
           className="flex flex-wrap justify-center items-center gap-8 md:gap-20 opacity-40 grayscale"
         >
           {logos.map((logo) => (
-            <motion.span 
-              key={logo} 
+            <motion.span
+              key={logo}
               whileHover={{ opacity: 1, grayscale: 0, scale: 1.1 }}
               className="text-lg md:text-2xl font-bold text-white cursor-default transition-all"
             >
@@ -325,7 +325,7 @@ const FeaturesSection1 = () => {
   return (
     <section id="features" className="py-16 md:py-24 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -343,7 +343,7 @@ const FeaturesSection1 = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {features.map((feature, idx) => (
-            <motion.div 
+            <motion.div
               key={idx}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -362,9 +362,9 @@ const FeaturesSection1 = () => {
                 {feature.description}
               </p>
               <div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-black shadow-sm group-hover:shadow-md transition-all">
-                <img 
-                  src={feature.image} 
-                  alt={feature.title} 
+                <img
+                  src={feature.image}
+                  alt={feature.title}
                   className="w-full h-auto group-hover:scale-105 transition-transform duration-700 opacity-80"
                   referrerPolicy="no-referrer"
                 />
@@ -402,14 +402,14 @@ const FeaturesSection2 = () => {
   return (
     <section id="how-it-works" className="py-16 md:py-24 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="text-center mb-12 md:mb-16"
         >
-<span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">
             <Zap className="w-3 h-3" /> Why LLMLite
           </span>
           <h2 className="text-2xl md:text-4xl font-extrabold font-display tracking-tight text-white mb-4 md:mb-6">Cut Costs and Ship Faster</h2>
@@ -420,7 +420,7 @@ const FeaturesSection2 = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {cards.map((card, idx) => (
-            <motion.div 
+            <motion.div
               key={idx}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -478,10 +478,10 @@ const PricingSection = () => {
   return (
     <section id="pricing" className="py-16 md:py-24 bg-[#0a0a0a] text-white relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-white/5 blur-[80px] md:blur-[120px] rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 md:mb-20 gap-6 md:gap-8">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -492,20 +492,20 @@ const PricingSection = () => {
             </span>
             <h2 className="text-2xl md:text-5xl font-extrabold font-display tracking-tight text-white mb-4 md:mb-6">Simple and Flexible Pricing</h2>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="bg-white/5 p-1 rounded-full border border-white/10 flex items-center relative"
           >
-            <div 
+            <div
               className={cn(
                 "absolute h-[calc(100%-8px)] w-[calc(50%-4px)] bg-white rounded-full transition-all duration-300 ease-out",
                 isAnnual ? "translate-x-[calc(100%)]" : "translate-x-0"
               )}
             />
-            <button 
+            <button
               onClick={() => setIsAnnual(false)}
               className={cn(
                 "px-6 md:px-8 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-bold transition-all relative z-10",
@@ -514,7 +514,7 @@ const PricingSection = () => {
             >
               Monthly
             </button>
-            <button 
+            <button
               onClick={() => setIsAnnual(true)}
               className={cn(
                 "px-6 md:px-8 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-bold transition-all relative z-10",
@@ -528,36 +528,36 @@ const PricingSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {plans.map((plan, idx) => (
-              <motion.div 
-                key={idx} 
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                whileHover={{ y: -10, transition: { duration: 0.3 } }}
-                className={cn(
-                  "p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border transition-all duration-500 relative group overflow-hidden",
-                  plan.highlight 
-                    ? "bg-white text-black border-white scale-100 md:scale-105 shadow-[0_30px_60px_-12px_rgba(255,255,255,0.2)]" 
-                    : "bg-white/[0.03] backdrop-blur-xl text-white border-white/10 hover:border-white/20"
-                )}
-              >
-                {/* Shine Effect for all cards */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                  <div className={cn(
-                    "absolute inset-[-100%] animate-[spin_4s_linear_infinite]",
-                    plan.highlight 
-                      ? "bg-[conic-gradient(from_0deg,transparent_0deg,transparent_120deg,rgba(0,0,0,0.05)_180deg,transparent_240deg)]"
-                      : "bg-[conic-gradient(from_0deg,transparent_0deg,transparent_120deg,rgba(255,255,255,0.1)_180deg,transparent_240deg)]"
-                  )} />
-                </div>
-                
-                {/* Edge Shine */}
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+              whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              className={cn(
+                "p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border transition-all duration-500 relative group overflow-hidden",
+                plan.highlight
+                  ? "bg-white text-black border-white scale-100 md:scale-105 shadow-[0_30px_60px_-12px_rgba(255,255,255,0.2)]"
+                  : "bg-white/[0.03] backdrop-blur-xl text-white border-white/10 hover:border-white/20"
+              )}
+            >
+              {/* Shine Effect for all cards */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
                 <div className={cn(
-                  "absolute inset-0 border rounded-[1.5rem] md:rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
-                  plan.highlight ? "border-black/5 shadow-[inset_0_1px_1px_rgba(0,0,0,0.1)]" : "border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)]"
+                  "absolute inset-[-100%] animate-[spin_4s_linear_infinite]",
+                  plan.highlight
+                    ? "bg-[conic-gradient(from_0deg,transparent_0deg,transparent_120deg,rgba(0,0,0,0.05)_180deg,transparent_240deg)]"
+                    : "bg-[conic-gradient(from_0deg,transparent_0deg,transparent_120deg,rgba(255,255,255,0.1)_180deg,transparent_240deg)]"
                 )} />
-              
+              </div>
+
+              {/* Edge Shine */}
+              <div className={cn(
+                "absolute inset-0 border rounded-[1.5rem] md:rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
+                plan.highlight ? "border-black/5 shadow-[inset_0_1px_1px_rgba(0,0,0,0.1)]" : "border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)]"
+              )} />
+
               <div className="relative z-10">
                 <div className="mb-8 md:mb-10">
                   <span className={cn("text-[8px] md:text-[10px] font-bold uppercase tracking-[0.2em]", plan.highlight ? "text-gray-400" : "text-white/30")}>
@@ -591,14 +591,14 @@ const PricingSection = () => {
                   ))}
                 </div>
 
-                <motion.button 
+                <motion.button
                   onClick={() => navigate('/signup')}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className={cn(
                     "w-full py-3 md:py-4 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm transition-all",
-                    plan.highlight 
-                      ? "bg-black text-white hover:bg-gray-800" 
+                    plan.highlight
+                      ? "bg-black text-white hover:bg-gray-800"
                       : "bg-white/10 text-white border border-white/20 hover:bg-white/20"
                   )}
                 >
@@ -617,7 +617,7 @@ const AdvancedCapabilities = () => {
   return (
     <section className="py-16 md:py-24 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -632,7 +632,7 @@ const AdvancedCapabilities = () => {
             The next generation of API cost management with intelligent routing and real-time automation.
           </p>
         </motion.div>
-        
+
         <GlowingEffectDemo />
       </div>
     </section>
@@ -643,7 +643,7 @@ const CTASection = () => {
   const navigate = useNavigate();
   return (
     <section className="py-16 md:py-24 bg-[#0a0a0a]">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
@@ -651,7 +651,7 @@ const CTASection = () => {
         className="max-w-7xl mx-auto overflow-hidden relative px-4"
       >
         <div className="relative z-10 px-6 md:px-8 py-16 md:py-24 text-center max-w-3xl mx-auto">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -660,7 +660,7 @@ const CTASection = () => {
           >
             A Smarter Way to Use AI, Today
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -669,14 +669,14 @@ const CTASection = () => {
           >
             The power of 100+ AI models with the simplicity of one API call — at a fraction of the cost. Free to start, no credit card needed.
           </motion.p>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4"
           >
-            <motion.button 
+            <motion.button
               onClick={() => navigate('/signup')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -684,7 +684,7 @@ const CTASection = () => {
             >
               Get Started
             </motion.button>
-            <motion.button 
+            <motion.button
               whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.15)" }}
               whileTap={{ scale: 0.98 }}
               className="w-full sm:w-auto px-8 md:px-10 py-3 md:py-4 bg-white/10 text-white font-bold rounded-full border border-white/20 transition-colors text-sm md:text-base"
@@ -704,12 +704,12 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12 mb-12 md:mb-20">
           <div className="col-span-2 md:col-span-1">
-          <div className="flex items-center gap-2 mb-6 md:mb-8">
-            <div className="w-7 h-7 md:w-8 md:h-8 bg-white rounded-lg flex items-center justify-center">
-              <Layers className="text-black w-4 h-4 md:w-5 md:h-5" />
+            <div className="flex items-center gap-2 mb-6 md:mb-8">
+              <div className="w-7 h-7 md:w-8 md:h-8 bg-white rounded-lg flex items-center justify-center">
+                <Layers className="text-black w-4 h-4 md:w-5 md:h-5" />
+              </div>
+              <span className="text-lg md:text-xl font-extrabold font-display tracking-tight text-white">LLMLite</span>
             </div>
-<span className="text-lg md:text-xl font-extrabold font-display tracking-tight text-white">LLMLite</span>
-          </div>
             <div className="flex items-center gap-3 md:gap-4">
               <a href="#" className="p-2 bg-white/5 rounded-lg text-white/60 hover:bg-white hover:text-black transition-all">
                 <Twitter className="w-3.5 h-3.5 md:w-4 md:h-4" />
@@ -723,7 +723,7 @@ const Footer = () => {
             </div>
           </div>
 
-<div>
+          <div>
             <h4 className="text-[10px] md:text-sm font-bold text-white mb-4 md:mb-6 uppercase tracking-widest">Legal</h4>
             <ul className="space-y-3 md:space-y-4">
               <li><Link to="/privacy" className="text-xs md:text-sm text-white/50 hover:text-white">Privacy Policy</Link></li>
