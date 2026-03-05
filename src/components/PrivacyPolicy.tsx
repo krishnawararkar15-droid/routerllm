@@ -44,8 +44,8 @@ export const PrivacyPolicy = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
-      <nav className="border-b border-white/10 bg-gray-950/80 backdrop-blur-xl sticky top-0 z-50">
+    <div className="min-h-screen bg-black text-white font-sans">
+      <nav className="border-b border-white/10 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
