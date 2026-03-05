@@ -218,7 +218,7 @@ const Hero = () => {
           }}
           className="mt-16 md:mt-24 relative perspective-1000"
         >
-          <div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-[#1a1a1a] shadow-[0_0_80px_-15px_rgba(255,255,255,0.15)] ring-1 ring-white/10">
+          <div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-black shadow-[0_0_80px_-15px_rgba(255,255,255,0.15)] ring-1 ring-white/10">
             <div className="p-3 md:p-4 border-b border-white/10 flex items-center gap-2 bg-white/5 backdrop-blur-md">
               <div className="flex gap-1">
                 <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-red-500/50" />
@@ -363,7 +363,7 @@ const FeaturesSection1 = () => {
               <p className="text-xs md:text-sm text-white/50 mb-6 md:mb-8 leading-relaxed font-medium">
                 {feature.description}
               </p>
-              <div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-[#1a1a1a] shadow-sm group-hover:shadow-md transition-all">
+              <div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-black shadow-sm group-hover:shadow-md transition-all">
                 <img 
                   src={feature.image} 
                   alt={feature.title} 
