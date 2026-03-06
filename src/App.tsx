@@ -450,7 +450,7 @@ const FeaturesSection1 = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {features.map((feature, idx) => (
             <motion.div
               key={idx}
@@ -475,7 +475,7 @@ const FeaturesSection1 = () => {
                   <div className="w-full bg-black rounded-xl overflow-hidden">
 
   {/* Live Routing Tester */}
-  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-3 mb-2">
+  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-3 lg:p-4 mb-2 lg:mb-3">
     <div className="flex items-center gap-2 mb-1">
       <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><polygon points="3,2 14,8 3,14" fill="#22c55e"/></svg>
       <span className="text-white font-black text-xs">Live Routing Tester</span>
@@ -500,7 +500,7 @@ const FeaturesSection1 = () => {
   </div>
 
   {/* Stats Row - horizontal on mobile */}
-  <div className="grid grid-cols-3 gap-1.5 mb-2">
+  <div className="grid grid-cols-3 gap-1.5 lg:gap-2 mb-2 lg:mb-3">
     <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-2.5">
       <div className="text-white font-black text-[9px] mb-2">Routing Split</div>
       <div className="flex justify-center mb-2">
@@ -553,7 +553,7 @@ const FeaturesSection1 = () => {
   </div>
 
   {/* Simple vs Complex - 2 column compact */}
-  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-3">
+  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-3 lg:p-4">
     <div className="font-black text-white text-[10px] mb-0.5">SIMPLE vs COMPLEX?</div>
     <div className="grid grid-cols-2 gap-2 mt-2">
       <div>
