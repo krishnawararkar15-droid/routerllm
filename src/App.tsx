@@ -450,7 +450,7 @@ const FeaturesSection1 = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid lg:grid-cols-2 lg:gap-6 lg:items-stretch">
           {features.map((feature, idx) => (
             <motion.div
               key={idx}
@@ -459,7 +459,7 @@ const FeaturesSection1 = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
               whileHover={{ y: -8 }}
-              className="group bg-white/5 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-white/5 transition-all hover:shadow-2xl hover:shadow-white/5"
+              className="group bg-white/5 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-white/5 transition-all hover:shadow-2xl hover:shadow-white/5 lg:h-full lg:min-h-full"
             >
               <div className="flex items-center gap-3 mb-4 md:mb-6">
                 <div className="p-2.5 bg-[#1a1a1a] text-white rounded-xl shadow-sm group-hover:bg-white group-hover:text-black transition-all duration-300">
@@ -470,7 +470,7 @@ const FeaturesSection1 = () => {
               <p className="text-xs md:text-sm text-white/50 mb-6 md:mb-8 leading-relaxed font-medium">
                 {feature.description}
               </p>
-<div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-black shadow-sm group-hover:shadow-md transition-all">
+<div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-black shadow-sm group-hover:shadow-md transition-all h-full">
                 {feature.title === "Auto Routing" ? (
                   <div className="w-full bg-black rounded-xl overflow-hidden">
 
