@@ -473,116 +473,109 @@ const FeaturesSection1 = () => {
 <div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-black shadow-sm group-hover:shadow-md transition-all">
                 {feature.title === "Auto Routing" ? (
                   <div className="w-full bg-black rounded-xl overflow-hidden">
-                    <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-4 mb-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><polygon points="3,2 14,8 3,14" fill="#22c55e"/></svg>
-                        <span className="text-white font-black text-sm">Live Routing Tester</span>
-                        <span className="bg-green-500/20 text-green-400 border border-green-500/30 text-[9px] font-black px-2 py-0.5 rounded-full">LIVE</span>
-                      </div>
-                      <p className="text-white/30 text-[10px] mb-3">Type any prompt and see exactly which model LLMLite picks and why</p>
-                      <div className="flex gap-2 mb-3">
-                        <div className="flex-1 bg-black border border-white/10 rounded-lg px-3 py-2">
-                          <span className="text-white/20 text-[11px]">Type any prompt here and press Enter or click Route...</span>
-                        </div>
-                        <div className="bg-blue-600 text-white font-black px-4 py-2 rounded-lg text-[11px] flex items-center gap-1.5 flex-shrink-0">
-                          <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M8 2l6 6-6 6" stroke="white" strokeWidth="2" strokeLinecap="round"/></svg>
-                          Route
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[9px] text-white/20 uppercase tracking-widest">Try these examples:</span>
-                        {['What is 2+2?','Translate hello to French','Write a 500 word essay on AI','Debug my React code'].map((p, i) => (
-                          <div key={i} className="bg-white/[0.05] border border-white/[0.08] text-white/50 text-[10px] px-2.5 py-1 rounded-lg">{p}</div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3 mb-3 px-3">
-                      <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-4">
-                        <div className="text-white font-black text-[11px] mb-3">Your Routing Split</div>
-                        <div className="flex justify-center mb-3">
-                          <svg width="80" height="80" viewBox="0 0 80 80">
-                            <circle cx="40" cy="40" r="28" fill="none" stroke="#1e1e2e" strokeWidth="12"/>
-                            <circle cx="40" cy="40" r="28" fill="none" stroke="#3b82f6" strokeWidth="12"
-                              strokeDasharray={`${2 * Math.PI * 28 * 0.75} ${2 * Math.PI * 28 * 0.25}`}
-                              strokeDashoffset={-2 * Math.PI * 28 * 0.25}
-                              transform="rotate(-90 40 40)"/>
-                            <circle cx="40" cy="40" r="28" fill="none" stroke="#8b5cf6" strokeWidth="12"
-                              strokeDasharray={`${2 * Math.PI * 28 * 0.25} ${2 * Math.PI * 28 * 0.75}`}
-                              strokeDashoffset={0}
-                              transform="rotate(90 40 40)"/>
-                          </svg>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between text-[10px]">
-                            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-500"/><span className="text-white/60">Simple</span></div>
-                            <span className="text-white font-black">75%</span>
-                          </div>
-                          <div className="flex items-center justify-between text-[10px]">
-                            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-purple-500"/><span className="text-white/60">Complex</span></div>
-                            <span className="text-white font-black">25%</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-span-2 grid grid-rows-2 gap-3">
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-blue-500/[0.08] border border-blue-500/20 rounded-xl p-3">
-                            <div className="text-[9px] text-blue-400 uppercase tracking-widest font-black mb-1">Simple Requests</div>
-                            <div className="text-3xl font-black text-blue-400">3,867</div>
-                            <div className="text-[9px] text-white/30 mt-0.5">Routed to free models → $0.00</div>
-                          </div>
-                          <div className="bg-purple-500/[0.08] border border-purple-500/20 rounded-xl p-3">
-                            <div className="text-[9px] text-purple-400 uppercase tracking-widest font-black mb-1">Complex Requests</div>
-                            <div className="text-3xl font-black text-purple-400">1,002</div>
-                            <div className="text-[9px] text-white/30 mt-0.5">Routed to powerful models</div>
-                          </div>
-                        </div>
-                        <div className="bg-green-500/[0.06] border border-green-500/20 rounded-xl p-3 flex items-center justify-between">
-                          <div>
-                            <div className="text-[9px] text-green-400 uppercase tracking-widest font-black mb-1">Total Saved by Routing</div>
-                            <div className="text-2xl font-black text-green-400">$1,242</div>
-                            <div className="text-[9px] text-white/30 mt-0.5">vs sending everything to GPT-4o</div>
-                          </div>
-                          <div className="text-3xl">💰</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-4 mx-3 mb-3">
-                      <div className="font-black text-white text-[11px] mb-0.5">What Makes a Prompt SIMPLE vs COMPLEX?</div>
-                      <div className="text-white/30 text-[9px] mb-3">Click any example to test it live</div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <div className="flex items-center gap-1.5 mb-2">
-                            <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#3b82f6" strokeWidth="1.5"/><path d="M5 8l2 2 4-4" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                            <span className="text-[9px] text-blue-400 font-black uppercase tracking-widest">Simple — Goes to Free Model</span>
-                          </div>
-                          {[
-                            { p: '"What is 2+2?"', r: 'Basic math — no reasoning needed' },
-                            { p: '"Translate hello to Spanish"', r: 'Simple translation task' },
-                          ].map((item, i) => (
-                            <div key={i} className="bg-blue-500/[0.04] border border-blue-500/10 rounded-lg p-2.5 mb-1.5">
-                              <div className="text-[10px] font-bold text-white mb-0.5">{item.p}</div>
-                              <div className="text-[9px] text-white/30">{item.r}</div>
-                            </div>
-                          ))}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-1.5 mb-2">
-                            <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#8b5cf6" strokeWidth="1.5"/><path d="M8 4v4l2 2" stroke="#8b5cf6" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                            <span className="text-[9px] text-purple-400 font-black uppercase tracking-widest">Complex — Goes to Powerful Model</span>
-                          </div>
-                          {[
-                            { p: '"Write a 1000 word essay about climate change with citations"', r: 'Long form content requiring deep knowledge' },
-                            { p: '"Analyze this business strategy and suggest improvements"', r: 'Complex reasoning and analysis required' },
-                          ].map((item, i) => (
-                            <div key={i} className="bg-purple-500/[0.04] border border-purple-500/10 rounded-lg p-2.5 mb-1.5">
-                              <div className="text-[10px] font-bold text-white mb-0.5">{item.p}</div>
-                              <div className="text-[9px] text-white/30">{item.r}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+
+  {/* Live Routing Tester */}
+  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-3 mb-2">
+    <div className="flex items-center gap-2 mb-1">
+      <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><polygon points="3,2 14,8 3,14" fill="#22c55e"/></svg>
+      <span className="text-white font-black text-xs">Live Routing Tester</span>
+      <span className="bg-green-500/20 text-green-400 border border-green-500/30 text-[8px] font-black px-1.5 py-0.5 rounded-full">LIVE</span>
+    </div>
+    <p className="text-white/30 text-[9px] mb-2">Type any prompt and see which model LLMLite picks</p>
+    <div className="flex gap-1.5 mb-2">
+      <div className="flex-1 bg-black border border-white/10 rounded-lg px-2 py-1.5">
+        <span className="text-white/20 text-[10px]">Type any prompt here...</span>
+      </div>
+      <div className="bg-blue-600 text-white font-black px-3 py-1.5 rounded-lg text-[10px] flex items-center gap-1 flex-shrink-0">
+        <svg width="8" height="8" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M8 2l6 6-6 6" stroke="white" strokeWidth="2" strokeLinecap="round"/></svg>
+        Route
+      </div>
+    </div>
+    <div className="flex items-center gap-1.5 flex-wrap">
+      <span className="text-[8px] text-white/20 uppercase tracking-widest">Examples:</span>
+      {['What is 2+2?','Translate hello to French','Write an essay'].map((p, i) => (
+        <div key={i} className="bg-white/[0.05] border border-white/[0.08] text-white/50 text-[9px] px-2 py-0.5 rounded-md">{p}</div>
+      ))}
+    </div>
+  </div>
+
+  {/* Stats Row - horizontal on mobile */}
+  <div className="grid grid-cols-3 gap-1.5 mb-2">
+    <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-2.5">
+      <div className="text-white font-black text-[9px] mb-2">Routing Split</div>
+      <div className="flex justify-center mb-2">
+        <svg width="52" height="52" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="28" fill="none" stroke="#1e1e2e" strokeWidth="12"/>
+          <circle cx="40" cy="40" r="28" fill="none" stroke="#3b82f6" strokeWidth="12"
+            strokeDasharray={`${2 * Math.PI * 28 * 0.75} ${2 * Math.PI * 28 * 0.25}`}
+            strokeDashoffset={-2 * Math.PI * 28 * 0.25}
+            transform="rotate(-90 40 40)"/>
+          <circle cx="40" cy="40" r="28" fill="none" stroke="#8b5cf6" strokeWidth="12"
+            strokeDasharray={`${2 * Math.PI * 28 * 0.25} ${2 * Math.PI * 28 * 0.75}`}
+            strokeDashoffset={0}
+            transform="rotate(90 40 40)"/>
+        </svg>
+      </div>
+      <div className="space-y-0.5">
+        <div className="flex items-center justify-between text-[8px]">
+          <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-blue-500"/><span className="text-white/60">Simple</span></div>
+          <span className="text-white font-black">75%</span>
+        </div>
+        <div className="flex items-center justify-between text-[8px]">
+          <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-purple-500"/><span className="text-white/60">Complex</span></div>
+          <span className="text-white font-black">25%</span>
+        </div>
+      </div>
+    </div>
+
+    <div className="col-span-2 grid grid-rows-2 gap-1.5">
+      <div className="grid grid-cols-2 gap-1.5">
+        <div className="bg-blue-500/[0.08] border border-blue-500/20 rounded-xl p-2">
+          <div className="text-[7px] text-blue-400 uppercase tracking-widest font-black mb-0.5">Simple</div>
+          <div className="text-lg font-black text-blue-400">3,867</div>
+          <div className="text-[7px] text-white/30">Free models</div>
+        </div>
+        <div className="bg-purple-500/[0.08] border border-purple-500/20 rounded-xl p-2">
+          <div className="text-[7px] text-purple-400 uppercase tracking-widest font-black mb-0.5">Complex</div>
+          <div className="text-lg font-black text-purple-400">1,002</div>
+          <div className="text-[7px] text-white/30">Paid models</div>
+        </div>
+      </div>
+      <div className="bg-green-500/[0.06] border border-green-500/20 rounded-xl p-2 flex items-center justify-between">
+        <div>
+          <div className="text-[7px] text-green-400 uppercase tracking-widest font-black mb-0.5">Total Saved</div>
+          <div className="text-lg font-black text-green-400">$1,242</div>
+          <div className="text-[7px] text-white/30">vs GPT-4o</div>
+        </div>
+        <div className="text-2xl">💰</div>
+      </div>
+    </div>
+  </div>
+
+  {/* Simple vs Complex - 2 column compact */}
+  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-3">
+    <div className="font-black text-white text-[10px] mb-0.5">SIMPLE vs COMPLEX?</div>
+    <div className="grid grid-cols-2 gap-2 mt-2">
+      <div>
+        <div className="text-[8px] text-blue-400 font-black uppercase mb-1.5">⚡ Simple → Free</div>
+        {['"What is 2+2?"','"Translate hello"'].map((item, i) => (
+          <div key={i} className="bg-blue-500/[0.04] border border-blue-500/10 rounded-lg p-1.5 mb-1">
+            <div className="text-[9px] font-bold text-white">{item}</div>
+          </div>
+        ))}
+      </div>
+      <div>
+        <div className="text-[8px] text-purple-400 font-black uppercase mb-1.5">🧠 Complex → Paid</div>
+        {['"Write 1000 word essay"','"Analyze business strategy"'].map((item, i) => (
+          <div key={i} className="bg-purple-500/[0.04] border border-purple-500/10 rounded-lg p-1.5 mb-1">
+            <div className="text-[9px] font-bold text-white">{item}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+</div>
                 ) : (
                   <img
                     src={feature.image}
