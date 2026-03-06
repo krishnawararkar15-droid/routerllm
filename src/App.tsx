@@ -423,7 +423,7 @@ const FeaturesSection1 = () => {
   }, []);
 
   return (
-    <section id="features" ref={sectionRef} className="py-16 md:py-24 bg-[#080810]">
+    <section id="features" ref={sectionRef} className="py-16 md:py-24 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -483,7 +483,7 @@ const FeatureCard = ({ number, title, description, delay, isVisible, fullWidth =
       animate={isVisible ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: delay / 1000 }}
       whileHover={{ scale: 1.02 }}
-      className={`bg-gray-900 border border-gray-800 rounded-2xl p-6 transition-all duration-0.2 ${fullWidth ? 'md:col-span-3' : ''}`}
+      className={`group bg-white/5 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-white/5 transition-all hover:shadow-2xl hover:shadow-white/5 ${fullWidth ? 'md:col-span-3' : ''}`}
     >
       <div className="flex items-center gap-3 mb-2">
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white font-bold text-lg flex items-center justify-center">
@@ -491,9 +491,9 @@ const FeatureCard = ({ number, title, description, delay, isVisible, fullWidth =
         </div>
       </div>
       <h3 className="text-xl font-bold text-white mt-3">{title}</h3>
-      <p className="text-gray-400 text-sm mt-2">{description}</p>
+      <p className="text-white/50 text-sm mt-2">{description}</p>
       
-      <div className="bg-gray-950 rounded-xl p-3 mt-4">
+      <div className="bg-black rounded-xl p-3 mt-4">
         {number === 1 && <AutoRoutingAnimation isVisible={isVisible} delay={delay} />}
         {number === 2 && <ManualOverrideAnimation isVisible={isVisible} delay={delay} />}
         {number === 3 && <SavingsAnimation isVisible={isVisible} delay={delay} />}
