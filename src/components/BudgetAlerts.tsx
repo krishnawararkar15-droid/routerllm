@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Bell, BellOff, Mail, Shield, AlertTriangle, CheckCircle, TrendingUp, Zap, Activity } from 'lucide-react';
 import { LayoutDashboard, Key, BarChart3, FileText, Settings, Layers, Code2, CreditCard, LogOut, Menu, X, DollarSign } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'motion/react';
+import { ProfilePopup } from './ProfilePopup';
 
 function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
 
@@ -39,7 +40,7 @@ const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, l
   </Link>
 );
 
-const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any }) => {
+const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpen, profileRef }: { userEmail: string, stats: any, profilePopupOpen?: boolean, setProfilePopupOpen?: (open: boolean) => void, profileRef?: any }) => {
   const location = useLocation();
   return (
   <div className="flex flex-col h-full" style={{ background: 'transparent' }}>
@@ -75,8 +76,8 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
       <NavItem icon={Shield} label="Secure & Private" to="/dashboard/security" active={location.pathname === '/dashboard/security'} />
     </div>
 
-    <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3">
-      <div className="flex items-center gap-3 px-2 py-2 mb-1">
+    <div ref={profileRef} style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3 relative">
+      <div className="flex items-center gap-3 px-2 py-2 mb-1" onClick={() => setProfilePopupOpen && setProfilePopupOpen(!profilePopupOpen)}>
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-black text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', boxShadow: '0 0 12px rgba(59,130,246,0.4)' }}>
           {userEmail ? userEmail[0].toUpperCase() : 'K'}
         </div>
@@ -93,6 +94,7 @@ const SidebarContent = ({ userEmail, stats }: { userEmail: string, stats: any })
         <LogOut className="w-4 h-4" />
         <span className="text-[13px] font-medium">Logout</span>
       </Link>
+      {profilePopupOpen && setProfilePopupOpen && (<ProfilePopup userEmail={userEmail} userPlan={stats?.plan || 'free'} onClose={() => setProfilePopupOpen(false)} />)}
     </div>
   </div>
   );
@@ -107,6 +109,8 @@ export const BudgetAlerts = () => {
   const [alertEmail, setAlertEmail] = useState('');
   const [saved, setSaved] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const userKey = localStorage.getItem('routellm_key') || '';
   const userEmail = localStorage.getItem('routellm_email') || '';
   const navigate = useNavigate();
@@ -185,7 +189,7 @@ export const BudgetAlerts = () => {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <SidebarContent userEmail={userEmail} stats={stats} />
+              <SidebarContent userEmail={userEmail} stats={stats} profilePopupOpen={profilePopupOpen} setProfilePopupOpen={setProfilePopupOpen} profileRef={profileRef} />
             </motion.aside>
           </>
         )}
@@ -193,7 +197,7 @@ export const BudgetAlerts = () => {
 
       {/* Desktop Sidebar */}
       <aside className="w-64 bg-[#050505] border-r border-white/[0.06] flex-col hidden lg:flex">
-        <SidebarContent userEmail={userEmail} stats={stats} />
+        <SidebarContent userEmail={userEmail} stats={stats} profilePopupOpen={profilePopupOpen} setProfilePopupOpen={setProfilePopupOpen} profileRef={profileRef} />
       </aside>
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">

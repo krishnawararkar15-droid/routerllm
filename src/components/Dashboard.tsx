@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 const API_BASE = "/api/external";
 import { 
   LayoutDashboard, 
@@ -37,6 +37,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { Link, useNavigate } from 'react-router-dom';
+import { ProfilePopup } from './ProfilePopup';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -92,8 +93,10 @@ export const Dashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const userKey = localStorage.getItem('routellm_key');
-  const userEmail = localStorage.getItem('routellm_email');
+  const userEmail = localStorage.getItem('routellm_email') || '';
 
   useEffect(() => {
     if (!userKey) { navigate('/login'); return; }
@@ -178,8 +181,11 @@ export const Dashboard = () => {
 
       </div>
 
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3">
-        <div className="flex items-center gap-3 px-2 py-2 mb-1">
+      <div ref={profileRef} style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3 relative">
+        <div 
+          className="flex items-center gap-3 px-2 py-2 mb-1 cursor-pointer hover:bg-white/5 rounded-lg transition-all"
+          onClick={() => setProfilePopupOpen(!profilePopupOpen)}
+        >
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-black text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', boxShadow: '0 0 12px rgba(59,130,246,0.4)' }}>
             {userEmail ? userEmail[0].toUpperCase() : 'K'}
           </div>
@@ -188,14 +194,14 @@ export const Dashboard = () => {
             <div className="text-[9px] text-white/30 uppercase tracking-wider">{(stats?.plan ?? 'free').charAt(0).toUpperCase() + (stats?.plan ?? 'free').slice(1)} Plan</div>
           </div>
         </div>
-        <Link
-          to="/login"
-          onClick={() => localStorage.clear()}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all w-full"
-        >
-          <LogOut className="w-4 h-4" />
-          <span className="text-[13px] font-medium">Logout</span>
-        </Link>
+        
+        {profilePopupOpen && (
+          <ProfilePopup 
+            userEmail={userEmail} 
+            userPlan={stats?.plan || 'free'} 
+            onClose={() => setProfilePopupOpen(false)} 
+          />
+        )}
       </div>
     </div>
   );

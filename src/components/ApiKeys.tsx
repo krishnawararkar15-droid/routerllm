@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Menu, X, Copy, Check, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'motion/react';
+import { ProfilePopup } from './ProfilePopup';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -22,6 +23,8 @@ export const ApiKeys = () => {
   const [testResult, setTestResult] = useState<any>(null);
   const [testLoading, setTestLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!userKey) {
@@ -154,8 +157,11 @@ console.log(data);`,
         <NavItem icon={Settings} label="Custom Rules" to="#" />
       </div>
 
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3">
-        <div className="flex items-center gap-3 px-2 py-2 mb-1">
+      <div ref={profileRef} style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3 relative">
+        <div 
+          className="flex items-center gap-3 px-2 py-2 mb-1 cursor-pointer hover:bg-white/5 rounded-lg transition-all"
+          onClick={() => setProfilePopupOpen(!profilePopupOpen)}
+        >
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-black text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', boxShadow: '0 0 12px rgba(59,130,246,0.4)' }}>
             {userEmail ? userEmail[0].toUpperCase() : 'K'}
           </div>
@@ -164,14 +170,14 @@ console.log(data);`,
             <div className="text-[9px] text-white/30 uppercase tracking-wider">{(stats?.plan ?? 'free').charAt(0).toUpperCase() + (stats?.plan ?? 'free').slice(1)} Plan</div>
           </div>
         </div>
-        <Link
-          to="/login"
-          onClick={() => localStorage.clear()}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all w-full"
-        >
-          <LogOut className="w-4 h-4" />
-          <span className="text-[13px] font-medium">Logout</span>
-        </Link>
+        
+        {profilePopupOpen && (
+          <ProfilePopup 
+            userEmail={userEmail} 
+            userPlan={stats?.plan || 'free'} 
+            onClose={() => setProfilePopupOpen(false)} 
+          />
+        )}
       </div>
     </div>
   );
