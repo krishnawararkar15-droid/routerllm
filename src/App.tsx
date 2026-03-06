@@ -404,264 +404,354 @@ const SocialProof = () => {
 };
 
 const FeaturesSection1 = () => {
-  const features = [
-    {
-      title: "Auto Routing",
-      description: "Send any prompt to our API and we handle the rest. We instantly classify your prompt and pick the best value model — no configuration needed.",
-      icon: <Layout className="w-5 h-5" />,
-      image: "https://picsum.photos/seed/pm/800/500"
-    },
-    {
-      title: "Manual Model Override",
-      description: "Need GPT-4o for a specific request? Just pass the model name. LLMLite skips classification and calls exactly what you asked for.",
-      icon: <Zap className="w-5 h-5" />,
-      image: "https://picsum.photos/seed/workflow/800/500"
-    },
-    {
-      title: "Savings Dashboard",
-      description: "See exactly how many tokens you've used, how much you've spent, and how much you've saved compared to using GPT-4o for everything.",
-      icon: <BarChart3 className="w-5 h-5" />,
-      image: "https://picsum.photos/seed/goals/800/500"
-    },
-    {
-      title: "Usage Management",
-      description: "Manage multiple subscription keys, set budgets, track usage, and get alerts before you overspend — all in one place.",
-      icon: <Users className="w-5 h-5" />,
-      image: "https://picsum.photos/seed/resource/800/500"
+  const sectionRef = React.useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
     }
-  ];
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="features" className="py-16 md:py-24 bg-[#0a0a0a]">
+    <section id="features" ref={sectionRef} className="py-16 md:py-24 bg-[#080810]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="mb-12 md:mb-16"
+          className="mb-12 md:mb-16 text-center"
         >
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">
-            <Settings className="w-3 h-3" /> Features
-          </span>
           <h2 className="text-2xl md:text-4xl font-extrabold font-display tracking-tight text-white mb-4 md:mb-6">Everything Your API Was Missing</h2>
-          <p className="text-sm md:text-base text-white/50 max-w-2xl leading-relaxed font-medium">
-            LLMLite's intelligent routing handles any type of AI workload. And we never stop improving.
+          <p className="text-sm md:text-base text-white/50 max-w-2xl mx-auto leading-relaxed font-medium">
+            Four powerful features that make developers switch and stay
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid lg:grid-cols-2 lg:gap-6 lg:items-stretch">
-          {features.map((feature, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-              whileHover={{ y: -8 }}
-              className="group bg-white/5 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-white/5 transition-all hover:shadow-2xl hover:shadow-white/5 lg:h-full lg:min-h-full"
-            >
-              <div className="flex items-center gap-3 mb-4 md:mb-6">
-                <div className="p-2.5 bg-[#1a1a1a] text-white rounded-xl shadow-sm group-hover:bg-white group-hover:text-black transition-all duration-300">
-                  {feature.icon}
-                </div>
-                <h3 className="text-base md:text-lg font-extrabold font-display text-white">{feature.title}</h3>
-              </div>
-              <p className="text-xs md:text-sm text-white/50 mb-6 md:mb-8 leading-relaxed font-medium">
-                {feature.description}
-              </p>
-<div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10 bg-black shadow-sm group-hover:shadow-md transition-all h-full">
-                {feature.title === "Auto Routing" ? (
-                  <div className="w-full bg-black rounded-xl overflow-hidden">
-
-  {/* Live Routing Tester */}
-  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-3 lg:p-4 mb-2 lg:mb-3">
-    <div className="flex items-center gap-2 mb-1">
-      <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><polygon points="3,2 14,8 3,14" fill="#22c55e"/></svg>
-      <span className="text-white font-black text-xs">Live Routing Tester</span>
-      <span className="bg-green-500/20 text-green-400 border border-green-500/30 text-[8px] font-black px-1.5 py-0.5 rounded-full">LIVE</span>
-    </div>
-    <p className="text-white/30 text-[9px] mb-2">Type any prompt and see which model LLMLite picks</p>
-    <div className="flex gap-1.5 mb-2">
-      <div className="flex-1 bg-black border border-white/10 rounded-lg px-2 py-1.5">
-        <span className="text-white/20 text-[10px]">Type any prompt here...</span>
-      </div>
-      <div className="bg-blue-600 text-white font-black px-3 py-1.5 rounded-lg text-[10px] flex items-center gap-1 flex-shrink-0">
-        <svg width="8" height="8" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M8 2l6 6-6 6" stroke="white" strokeWidth="2" strokeLinecap="round"/></svg>
-        Route
-      </div>
-    </div>
-    <div className="flex items-center gap-1.5 flex-wrap">
-      <span className="text-[8px] text-white/20 uppercase tracking-widest">Examples:</span>
-      {['What is 2+2?','Translate hello to French','Write an essay'].map((p, i) => (
-        <div key={i} className="bg-white/[0.05] border border-white/[0.08] text-white/50 text-[9px] px-2 py-0.5 rounded-md">{p}</div>
-      ))}
-    </div>
-  </div>
-
-  {/* Stats Row - horizontal on mobile */}
-  <div className="grid grid-cols-3 gap-1.5 lg:gap-2 mb-2 lg:mb-3">
-    <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-2.5">
-      <div className="text-white font-black text-[9px] mb-2">Routing Split</div>
-      <div className="flex justify-center mb-2">
-        <svg width="52" height="52" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r="28" fill="none" stroke="#1e1e2e" strokeWidth="12"/>
-          <circle cx="40" cy="40" r="28" fill="none" stroke="#3b82f6" strokeWidth="12"
-            strokeDasharray={`${2 * Math.PI * 28 * 0.75} ${2 * Math.PI * 28 * 0.25}`}
-            strokeDashoffset={-2 * Math.PI * 28 * 0.25}
-            transform="rotate(-90 40 40)"/>
-          <circle cx="40" cy="40" r="28" fill="none" stroke="#8b5cf6" strokeWidth="12"
-            strokeDasharray={`${2 * Math.PI * 28 * 0.25} ${2 * Math.PI * 28 * 0.75}`}
-            strokeDashoffset={0}
-            transform="rotate(90 40 40)"/>
-        </svg>
-      </div>
-      <div className="space-y-0.5">
-        <div className="flex items-center justify-between text-[8px]">
-          <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-blue-500"/><span className="text-white/60">Simple</span></div>
-          <span className="text-white font-black">75%</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <FeatureCard
+            number={1}
+            title="Auto Routing"
+            description="Send any prompt and LLMLite instantly picks the cheapest capable model. Zero configuration needed."
+            delay={0}
+            isVisible={isVisible}
+          />
+          <FeatureCard
+            number={2}
+            title="Manual Model Override"
+            description="Need GPT-4o for a specific request? Pass the model name and LLMLite skips classification entirely."
+            delay={100}
+            isVisible={isVisible}
+          />
+          <FeatureCard
+            number={3}
+            title="Savings Dashboard"
+            description="See exactly how much you saved vs GPT-4o. Every token. Every dollar. Fully transparent."
+            delay={200}
+            isVisible={isVisible}
+          />
         </div>
-        <div className="flex items-center justify-between text-[8px]">
-          <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-purple-500"/><span className="text-white/60">Complex</span></div>
-          <span className="text-white font-black">25%</span>
-        </div>
-      </div>
-    </div>
 
-    <div className="col-span-2 grid grid-rows-2 gap-1.5">
-      <div className="grid grid-cols-2 gap-1.5">
-        <div className="bg-blue-500/[0.08] border border-blue-500/20 rounded-xl p-2">
-          <div className="text-[7px] text-blue-400 uppercase tracking-widest font-black mb-0.5">Simple</div>
-          <div className="text-lg font-black text-blue-400">3,867</div>
-          <div className="text-[7px] text-white/30">Free models</div>
-        </div>
-        <div className="bg-purple-500/[0.08] border border-purple-500/20 rounded-xl p-2">
-          <div className="text-[7px] text-purple-400 uppercase tracking-widest font-black mb-0.5">Complex</div>
-          <div className="text-lg font-black text-purple-400">1,002</div>
-          <div className="text-[7px] text-white/30">Paid models</div>
-        </div>
-      </div>
-      <div className="bg-green-500/[0.06] border border-green-500/20 rounded-xl p-2 flex items-center justify-between">
-        <div>
-          <div className="text-[7px] text-green-400 uppercase tracking-widest font-black mb-0.5">Total Saved</div>
-          <div className="text-lg font-black text-green-400">$1,242</div>
-          <div className="text-[7px] text-white/30">vs GPT-4o</div>
-        </div>
-        <div className="text-2xl">💰</div>
-      </div>
-    </div>
-  </div>
-
-  {/* Simple vs Complex - 2 column compact */}
-  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-3 lg:p-4">
-    <div className="font-black text-white text-[10px] mb-0.5">SIMPLE vs COMPLEX?</div>
-    <div className="grid grid-cols-2 gap-2 mt-2">
-      <div>
-        <div className="text-[8px] text-blue-400 font-black uppercase mb-1.5">⚡ Simple → Free</div>
-        {['"What is 2+2?"','"Translate hello"'].map((item, i) => (
-          <div key={i} className="bg-blue-500/[0.04] border border-blue-500/10 rounded-lg p-1.5 mb-1">
-            <div className="text-[9px] font-bold text-white">{item}</div>
-          </div>
-        ))}
-      </div>
-      <div>
-        <div className="text-[8px] text-purple-400 font-black uppercase mb-1.5">🧠 Complex → Paid</div>
-        {['"Write 1000 word essay"','"Analyze business strategy"'].map((item, i) => (
-          <div key={i} className="bg-purple-500/[0.04] border border-purple-500/10 rounded-lg p-1.5 mb-1">
-            <div className="text-[9px] font-bold text-white">{item}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-
-</div>
-                ) : feature.title === "Manual Model Override" ? (
-                  <div className="w-full bg-black rounded-xl overflow-hidden">
-
-  {/* Model Comparison */}
-  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-3 lg:p-4 mb-2 lg:mb-3">
-    <div className="flex items-center gap-2 mb-1">
-      <span className="text-sm">⚖️</span>
-      <span className="text-white font-black text-xs lg:text-sm">Model Comparison</span>
-    </div>
-    <p className="text-white/30 text-[9px] lg:text-[10px] mb-3">Send the same prompt to two models and compare quality and cost side by side</p>
-    <div className="grid grid-cols-2 gap-2 mb-2">
-      {[
-        { label: 'MODEL A', value: 'Gemma 3 4B — $0.00' },
-        { label: 'MODEL B', value: 'GPT-4o Mini — $0.15/1M' },
-      ].map((item, i) => (
-        <div key={i}>
-          <div className="text-[8px] text-white/30 uppercase tracking-widest mb-1">{item.label}</div>
-          <div className="bg-black border border-white/10 rounded-lg px-3 py-2 flex items-center justify-between">
-            <span className="text-[10px] lg:text-xs text-white">{item.value}</span>
-            <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round"/></svg>
-          </div>
-        </div>
-      ))}
-    </div>
-    <div className="bg-black border border-white/10 rounded-lg px-3 py-2 mb-2">
-      <span className="text-[10px] text-white/20">Enter prompt to compare both models...</span>
-    </div>
-    <div className="w-full bg-blue-700 rounded-lg py-2 flex items-center justify-center gap-2">
-      <span className="text-sm">⚖️</span>
-      <span className="text-white font-black text-[11px] lg:text-xs">Compare Both Models</span>
-    </div>
-  </div>
-
-  {/* All Available Models Table */}
-  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl overflow-hidden">
-    <div className="p-3 lg:p-4 border-b border-white/[0.06]">
-      <div className="text-white font-black text-xs lg:text-sm">All Available Models</div>
-      <div className="text-white/30 text-[9px] lg:text-[10px] mt-0.5">Complete list of models you can route to</div>
-    </div>
-    {/* Table Header */}
-    <div className="grid grid-cols-12 gap-1 px-3 lg:px-4 py-2 border-b border-white/[0.06]">
-      <div className="col-span-4 text-[8px] text-white/30 uppercase tracking-widest">Model</div>
-      <div className="col-span-2 text-[8px] text-white/30 uppercase tracking-widest hidden lg:block">Provider</div>
-      <div className="col-span-2 text-[8px] text-white/30 uppercase tracking-widest">Cost</div>
-      <div className="col-span-3 text-[8px] text-white/30 uppercase tracking-widest hidden lg:block">Best For</div>
-      <div className="col-span-2 lg:col-span-1 text-[8px] text-white/30 uppercase tracking-widest">Type</div>
-    </div>
-    {/* Table Rows */}
-    {[
-      { name: 'Gemma 3 4B', provider: 'Google', cost: '$0.00', best: 'Short answers, summaries, Q&A', type: 'FREE' },
-      { name: 'Llama 3.1 8B', provider: 'Meta', cost: '$0.00', best: 'General text, translations', type: 'FREE' },
-      { name: 'Mistral 7B', provider: 'Mistral', cost: '$0.00', best: 'Reasoning, structured output', type: 'FREE' },
-      { name: 'GPT-4o Mini', provider: 'OpenAI', cost: '$0.15/1M', best: 'Complex reasoning, long context', type: 'PAID' },
-      { name: 'GPT-4o', provider: 'OpenAI', cost: '$5.00/1M', best: 'Most complex tasks, vision', type: 'PAID' },
-      { name: 'Claude 3 Haiku', provider: 'Anthropic', cost: '$0.25/1M', best: 'Analysis, coding, fast', type: 'PAID' },
-      { name: 'Claude 3.5 Sonnet', provider: 'Anthropic', cost: '$3.00/1M', best: 'Best coding, complex writing', type: 'PAID' },
-    ].map((row, i) => (
-      <div key={i} className="grid grid-cols-12 gap-1 px-3 lg:px-4 py-2 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
-        <div className="col-span-4 text-[10px] lg:text-[11px] font-bold text-white">{row.name}</div>
-        <div className="col-span-2 text-[10px] lg:text-[11px] text-white/40 hidden lg:block">{row.provider}</div>
-        <div className="col-span-2 text-[10px] lg:text-[11px] font-bold text-green-400">{row.cost}</div>
-        <div className="col-span-3 text-[9px] text-white/30 hidden lg:block truncate">{row.best}</div>
-        <div className="col-span-2 lg:col-span-1">
-          <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${row.type === 'FREE' ? 'bg-green-500/20 text-green-400' : 'bg-purple-500/20 text-purple-400'}`}>
-            {row.type}
-          </span>
-        </div>
-      </div>
-    ))}
-  </div>
-
-</div>
-                ) : (
-                  <img
-                    src={feature.image}
-                    alt={feature.title}
-                    className="w-full h-auto group-hover:scale-105 transition-transform duration-700 opacity-80"
-                    referrerPolicy="no-referrer"
-                  />
-                )}
-              </div>
-            </motion.div>
-          ))}
+        <div className="mt-6">
+          <FeatureCard
+            number={4}
+            title="Usage Management"
+            description="Track every request in real time. See which models you use, how many tokens, and your exact cost per request. Nothing hidden."
+            delay={400}
+            isVisible={isVisible}
+            fullWidth
+          />
         </div>
       </div>
     </section>
+  );
+};
+
+const FeatureCard = ({ number, title, description, delay, isVisible, fullWidth = false }: { number: number, title: string, description: string, delay: number, isVisible: boolean, fullWidth?: boolean }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={isVisible ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: delay / 1000 }}
+      whileHover={{ scale: 1.02 }}
+      className={`bg-gray-900 border border-gray-800 rounded-2xl p-6 transition-all duration-0.2 ${fullWidth ? 'md:col-span-3' : ''}`}
+    >
+      <div className="flex items-center gap-3 mb-2">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white font-bold text-lg flex items-center justify-center">
+          {number}
+        </div>
+      </div>
+      <h3 className="text-xl font-bold text-white mt-3">{title}</h3>
+      <p className="text-gray-400 text-sm mt-2">{description}</p>
+      
+      <div className="bg-gray-950 rounded-xl p-3 mt-4">
+        {number === 1 && <AutoRoutingAnimation isVisible={isVisible} delay={delay} />}
+        {number === 2 && <ManualOverrideAnimation isVisible={isVisible} delay={delay} />}
+        {number === 3 && <SavingsAnimation isVisible={isVisible} delay={delay} />}
+        {number === 4 && <UsageManagementAnimation isVisible={isVisible} delay={delay} />}
+      </div>
+    </motion.div>
+  );
+};
+
+const AutoRoutingAnimation = ({ isVisible, delay }: { isVisible: boolean; delay: number }) => {
+  const [step, setStep] = React.useState(0);
+  const [displayText, setDisplayText] = React.useState('');
+  
+  React.useEffect(() => {
+    if (!isVisible) return;
+    const texts = ['What is 2+2?', 'Explain neural networks'];
+    const timeouts: NodeJS.Timeout[] = [];
+    
+    const runLoop = () => {
+      let currentTextIndex = 0;
+      let charIndex = 0;
+      
+      const typeInterval = setInterval(() => {
+        if (charIndex < texts[currentTextIndex].length) {
+          setDisplayText(texts[currentTextIndex].slice(0, charIndex + 1));
+          charIndex++;
+        } else {
+          clearInterval(typeInterval);
+          setTimeout(() => {
+            setStep((currentTextIndex + 1) % 2 === 0 ? 1 : 0);
+            setTimeout(() => {
+              setStep((prev) => (prev + 1) % 2);
+              charIndex = 0;
+              setDisplayText('');
+              currentTextIndex = (currentTextIndex + 1) % 2;
+            }, 1500);
+          }, 1000);
+        }
+      }, 80);
+      
+      timeouts.push(typeInterval as unknown as NodeJS.Timeout);
+    };
+    
+    const startTimeout = setTimeout(() => {
+      runLoop();
+    }, delay);
+    timeouts.push(startTimeout);
+    
+    return () => timeouts.forEach(t => clearTimeout(t));
+  }, [isVisible, delay]);
+  
+  const isSimple = step === 0;
+  
+  return (
+    <div className="space-y-2">
+      <div className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Live Classification</div>
+      <div className="bg-black border border-white/10 rounded-lg px-3 py-2">
+        <span className="text-white text-xs font-mono">{displayText}</span>
+        <span className="animate-pulse">|</span>
+      </div>
+      <div className={`flex items-center gap-2 transition-all duration-300 ${step > 0 ? 'opacity-100' : 'opacity-0'}`}>
+        <span className={`px-2 py-1 rounded text-[9px] font-bold ${isSimple ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-orange-500/20 text-orange-400 border border-orange-500/30'}`}>
+          {isSimple ? 'SIMPLE' : 'COMPLEX'}
+        </span>
+        <ArrowRight className="w-3 h-3 text-white/30" />
+        <span className="text-white text-xs font-bold">{isSimple ? 'gemma-3-4b' : 'llama-3.1-8b'}</span>
+        <span className="text-green-400 text-xs font-bold ml-auto">{isSimple ? '$0.00' : '$0.00'}</span>
+      </div>
+    </div>
+  );
+};
+
+const ManualOverrideAnimation = ({ isVisible, delay }: { isVisible: boolean; delay: number }) => {
+  const [selected, setSelected] = React.useState(0);
+  
+  React.useEffect(() => {
+    if (!isVisible) return;
+    const interval = setInterval(() => {
+      setSelected((prev) => (prev + 1) % 3);
+    }, 1500);
+    const startTimeout = setTimeout(() => {
+      interval;
+    }, delay);
+    return () => { clearInterval(interval); clearTimeout(startTimeout); };
+  }, [isVisible, delay]);
+  
+  const models = [
+    { name: 'Gemma 3 4B', cost: '$0.00', type: 'FREE' },
+    { name: 'GPT-4o', cost: '$5.00/1M', type: 'PAID' },
+    { name: 'Claude 3.5', cost: '$3.00/1M', type: 'PAID' },
+  ];
+  
+  return (
+    <div className="space-y-2">
+      <div className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Select Model</div>
+      <div className="space-y-1.5">
+        {models.map((model, idx) => (
+          <div 
+            key={idx}
+            className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all duration-300 ${
+              selected === idx 
+                ? 'bg-blue-500/10 border-blue-500/50 shadow-[0_0_10px_rgba(59,130,246,0.3)]' 
+                : 'bg-black border-white/10'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full ${selected === idx ? 'bg-blue-400' : 'bg-white/20'}`} />
+              <span className="text-white text-[10px] font-medium">{model.name}</span>
+            </div>
+            <span className={`text-[9px] font-bold ${model.cost === '$0.00' ? 'text-green-400' : 'text-white/60'}`}>
+              {model.cost}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const SavingsAnimation = ({ isVisible, delay }: { isVisible: boolean; delay: number }) => {
+  const [count, setCount] = React.useState(0);
+  const [showStats, setShowStats] = React.useState(false);
+  
+  React.useEffect(() => {
+    if (!isVisible) return;
+    let startTimeout: NodeJS.Timeout;
+    
+    const startAnim = setTimeout(() => {
+      const duration = 3000;
+      const steps = 60;
+      const increment = 1242 / steps;
+      let current = 0;
+      
+      const counter = setInterval(() => {
+        current += increment;
+        if (current >= 1242) {
+          setCount(1242);
+          clearInterval(counter);
+          setTimeout(() => setShowStats(true), 500);
+        } else {
+          setCount(Math.floor(current));
+        }
+      }, duration / steps);
+      
+      startTimeout = counter as unknown as NodeJS.Timeout;
+    }, delay);
+    
+    return () => { clearTimeout(startAnim); clearTimeout(startTimeout); };
+  }, [isVisible, delay]);
+  
+  React.useEffect(() => {
+    if (!isVisible) return;
+    const resetInterval = setInterval(() => {
+      setCount(0);
+      setShowStats(false);
+      setTimeout(() => {
+        const duration = 3000;
+        const steps = 60;
+        const increment = 1242 / steps;
+        let current = 0;
+        
+        const counter = setInterval(() => {
+          current += increment;
+          if (current >= 1242) {
+            setCount(1242);
+            clearInterval(counter);
+            setTimeout(() => setShowStats(true), 500);
+          } else {
+            setCount(Math.floor(current));
+          }
+        }, duration / steps);
+      }, 100);
+    }, 5000);
+    
+    return () => clearInterval(resetInterval);
+  }, [isVisible]);
+  
+  return (
+    <div className="text-center">
+      <div className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Total Saved</div>
+      <div className="text-4xl font-black text-green-400">${count.toLocaleString()}</div>
+      <div className="text-[10px] text-white/40 mt-1">saved vs GPT-4o</div>
+      <div className={`mt-3 space-y-1 transition-opacity duration-500 ${showStats ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="text-[9px] text-white/50">84,291 requests routed</div>
+        <div className="text-[9px] text-white/50">71% cost reduction</div>
+      </div>
+    </div>
+  );
+};
+
+const UsageManagementAnimation = ({ isVisible, delay }: { isVisible: boolean; delay: number }) => {
+  const [progress, setProgress] = React.useState(0);
+  const [rowsVisible, setRowsVisible] = React.useState([false, false, false]);
+  
+  React.useEffect(() => {
+    if (!isVisible) return;
+    const rowTimeouts: NodeJS.Timeout[] = [];
+    
+    rowTimeouts.push(setTimeout(() => setRowsVisible([true, false, false]), delay));
+    rowTimeouts.push(setTimeout(() => setRowsVisible([true, true, false]), delay + 500));
+    rowTimeouts.push(setTimeout(() => setRowsVisible([true, true, true]), delay + 1000));
+    
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 65) {
+          return 0;
+        }
+        return prev + 1;
+      });
+    }, 2000 / 65);
+    
+    return () => {
+      rowTimeouts.forEach(t => clearTimeout(t));
+      clearInterval(progressInterval);
+    };
+  }, [isVisible, delay]);
+  
+  const requests = [
+    { model: 'gemma-3-4b', type: 'SIMPLE', tokens: '42', cost: '$0.00' },
+    { model: 'gpt-4o', type: 'COMPLEX', tokens: '842', cost: '$0.012' },
+    { model: 'llama-3.1-8b', type: 'SIMPLE', tokens: '124', cost: '$0.00' },
+  ];
+  
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <div className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Recent Requests</div>
+        {requests.map((req, idx) => (
+          <div 
+            key={idx}
+            className={`flex items-center gap-2 px-2 py-1.5 rounded bg-black border border-white/5 transition-all duration-300 ${
+              rowsVisible[idx] ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+            }`}
+            style={{ transitionDelay: `${idx * 50}ms` }}
+          >
+            <span className="text-white text-[9px] font-medium flex-1 truncate">{req.model}</span>
+            <span className={`text-[7px] font-bold px-1 py-0.5 rounded ${req.type === 'SIMPLE' ? 'bg-blue-500/20 text-blue-400' : 'bg-orange-500/20 text-orange-400'}`}>
+              {req.type}
+            </span>
+            <span className="text-white/40 text-[8px]">{req.tokens}</span>
+            <span className="text-green-400 text-[8px] font-bold">{req.cost}</span>
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-col justify-center">
+        <div className="text-[10px] text-white/40 uppercase tracking-widest mb-2">Monthly Usage</div>
+        <div className="h-4 bg-black rounded-full overflow-hidden border border-white/10">
+          <div 
+            className="h-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-2000 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <div className="flex justify-between mt-2">
+          <span className="text-white text-xs font-bold">1.2M tokens used</span>
+          <span className="text-white/40 text-xs">65% of limit used</span>
+        </div>
+      </div>
+    </div>
   );
 };
 
