@@ -199,11 +199,11 @@ How it Works
             <div className="absolute inset-0 bg-gradient-to-t from-blue-500/5 to-transparent pointer-events-none z-10" />
 
             {/* Dashboard content - NO browser bar */}
-            <div className="w-full bg-black overflow-hidden" style={{height: '480px'}}>
+            <div className="w-full bg-black overflow-hidden" style={{height: '300px'}}>
               <div className="flex h-full">
 
                 {/* Sidebar */}
-                <div className="flex-shrink-0 bg-[#050505] border-r border-white/[0.06]" style={{width: '190px'}}>
+                <div className="flex-shrink-0 bg-[#050505] border-r border-white/[0.06] hidden md:block" style={{width: '190px'}}>
                   <div className="flex items-center gap-2 p-4 border-b border-white/[0.06]">
                     <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center text-[10px] font-black text-white">R</div>
                     <span className="text-white text-sm font-black">LLMLite</span>
@@ -253,7 +253,7 @@ How it Works
                     <div className="bg-blue-600 text-white text-[9px] font-black px-3 py-1.5 rounded-lg">New Key</div>
                   </div>
                   {/* Stats */}
-                  <div className="grid grid-cols-4 gap-2.5 p-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-3">
                     {[
                       { label: 'TOTAL REQUESTS', value: '4,571', badge: '+13.5%', color: 'text-white' },
                       { label: 'TOTAL TOKENS', value: '3.2M', badge: '+8.2%', color: 'text-white' },
@@ -265,7 +265,7 @@ How it Works
                           <span className="text-[7px] text-white/30 uppercase tracking-widest">{card.label}</span>
                           <span className="text-[7px] bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full font-bold">{card.badge}</span>
                         </div>
-                        <div className={`text-2xl font-black ${card.color}`}>{card.value}</div>
+                        <div className={`text-lg md:text-2xl font-black ${card.color}`}>{card.value}</div>
                         <div className="flex gap-0.5 mt-2">
                           {[30,45,35,60,40,55,50,70].map((h, j) => (
                             <div key={j} className="flex-1 rounded-sm bg-white/10" style={{height:'10px', opacity: h/100 + 0.2}} />
@@ -287,7 +287,7 @@ How it Works
                         ))}
                       </div>
                     </div>
-                    <div className="relative" style={{height:'120px'}}>
+                    <div className="relative" style={{height:'80px'}}>
                       <svg viewBox="0 0 600 120" preserveAspectRatio="none" className="w-full h-full">
                         <defs>
                           <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
