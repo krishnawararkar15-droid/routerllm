@@ -64,32 +64,35 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/70 backdrop-blur-xl border-b border-white/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 md:h-16">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 md:w-8 md:h-8 bg-white rounded-lg flex items-center justify-center">
-              <Layers className="text-black w-4 h-4 md:w-5 md:h-5" />
+    <nav className="fixed top-4 left-0 right-0 z-50">
+      <div className="max-w-5xl mx-auto mt-4 px-6">
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-full shadow-lg shadow-black/20">
+          <div className="flex justify-between items-center h-14 md:h-16 px-4 md:px-6">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-7 h-7 md:w-8 md:h-8 bg-white rounded-lg flex items-center justify-center">
+                <Layers className="text-black w-4 h-4 md:w-5 md:h-5" />
+              </div>
+              <span className="text-lg md:text-xl font-extrabold font-display tracking-tight text-white">LLMLite</span>
+            </Link>
+
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#features" className="text-sm font-semibold text-white/60 hover:text-white transition-colors">Features</a>
+              <a href="#how-it-works" className="text-sm font-semibold text-white/60 hover:text-white transition-colors">How It Works</a>
+              <a href="#pricing" className="text-sm font-semibold text-white/60 hover:text-white transition-colors">Pricing</a>
+              <a href="#docs" className="text-sm font-semibold text-white/60 hover:text-white transition-colors">Docs</a>
             </div>
-            <span className="text-lg md:text-xl font-extrabold font-display tracking-tight text-white">LLMLite</span>
-          </Link>
 
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-sm font-semibold text-white/60 hover:text-white transition-colors">Features</a>
-            <a href="#how-it-works" className="text-sm font-semibold text-white/60 hover:text-white transition-colors">How It Works</a>
-            <a href="#pricing" className="text-sm font-semibold text-white/60 hover:text-white transition-colors">Pricing</a>
-            <a href="#docs" className="text-sm font-semibold text-white/60 hover:text-white transition-colors">Docs</a>
-          </div>
+            <div className="hidden md:flex items-center">
+              <button onClick={() => navigate('/signup')} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-full text-sm transition-all">
+                Get Started
+              </button>
+            </div>
 
-          <div className="hidden md:flex items-center space-x-4">
-            <button onClick={() => navigate('/login')} className="text-sm font-semibold text-white/60 hover:text-white transition-colors px-4 py-2">Sign In</button>
-            <button onClick={() => navigate('/signup')} className="text-sm font-bold bg-white text-black px-6 py-2.5 rounded-full hover:bg-gray-200 transition-all shadow-lg shadow-white/10">Get Started</button>
-          </div>
-
-          <div className="md:hidden flex items-center">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-white/60">
-              {isOpen ? <X /> : <Menu />}
-            </button>
+            <div className="md:hidden flex items-center">
+              <button onClick={() => setIsOpen(!isOpen)} className="text-white/60">
+                {isOpen ? <X /> : <Menu />}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -101,7 +104,7 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#0a0a0a] border-t border-white/5 overflow-hidden"
+            className="md:hidden bg-[#0a0a0a] border-t border-white/5 overflow-hidden mx-4 mt-2 rounded-2xl"
           >
             <div className="px-4 pt-2 pb-6 space-y-1">
               <a href="#features" className="block px-3 py-2 text-base font-medium text-white/60">Features</a>
@@ -109,8 +112,7 @@ const Navbar = () => {
               <a href="#pricing" className="block px-3 py-2 text-base font-medium text-white/60">Pricing</a>
               <a href="#docs" className="block px-3 py-2 text-base font-medium text-white/60">Docs</a>
               <div className="pt-4 flex flex-col space-y-2">
-                <button onClick={() => { navigate('/login'); setIsOpen(false); }} className="w-full text-center py-2 font-medium text-white/60">Sign In</button>
-                <button onClick={() => { navigate('/signup'); setIsOpen(false); }} className="w-full bg-white text-black py-2 rounded-full font-medium">Get Started</button>
+                <button onClick={() => { navigate('/signup'); setIsOpen(false); }} className="w-full bg-blue-600 text-white py-2 rounded-full font-medium">Get Started</button>
               </div>
             </div>
           </motion.div>
@@ -272,18 +274,19 @@ const DashboardPreview = () => {
 const Hero = () => {
   const { scrollY } = useScroll();
   const yGlow = useTransform(scrollY, [0, 500], [0, 150]);
-  const yIcons = useTransform(scrollY, [0, 500], [0, -100]);
   const navigate = useNavigate();
 
   return (
-    <section className="relative pt-24 md:pt-32 pb-16 md:pb-20 overflow-hidden bg-[#0a0a0a] text-white">
-      {/* Premium White Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[600px] bg-white/[0.07] blur-[80px] md:blur-[120px] rounded-full -translate-y-1/2 pointer-events-none" />
+    <section className="min-h-screen flex flex-col items-center justify-center pt-24 pb-0 overflow-hidden bg-black text-white">
+      {/* Blue Radial Glow */}
+      <div className="absolute inset-0 pointer-events-none" 
+        style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(37,99,235,0.15), transparent)' }} 
+      />
 
       {/* Background Glow */}
       <motion.div
         style={{ y: yGlow }}
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] md:h-[500px] bg-gradient-to-b from-white/5 to-transparent pointer-events-none"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] md:h-[500px] bg-gradient-to-b from-blue-500/10 to-transparent pointer-events-none"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -292,17 +295,17 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="inline-flex items-center gap-2 px-3 md:px-4 py-1 md:py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-xs md:text-sm font-medium mb-6 md:mb-8 hover:bg-white/10 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-500/30 text-blue-400 text-xs px-3 py-1 rounded-full mb-6 md:mb-8"
           >
-            <span className="text-white/60">Introducing LLMLite 1.0</span>
-            <ArrowRight className="w-3 h-3 md:w-4 md:h-4 text-white/40" />
+            <span>✦ Introducing LLMLite 1.0</span>
+            <ArrowRight className="w-3 h-3" />
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-            className="text-3xl md:text-6xl font-extrabold font-display tracking-tighter mb-4 md:mb-6 leading-[1.1]"
+            className="text-5xl md:text-6xl lg:text-7xl font-bold text-white text-center leading-tight"
           >
             One API To Cut Your <br className="hidden md:block" /> AI Costs Forever
           </motion.h1>
@@ -311,7 +314,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            className="text-sm md:text-lg text-white/60 mb-8 md:mb-10 leading-relaxed max-w-2xl mx-auto"
+            className="text-gray-400 text-center text-lg max-w-xl mx-auto mt-4"
           >
             LLMLite automatically routes every prompt to the cheapest AI model that can handle it. Simple questions go to free models. Complex tasks go to powerful ones. Save 30–80% on every API bill — automatically.
           </motion.p>
@@ -320,28 +323,35 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4"
+            className="flex justify-center"
           >
             <motion.button
               onClick={() => navigate('/signup')}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors shadow-lg shadow-white/5 text-sm md:text-base"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition-all duration-200 mt-8"
             >
-              Get Started
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.15)" }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-white/10 text-white font-semibold rounded-full border border-white/20 transition-colors text-sm md:text-base"
-            >
-How it Works
+              Try it out →
             </motion.button>
           </motion.div>
         </div>
 
-        {/* Dashboard Preview */}
-        <DashboardPreview />
+        {/* Dashboard Preview with Blue Glow */}
+        <div className="relative mx-auto max-w-5xl mt-16 px-4">
+          {/* Blue glow behind image */}
+          <div className="absolute inset-0 rounded-2xl scale-95 blur-2xl" 
+            style={{ background: 'radial-gradient(ellipse at center, rgba(37,99,235,0.4), transparent 70%)' }} 
+          />
+          
+          {/* Image with glow border */}
+          <div className="relative rounded-2xl border border-white/10 ring-1 ring-blue-500/30 shadow-2xl shadow-blue-500/20 overflow-hidden">
+            <DashboardPreview />
+            {/* Gradient fade at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-32" 
+              style={{ background: 'linear-gradient(to top, #000000, transparent)' }} 
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
