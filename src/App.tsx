@@ -576,6 +576,78 @@ const FeaturesSection1 = () => {
   </div>
 
 </div>
+                ) : feature.title === "Manual Model Override" ? (
+                  <div className="w-full bg-black rounded-xl overflow-hidden">
+
+  {/* Model Comparison */}
+  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl p-3 lg:p-4 mb-2 lg:mb-3">
+    <div className="flex items-center gap-2 mb-1">
+      <span className="text-sm">⚖️</span>
+      <span className="text-white font-black text-xs lg:text-sm">Model Comparison</span>
+    </div>
+    <p className="text-white/30 text-[9px] lg:text-[10px] mb-3">Send the same prompt to two models and compare quality and cost side by side</p>
+    <div className="grid grid-cols-2 gap-2 mb-2">
+      {[
+        { label: 'MODEL A', value: 'Gemma 3 4B — $0.00' },
+        { label: 'MODEL B', value: 'GPT-4o Mini — $0.15/1M' },
+      ].map((item, i) => (
+        <div key={i}>
+          <div className="text-[8px] text-white/30 uppercase tracking-widest mb-1">{item.label}</div>
+          <div className="bg-black border border-white/10 rounded-lg px-3 py-2 flex items-center justify-between">
+            <span className="text-[10px] lg:text-xs text-white">{item.value}</span>
+            <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          </div>
+        </div>
+      ))}
+    </div>
+    <div className="bg-black border border-white/10 rounded-lg px-3 py-2 mb-2">
+      <span className="text-[10px] text-white/20">Enter prompt to compare both models...</span>
+    </div>
+    <div className="w-full bg-blue-700 rounded-lg py-2 flex items-center justify-center gap-2">
+      <span className="text-sm">⚖️</span>
+      <span className="text-white font-black text-[11px] lg:text-xs">Compare Both Models</span>
+    </div>
+  </div>
+
+  {/* All Available Models Table */}
+  <div className="bg-[#0d0d0d] border border-white/[0.08] rounded-xl overflow-hidden">
+    <div className="p-3 lg:p-4 border-b border-white/[0.06]">
+      <div className="text-white font-black text-xs lg:text-sm">All Available Models</div>
+      <div className="text-white/30 text-[9px] lg:text-[10px] mt-0.5">Complete list of models you can route to</div>
+    </div>
+    {/* Table Header */}
+    <div className="grid grid-cols-12 gap-1 px-3 lg:px-4 py-2 border-b border-white/[0.06]">
+      <div className="col-span-4 text-[8px] text-white/30 uppercase tracking-widest">Model</div>
+      <div className="col-span-2 text-[8px] text-white/30 uppercase tracking-widest hidden lg:block">Provider</div>
+      <div className="col-span-2 text-[8px] text-white/30 uppercase tracking-widest">Cost</div>
+      <div className="col-span-3 text-[8px] text-white/30 uppercase tracking-widest hidden lg:block">Best For</div>
+      <div className="col-span-2 lg:col-span-1 text-[8px] text-white/30 uppercase tracking-widest">Type</div>
+    </div>
+    {/* Table Rows */}
+    {[
+      { name: 'Gemma 3 4B', provider: 'Google', cost: '$0.00', best: 'Short answers, summaries, Q&A', type: 'FREE' },
+      { name: 'Llama 3.1 8B', provider: 'Meta', cost: '$0.00', best: 'General text, translations', type: 'FREE' },
+      { name: 'Mistral 7B', provider: 'Mistral', cost: '$0.00', best: 'Reasoning, structured output', type: 'FREE' },
+      { name: 'GPT-4o Mini', provider: 'OpenAI', cost: '$0.15/1M', best: 'Complex reasoning, long context', type: 'PAID' },
+      { name: 'GPT-4o', provider: 'OpenAI', cost: '$5.00/1M', best: 'Most complex tasks, vision', type: 'PAID' },
+      { name: 'Claude 3 Haiku', provider: 'Anthropic', cost: '$0.25/1M', best: 'Analysis, coding, fast', type: 'PAID' },
+      { name: 'Claude 3.5 Sonnet', provider: 'Anthropic', cost: '$3.00/1M', best: 'Best coding, complex writing', type: 'PAID' },
+    ].map((row, i) => (
+      <div key={i} className="grid grid-cols-12 gap-1 px-3 lg:px-4 py-2 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
+        <div className="col-span-4 text-[10px] lg:text-[11px] font-bold text-white">{row.name}</div>
+        <div className="col-span-2 text-[10px] lg:text-[11px] text-white/40 hidden lg:block">{row.provider}</div>
+        <div className="col-span-2 text-[10px] lg:text-[11px] font-bold text-green-400">{row.cost}</div>
+        <div className="col-span-3 text-[9px] text-white/30 hidden lg:block truncate">{row.best}</div>
+        <div className="col-span-2 lg:col-span-1">
+          <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${row.type === 'FREE' ? 'bg-green-500/20 text-green-400' : 'bg-purple-500/20 text-purple-400'}`}>
+            {row.type}
+          </span>
+        </div>
+      </div>
+    ))}
+  </div>
+
+</div>
                 ) : (
                   <img
                     src={feature.image}
