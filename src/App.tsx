@@ -104,7 +104,7 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#0a0a0a] border-t border-white/5 overflow-hidden mx-4 mt-2 rounded-2xl"
+            className="md:hidden bg-black border-t border-white/5 overflow-hidden mx-4 mt-2 rounded-2xl"
           >
             <div className="px-4 pt-2 pb-6 space-y-1">
               <a href="#features" className="block px-3 py-2 text-base font-medium text-white/60">Features</a>
@@ -381,7 +381,7 @@ const SocialProof = () => {
   const logos = ['ProductHunt', 'GitHub', 'Dev.to', 'Hashnode', 'IndieHackers'];
 
   return (
-    <section className="py-12 md:py-16 bg-[#0a0a0a] border-b border-white/5">
+    <section className="py-12 md:py-16 bg-black border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.p
           initial={{ opacity: 0 }}
@@ -433,7 +433,7 @@ const FeaturesSection1 = () => {
   }, []);
 
   return (
-    <section id="features" ref={sectionRef} className="py-16 md:py-24 bg-[#0a0a0a]">
+    <section id="features" ref={sectionRef} className="py-16 md:py-24 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -788,7 +788,7 @@ const FeaturesSection2 = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-16 md:py-24 bg-[#0a0a0a]">
+    <section id="how-it-works" className="py-16 md:py-24 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -864,7 +864,7 @@ const PricingSection = () => {
   ];
 
   return (
-    <section id="pricing" className="py-16 md:py-24 bg-[#0a0a0a] text-white relative overflow-hidden">
+    <section id="pricing" className="py-16 md:py-24 bg-black text-white relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-white/5 blur-[80px] md:blur-[120px] rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -1003,7 +1003,7 @@ const PricingSection = () => {
 
 const AdvancedCapabilities = () => {
   return (
-    <section className="py-16 md:py-24 bg-[#0a0a0a]">
+    <section className="py-16 md:py-24 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1030,7 +1030,7 @@ const AdvancedCapabilities = () => {
 const CTASection = () => {
   const navigate = useNavigate();
   return (
-    <section className="py-16 md:py-24 bg-[#0a0a0a]">
+    <section className="py-16 md:py-24 bg-black">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
@@ -1088,7 +1088,7 @@ const CTASection = () => {
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0a0a0a] pt-16 md:pt-20 pb-8 md:pb-10 border-t border-white/5">
+    <footer className="bg-black pt-16 md:pt-20 pb-8 md:pb-10 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12 mb-12 md:mb-20">
           <div className="col-span-2 md:col-span-1">
@@ -1171,7 +1171,7 @@ const LandingPage = () => (
 export default function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-[#0a0a0a] font-sans selection:bg-white selection:text-black">
+      <div className="min-h-screen bg-black font-sans selection:bg-white selection:text-black">
         <div className="hidden md:block">
           <CursorFollower />
         </div>
