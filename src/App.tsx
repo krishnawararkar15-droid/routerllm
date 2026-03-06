@@ -189,54 +189,64 @@ const Hero = () => {
 How it Works
             </motion.button>
           </motion.div>
-          </div>
         </div>
 
         {/* Dashboard Preview */}
         <div className="mt-12 mx-auto w-full max-w-6xl px-4">
           <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-blue-500/10">
-            {/* Glow */}
             <div className="absolute inset-0 bg-gradient-to-t from-blue-500/5 to-transparent pointer-events-none z-10" />
 
-            {/* Dashboard content - NO browser bar */}
-            <div className="w-full bg-black overflow-hidden" style={{height: '300px'}}>
-              <div className="flex h-full">
+            {/* Wrapper that scales down on mobile */}
+            <div className="w-full overflow-hidden bg-black"
+              style={{height: 'clamp(280px, 50vw, 480px)'}}>
+              <div style={{
+                transform: 'scale(clamp(0.35, 0.6vw, 1))',
+                transformOrigin: 'top left',
+                width: '960px',
+                height: '480px',
+              }} className="flex">
 
                 {/* Sidebar */}
-                <div className="flex-shrink-0 bg-[#050505] border-r border-white/[0.06] hidden md:block" style={{width: '190px'}}>
+                <div className="flex-shrink-0 bg-[#050505] border-r border-white/[0.06]" style={{width:'190px'}}>
                   <div className="flex items-center gap-2 p-4 border-b border-white/[0.06]">
                     <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center text-[10px] font-black text-white">R</div>
                     <span className="text-white text-sm font-black">LLMLite</span>
                   </div>
                   <div className="p-2">
                     <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1">Navigation</div>
-                    {[
-                      { label: 'Dashboard', active: true },
-                      { label: 'API Keys', active: false },
-                      { label: 'Usage', active: false },
-                      { label: 'Documentation', active: false },
-                    ].map((item, i) => (
-                      <div key={i} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] font-medium ${item.active ? 'bg-white/10 text-white border border-white/10' : 'text-white/40'}`}>
-                        <div className={`w-1.5 h-1.5 rounded-full ${item.active ? 'bg-blue-400' : 'bg-white/20'}`} />
-                        {item.label}
+                    {[{label:'Dashboard',active:true},{label:'API Keys',active:false},{label:'Usage',active:false},{label:'Documentation',active:false}].map((item,i)=>(
+                      <div key={i} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] font-medium ${item.active?'bg-white/10 text-white border border-white/10':'text-white/40'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${item.active?'bg-blue-400':'bg-white/20'}`}/>{item.label}
                       </div>
                     ))}
                     <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1 mt-3">Routing</div>
-                    {['Auto Routing','Manual Override'].map((item, i) => (
+                    {['Auto Routing','Manual Override'].map((item,i)=>(
                       <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] text-white/40">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/20" />{item}
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/20"/>{item}
                       </div>
                     ))}
                     <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1 mt-3">Cost Control</div>
-                    {['Budget Alerts'].map((item, i) => (
+                    {['Budget Alerts'].map((item,i)=>(
                       <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] text-white/40">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/20" />{item}
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/20"/>{item}
                       </div>
                     ))}
                     <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1 mt-3">Model Access</div>
-                    {['100+ Models'].map((item, i) => (
+                    {['100+ Models'].map((item,i)=>(
                       <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] text-white/40">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/20" />{item}
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/20"/>{item}
+                      </div>
+                    ))}
+                    <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1 mt-3">Developer Tools</div>
+                    {['Cost Transparency'].map((item,i)=>(
+                      <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] text-white/40">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/20"/>{item}
+                      </div>
+                    ))}
+                    <div className="text-[7px] text-white/20 uppercase tracking-widest px-2 py-1 mt-3">Key Management</div>
+                    {['Multiple Keys'].map((item,i)=>(
+                      <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg mb-0.5 text-[10px] text-white/40">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/20"/>{item}
                       </div>
                     ))}
                   </div>
@@ -253,22 +263,22 @@ How it Works
                     <div className="bg-blue-600 text-white text-[9px] font-black px-3 py-1.5 rounded-lg">New Key</div>
                   </div>
                   {/* Stats */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-3">
+                  <div className="grid grid-cols-4 gap-2.5 p-4">
                     {[
-                      { label: 'TOTAL REQUESTS', value: '4,571', badge: '+13.5%', color: 'text-white' },
-                      { label: 'TOTAL TOKENS', value: '3.2M', badge: '+8.2%', color: 'text-white' },
-                      { label: 'TOTAL SAVINGS', value: '$8,322', badge: '+34.7%', color: 'text-green-400' },
-                      { label: 'AVG. LATENCY', value: '142ms', badge: '-12ms', color: 'text-white' },
-                    ].map((card, i) => (
+                      {label:'TOTAL REQUESTS',value:'4,571',badge:'+13.5%',color:'text-white'},
+                      {label:'TOTAL TOKENS',value:'3.2M',badge:'+8.2%',color:'text-white'},
+                      {label:'TOTAL SAVINGS',value:'$8,322',badge:'+34.7%',color:'text-green-400'},
+                      {label:'AVG. LATENCY',value:'142ms',badge:'-12ms',color:'text-white'},
+                    ].map((card,i)=>(
                       <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-3">
                         <div className="flex items-center justify-between mb-1.5">
                           <span className="text-[7px] text-white/30 uppercase tracking-widest">{card.label}</span>
                           <span className="text-[7px] bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full font-bold">{card.badge}</span>
                         </div>
-                        <div className={`text-lg md:text-2xl font-black ${card.color}`}>{card.value}</div>
+                        <div className={`text-2xl font-black ${card.color}`}>{card.value}</div>
                         <div className="flex gap-0.5 mt-2">
-                          {[30,45,35,60,40,55,50,70].map((h, j) => (
-                            <div key={j} className="flex-1 rounded-sm bg-white/10" style={{height:'10px', opacity: h/100 + 0.2}} />
+                          {[30,45,35,60,40,55,50,70].map((h,j)=>(
+                            <div key={j} className="flex-1 rounded-sm bg-white/10" style={{height:'10px',opacity:h/100+0.2}}/>
                           ))}
                         </div>
                       </div>
@@ -282,30 +292,30 @@ How it Works
                         <div className="text-[9px] text-white/30">Real-time traffic across all routed models</div>
                       </div>
                       <div className="flex gap-1">
-                        {['24h','7d','30d','All'].map((t, i) => (
-                          <div key={i} className={`text-[8px] px-2 py-0.5 rounded font-bold cursor-pointer ${i === 0 ? 'bg-white/10 text-white border border-white/10' : 'text-white/30'}`}>{t}</div>
+                        {['24h','7d','30d','All'].map((t,i)=>(
+                          <div key={i} className={`text-[8px] px-2 py-0.5 rounded font-bold ${i===0?'bg-white/10 text-white border border-white/10':'text-white/30'}`}>{t}</div>
                         ))}
                       </div>
                     </div>
-                    <div className="relative" style={{height:'80px'}}>
-                      <svg viewBox="0 0 600 120" preserveAspectRatio="none" className="w-full h-full">
+                    <div className="relative" style={{height:'100px'}}>
+                      <svg viewBox="0 0 600 100" preserveAspectRatio="none" className="w-full h-full">
                         <defs>
                           <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.25"/>
                             <stop offset="100%" stopColor="#3b82f6" stopOpacity="0"/>
                           </linearGradient>
                         </defs>
-                        <path d="M0,105 C30,105 50,100 80,90 C120,75 150,72 200,58 C250,44 280,38 310,33 C340,28 370,42 400,48 C430,54 460,44 500,28 C540,12 570,8 600,2" fill="none" stroke="#3b82f6" strokeWidth="2.5"/>
-                        <path d="M0,105 C30,105 50,100 80,90 C120,75 150,72 200,58 C250,44 280,38 310,33 C340,28 370,42 400,48 C430,54 460,44 500,28 C540,12 570,8 600,2 L600,120 L0,120 Z" fill="url(#g1)"/>
+                        <path d="M0,90 C30,90 50,85 80,75 C120,60 150,58 200,44 C250,30 280,24 310,20 C340,16 370,28 400,34 C430,40 460,30 500,16 C540,4 570,2 600,1" fill="none" stroke="#3b82f6" strokeWidth="2.5"/>
+                        <path d="M0,90 C30,90 50,85 80,75 C120,60 150,58 200,44 C250,30 280,24 310,20 C340,16 370,28 400,34 C430,40 460,30 500,16 C540,4 570,2 600,1 L600,100 L0,100 Z" fill="url(#g1)"/>
                       </svg>
                       <div className="absolute left-0 top-0 h-full flex flex-col justify-between py-1">
-                        {['3600','2700','1800','900','0'].map((v,i) => (
+                        {['3600','2700','1800','900','0'].map((v,i)=>(
                           <span key={i} className="text-[7px] text-white/20">{v}</span>
                         ))}
                       </div>
                     </div>
-                    <div className="flex justify-between mt-2">
-                      {['00:00','04:00','08:00','12:00','16:00','20:00','23:59'].map((t,i) => (
+                    <div className="flex justify-between mt-1">
+                      {['00:00','04:00','08:00','12:00','16:00','20:00','23:59'].map((t,i)=>(
                         <span key={i} className="text-[7px] text-white/20">{t}</span>
                       ))}
                     </div>
@@ -315,11 +325,30 @@ How it Works
                     <span className="text-sm font-bold text-white">Recent Requests</span>
                     <span className="text-[9px] text-blue-400 font-bold">View All →</span>
                   </div>
+                  <div className="px-4 pb-3">
+                    {[
+                      {model:'google/gemma-3-4b-it:free',type:'SIMPLE',tokens:'124',cost:'$0.0000'},
+                      {model:'openai/gpt-4o-mini',type:'COMPLEX',tokens:'891',cost:'$0.0001'},
+                      {model:'google/gemma-3-4b-it:free',type:'SIMPLE',tokens:'67',cost:'$0.0000'},
+                    ].map((row,i)=>(
+                      <div key={i} className="flex items-center gap-3 py-1.5 border-t border-white/[0.04]">
+                        <div className="flex items-center gap-1 flex-1">
+                          <div className="w-1.5 h-1.5 rounded-full bg-blue-400"/>
+                          <span className="text-[9px] font-bold text-white">{row.model}</span>
+                        </div>
+                        <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${row.type==='SIMPLE'?'bg-blue-500/20 text-blue-400':'bg-purple-500/20 text-purple-400'}`}>{row.type}</span>
+                        <span className="text-[9px] text-white/40 w-8 text-right">{row.tokens}</span>
+                        <span className="text-[9px] font-bold text-green-400 w-14 text-right">{row.cost}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-</div>
+
+              </div>
+            </div>
           </div>
         </div>
-        </div>
+      </div>
     </section>
   );
 };
