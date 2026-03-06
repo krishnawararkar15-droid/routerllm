@@ -126,7 +126,7 @@ const DashboardPreview = () => {
 
   useEffect(() => {
     const update = () => {
-      if (containerRef.current) setScale(containerRef.current.offsetWidth / 960);
+      if (containerRef.current) setScale(containerRef.current.offsetWidth / 780);
     };
     update();
     window.addEventListener('resize', update);
@@ -136,8 +136,8 @@ const DashboardPreview = () => {
   return (
     <div className="mt-12 mx-auto w-full max-w-6xl px-4">
       <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-blue-500/10">
-        <div ref={containerRef} style={{width:'100%', overflow:'hidden', height: `${480 * scale}px`}}>
-          <div style={{width:'960px',height:'480px',transform:`scale(${scale})`,transformOrigin:'top left'}} className="flex bg-black">
+        <div ref={containerRef} style={{width:'100%', overflow:'hidden', height: `${420 * scale}px`}}>
+          <div style={{width:'780px',height:'420px',transform:`scale(${scale})`,transformOrigin:'top left'}} className="flex bg-black">
 
             {/* Sidebar */}
             <div className="flex-shrink-0 bg-[#050505] border-r border-white/[0.06]" style={{width:'190px'}}>
