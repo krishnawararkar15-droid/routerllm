@@ -32,10 +32,10 @@ export const ProfilePopup: React.FC<ProfilePopupProps> = ({ userEmail, userPlan,
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [onClose]);
 
-  const tokensUsed = stats?.tokens_used || 0;
-  const tokenLimit = userPlan === 'free' ? 100000 : userPlan === 'pro' ? 1000000 : 10000000;
-  const usagePercent = Math.min((tokensUsed / tokenLimit) * 100, 100);
-  const usageColor = usagePercent < 60 ? 'bg-green-500' : usagePercent < 80 ? 'bg-yellow-500' : 'bg-red-500';
+  const tokensUsed = stats?.total_tokens ?? stats?.tokens_used ?? 0;
+  const tokenLimit = stats?.token_limit ?? 100000;
+  const percentage = tokenLimit > 0 ? Math.min((tokensUsed / tokenLimit) * 100, 100) : 0;
+  const usageColor = percentage < 60 ? 'bg-green-500' : percentage < 80 ? 'bg-yellow-500' : 'bg-red-500';
 
   const planColors: Record<string, string> = {
     free: 'bg-green-500/20 text-green-400 border-green-500/30',
@@ -70,10 +70,10 @@ export const ProfilePopup: React.FC<ProfilePopupProps> = ({ userEmail, userPlan,
         <div className="mt-2">
           <div className="flex justify-between text-[10px] text-white/50 mb-1">
             <span>{tokensUsed.toLocaleString()} / {tokenLimit.toLocaleString()} tokens</span>
-            <span>{Math.round(usagePercent)}%</span>
+            <span>{percentage.toFixed(1)}%</span>
           </div>
           <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div className={`h-full ${usageColor} transition-all duration-300`} style={{ width: `${usagePercent}%` }} />
+            <div className={`h-full ${usageColor} transition-all duration-300`} style={{ width: `${percentage}%` }} />
           </div>
         </div>
       </div>
