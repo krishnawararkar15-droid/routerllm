@@ -274,7 +274,7 @@ async def signup(data: dict):
             return {
                 "subscription_key": user["subscription_key"],
                 "plan": user.get("plan", "free"),
-                "token_limit": user.get("token_limit", 500000),
+                "token_limit": user.get("token_limit", 100000),
                 "email": email
             }
         # New user — create fresh key
@@ -288,13 +288,13 @@ async def signup(data: dict):
             "subscription_key": new_key,
             "plan": "free",
             "tokens_used": 0,
-            "token_limit": 500000,
+            "token_limit": 100000,
             "password_hash": password_hash
         }).execute()
         return {
             "subscription_key": new_key,
             "plan": "free",
-            "token_limit": 500000,
+            "token_limit": 100000,
             "email": email
         }
     except Exception as e:
@@ -343,7 +343,7 @@ async def route_prompt(data: dict):
     
     user = user_data.data[0]
     tokens_used = user.get("tokens_used", 0)
-    token_limit = user.get("token_limit", 500000)
+    token_limit = user.get("token_limit", 100000)
     
     if tokens_used >= token_limit:
         raise HTTPException(
@@ -434,7 +434,7 @@ async def get_subscription_info(subscription_key: str):
     
     user = user_data.data[0]
     tokens_used = user.get("tokens_used", 0)
-    token_limit = user.get("token_limit", 500000)
+    token_limit = user.get("token_limit", 100000)
     tokens_remaining = token_limit - tokens_used
     
     requests_data = supabase.table("requests").select("id").eq("subscription_key", subscription_key).execute()
