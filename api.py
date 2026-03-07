@@ -3,6 +3,7 @@ import os
 import secrets
 import string
 import bcrypt
+import httpx
 
 supabase = create_client(
     os.environ.get("SUPABASE_URL"),
@@ -19,6 +20,72 @@ from dotenv import load_dotenv
 load_dotenv()
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+
+async def send_budget_alert_email(email: str, tokens_used: int, token_limit: int, plan: str):
+    percentage = round((tokens_used / token_limit) * 100, 1)
+    tokens_remaining = token_limit - tokens_used
+
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0d14; color: #ffffff; padding: 40px; border-radius: 12px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+            <h1 style="color: #ffffff; font-size: 24px; margin: 0;">⚠️ LLMLite Budget Alert</h1>
+        </div>
+
+        <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+            <p style="color: #9ca3af; margin: 0 0 8px 0; font-size: 14px;">TOKEN USAGE</p>
+            <p style="color: #ffffff; font-size: 32px; font-weight: bold; margin: 0;">{percentage}% used</p>
+            <div style="background: #374151; border-radius: 4px; height: 8px; margin-top: 12px;">
+                <div style="background: {'#ef4444' if percentage >= 90 else '#f59e0b'}; width: {percentage}%; height: 8px; border-radius: 4px;"></div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+            <div style="flex: 1; background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 16px;">
+                <p style="color: #9ca3af; font-size: 12px; margin: 0 0 4px 0;">TOKENS USED</p>
+                <p style="color: #ffffff; font-size: 20px; font-weight: bold; margin: 0;">{tokens_used:,}</p>
+            </div>
+            <div style="flex: 1; background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 16px;">
+                <p style="color: #9ca3af; font-size: 12px; margin: 0 0 4px 0;">TOKENS REMAINING</p>
+                <p style="color: #ef4444; font-size: 20px; font-weight: bold; margin: 0;">{tokens_remaining:,}</p>
+            </div>
+        </div>
+
+        <p style="color: #9ca3af; font-size: 14px; line-height: 1.6;">
+            You have used <strong style="color: #ffffff;">{percentage}%</strong> of your {plan.upper()} plan token limit.
+            {'You are very close to your limit. Upgrade now to avoid interruption.' if percentage >= 90 else 'Consider upgrading your plan to ensure uninterrupted service.'}
+        </p>
+
+        <div style="text-align: center; margin-top: 32px;">
+            <a href="https://llmlite.vercel.app/dashboard/billing"
+               style="background: #3b82f6; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
+                Upgrade My Plan →
+            </a>
+        </div>
+
+        <p style="color: #4b5563; font-size: 12px; text-align: center; margin-top: 32px;">
+            LLMLite · You are receiving this because you enabled budget alerts
+        </p>
+    </div>
+    """
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.resend.com/emails",
+                headers={
+                    "Authorization": f"Bearer {os.getenv('RESEND_API_KEY')}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "from": "LLMLite Alerts <onboarding@resend.dev>",
+                    "to": [email],
+                    "subject": f"⚠️ LLMLite: You have used {percentage}% of your token limit",
+                    "html": html_content
+                }
+            )
+            print(f"Alert email sent to {email}: {response.status_code}")
+    except Exception as e:
+        print(f"Failed to send alert email: {e}")
 
 SUBSCRIPTION_KEYS = {
     "sub-basic-001": {"plan": "basic", "request_limit": 100, "requests_used": 0},
@@ -310,6 +377,28 @@ async def route_prompt(data: dict):
         supabase.table("users").update({
             "tokens_used": current_tokens + total_tokens
         }).eq("subscription_key", subscription_key).execute()
+        
+        # Get updated user data for budget alerts
+        user_result = supabase.table("users").select("*").eq("subscription_key", subscription_key).execute()
+        if user_result.data:
+            user = user_result.data[0]
+            tokens_used = user.get("tokens_used", 0)
+            token_limit = user.get("token_limit", 100000)
+            email = user.get("email", "")
+            plan = user.get("plan", "free")
+            percentage = (tokens_used / token_limit) * 100 if token_limit > 0 else 0
+
+            # Send alert at 80% — only once
+            alert_sent_80 = user.get("alert_sent_80", False)
+            if percentage >= 80 and not alert_sent_80:
+                await send_budget_alert_email(email, tokens_used, token_limit, plan)
+                supabase.table("users").update({"alert_sent_80": True}).eq("subscription_key", subscription_key).execute()
+
+            # Send alert at 95% — only once
+            alert_sent_95 = user.get("alert_sent_95", False)
+            if percentage >= 95 and not alert_sent_95:
+                await send_budget_alert_email(email, tokens_used, token_limit, plan)
+                supabase.table("users").update({"alert_sent_95": True}).eq("subscription_key", subscription_key).execute()
     except Exception as update_err:
         print(f"Failed to update tokens_used: {update_err}")
     
