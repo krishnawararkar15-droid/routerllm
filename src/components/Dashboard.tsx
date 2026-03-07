@@ -43,15 +43,81 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const data = [
-  { name: '00:00', requests: 400 },
-  { name: '04:00', requests: 300 },
-  { name: '08:00', requests: 2000 },
-  { name: '12:00', requests: 2780 },
-  { name: '16:00', requests: 1890 },
-  { name: '20:00', requests: 2390 },
-  { name: '23:59', requests: 3490 },
-];
+const processChartData = (requests: any[], filter: string) => {
+  if (!requests || requests.length === 0) {
+    if (filter === '24h') {
+      return Array.from({ length: 24 }, (_, i) => ({ name: `${i.toString().padStart(2, '0')}:00`, requests: 0 }));
+    } else if (filter === '7d') {
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      return days.map(day => ({ name: day, requests: 0 }));
+    } else if (filter === '30d') {
+      return Array.from({ length: 30 }, (_, i) => ({ name: `Day ${i + 1}`, requests: 0 }));
+    } else {
+      return [{ name: 'No Data', requests: 0 }];
+    }
+  }
+
+  const now = new Date();
+  const filtered = requests.filter((r: any) => {
+    const date = new Date(r.created_at);
+    if (filter === '24h') {
+      const hoursDiff = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+      return hoursDiff <= 24;
+    } else if (filter === '7d') {
+      const daysDiff = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
+      return daysDiff <= 7;
+    } else if (filter === '30d') {
+      const daysDiff = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
+      return daysDiff <= 30;
+    }
+    return true;
+  });
+
+  if (filter === '24h') {
+    const hourlyData: Record<number, number> = {};
+    for (let i = 0; i < 24; i++) hourlyData[i] = 0;
+    filtered.forEach((r: any) => {
+      const date = new Date(r.created_at);
+      const hour = date.getHours();
+      hourlyData[hour] = (hourlyData[hour] || 0) + 1;
+    });
+    return Object.entries(hourlyData).map(([hour, count]) => ({
+      name: `${hour.padStart(2, '0')}:00`,
+      requests: count
+    })).sort((a, b) => a.name.localeCompare(b.name));
+  } else if (filter === '7d') {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dailyData: Record<string, number> = {};
+    days.forEach(day => dailyData[day] = 0);
+    filtered.forEach((r: any) => {
+      const date = new Date(r.created_at);
+      const day = days[date.getDay()];
+      dailyData[day] = (dailyData[day] || 0) + 1;
+    });
+    return days.map(day => ({ name: day, requests: dailyData[day] }));
+  } else if (filter === '30d') {
+    const dailyData: Record<string, number> = {};
+    for (let i = 0; i < 30; i++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const key = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      dailyData[key] = 0;
+    }
+    filtered.forEach((r: any) => {
+      const date = new Date(r.created_at);
+      const key = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      if (dailyData.hasOwnProperty(key)) {
+        dailyData[key] = (dailyData[key] || 0) + 1;
+      }
+    });
+    return Object.entries(dailyData).map(([name, requests]) => ({ name, requests })).reverse();
+  }
+  
+  return filtered.map((r: any) => ({
+    name: new Date(r.created_at).toLocaleDateString(),
+    requests: 1
+  }));
+};
 
 const sparklineData = [
   { v: 40 }, { v: 70 }, { v: 45 }, { v: 90 }, { v: 65 }, { v: 80 }, { v: 95 }
@@ -94,9 +160,14 @@ export const Dashboard = () => {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('24h');
   const profileRef = useRef<HTMLDivElement>(null);
   const userKey = localStorage.getItem('routellm_key');
   const userEmail = localStorage.getItem('routellm_email') || '';
+
+  const chartData = React.useMemo(() => {
+    return processChartData(stats?.recent_requests || [], activeFilter);
+  }, [stats, activeFilter]);
 
   useEffect(() => {
     if (!userKey) { navigate('/login'); return; }
@@ -304,9 +375,10 @@ export const Dashboard = () => {
                   {['24h', '7d', '30d', 'All'].map((range) => (
                     <button 
                       key={range}
+                      onClick={() => setActiveFilter(range)}
                       className={cn(
-                        "px-2 py-1 sm:px-2.5 sm:py-1 rounded-md text-[8px] sm:text-[9px] font-bold transition-all",
-                        range === '24h' ? "bg-white/10 text-white" : "text-white/40 hover:text-white"
+                        "px-3 py-1 rounded-md text-sm font-semibold transition-all cursor-pointer",
+                        activeFilter === range ? "bg-white text-black" : "text-gray-400 hover:text-white"
                       )}
                     >
                       {range}
@@ -316,7 +388,7 @@ export const Dashboard = () => {
               </div>
               <div className="h-[180px] sm:h-[300px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={data}>
+                  <AreaChart data={chartData}>
                     <defs>
                       <linearGradient id="colorRequests" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.12}/>
@@ -352,6 +424,9 @@ export const Dashboard = () => {
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
+              {!loading && chartData.every((d: any) => d.requests === 0) && (
+                <p className="text-center text-white/40 text-sm mt-4">No requests in this period yet</p>
+              )}
             </div>
 
             {/* Recent Activity Table */}
