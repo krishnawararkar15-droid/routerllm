@@ -53,6 +53,7 @@ import { TermsOfService } from './components/TermsOfService';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { RefundPolicy } from './components/RefundPolicy';
 import { Pricing } from './components/Pricing';
+import AuthCallback from './components/AuthCallback';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -1194,6 +1195,7 @@ export default function App() {
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/refund" element={<RefundPolicy />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/docs" element={<Docs />} />
         </Routes>
       </div>
