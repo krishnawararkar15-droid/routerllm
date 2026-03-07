@@ -126,7 +126,7 @@ export const FreeTier = () => {
   }, []);
 
   const tokensUsed = stats?.tokens_used ?? stats?.total_tokens ?? 0;
-  const tokenLimit = stats?.token_limit ?? 500000;
+  const tokenLimit = stats?.token_limit ?? 100000;
   const tokensRemaining = Math.max(0, tokenLimit - tokensUsed);
   const usagePercent = Math.min(100, Math.round((tokensUsed / tokenLimit) * 100));
   
@@ -207,7 +207,7 @@ export const FreeTier = () => {
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <span className="px-3 py-1.5 bg-green-500/20 text-green-400 text-xs font-bold rounded-full border border-green-500/30">FREE PLAN</span>
-                <span className="text-white/40 text-xs">500,000 tokens / month</span>
+                <span className="text-white/40 text-xs">100,000 tokens / month</span>
               </div>
               <div className="text-3xl font-black mb-2">{tokensUsed.toLocaleString()} <span className="text-white/40 text-lg">tokens used</span></div>
               <div className="text-lg text-white/60 mb-4">{tokensRemaining.toLocaleString()} tokens remaining</div>
@@ -238,7 +238,7 @@ export const FreeTier = () => {
                 <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-5">
                   <h3 className="text-sm font-bold text-green-400 mb-4">✅ INCLUDED</h3>
                   <ul className="space-y-3 text-sm">
-                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /> 500,000 tokens per month</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /> 100,000 tokens per month</li>
                     <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /> Auto routing (simple vs complex)</li>
                     <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /> 3 free models (Gemma, Llama, Mistral)</li>
                     <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-400" /> Real-time routing decisions</li>

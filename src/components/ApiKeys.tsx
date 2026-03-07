@@ -279,7 +279,7 @@ console.log(data);`,
               </div>
               <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 lg:p-6">
                 <div className="text-[9px] text-white/30 uppercase tracking-widest mb-1">Tokens Left</div>
-                <div className="text-2xl lg:text-3xl font-bold text-green-400">{((stats?.token_limit ?? 500000) - (stats?.total_tokens ?? 0)).toLocaleString()}</div>
+                <div className="text-2xl lg:text-3xl font-bold text-green-400">{((stats?.token_limit ?? 100000) - (stats?.total_tokens ?? 0)).toLocaleString()}</div>
               </div>
             </div>
 

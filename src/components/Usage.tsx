@@ -147,7 +147,7 @@ export const Usage = () => {
   };
 
   const tokensUsed = stats?.total_tokens ?? stats?.tokens_used ?? 0;
-  const tokenLimit = stats?.token_limit ?? 500000;
+  const tokenLimit = stats?.token_limit ?? 100000;
   const pct = Math.min(100, Math.round((tokensUsed / tokenLimit) * 100));
   const simpleCount = (stats?.recent_requests || []).filter((r: any) => r.prompt_type?.toUpperCase() === 'SIMPLE').length;
   const complexCount = (stats?.recent_requests || []).filter((r: any) => r.prompt_type?.toUpperCase() === 'COMPLEX').length;

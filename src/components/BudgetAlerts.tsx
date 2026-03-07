@@ -126,7 +126,7 @@ export const BudgetAlerts = () => {
   }, []);
 
   const tokensUsed = stats?.total_tokens ?? 0;
-  const tokenLimit = stats?.token_limit ?? 500000;
+  const tokenLimit = stats?.token_limit ?? 100000;
   const tokenPct = Math.min(100, Math.round((tokensUsed / tokenLimit) * 100));
   const totalCost = stats?.total_cost ?? 0;
   const costPct = Math.min(100, Math.round((totalCost / costLimit) * 100));

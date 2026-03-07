@@ -453,7 +453,7 @@ export const Docs = () => {
                         { field: 'total_cost', type: 'number', desc: 'Total cost in USD paid' },
                         { field: 'total_savings', type: 'number', desc: 'Money saved vs using GPT-4o for everything' },
                         { field: 'tokens_used', type: 'number', desc: 'Tokens used against your plan limit' },
-                        { field: 'token_limit', type: 'number', desc: 'Your plan token limit (500000 for free)' },
+                        { field: 'token_limit', type: 'number', desc: 'Your plan token limit (100000 for free)' },
                         { field: 'plan', type: 'string', desc: 'Your current plan: free, starter, or pro' },
                         { field: 'recent_requests', type: 'array', desc: 'Last 10 requests with model, tokens, cost, time' },
                       ].map((r, i) => (
@@ -560,7 +560,7 @@ response = requests.post(
 data = response.json()
 print(data["subscription_key"])  # sk-rl-xxxxx
 print(data["plan"])              # free
-print(data["token_limit"])       # 500000`} copied={copied} onCopy={copyCode} />
+print(data["token_limit"])       # 100000`} copied={copied} onCopy={copyCode} />
             </div>
           )}
 
