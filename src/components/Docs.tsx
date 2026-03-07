@@ -82,6 +82,23 @@ const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpe
       <NavItem icon={Settings} label="Custom Rules" to="#" />
     </div>
 
+    {/* Upgrade Banner for Free Users */}
+    {(() => {
+      const plan = localStorage.getItem('routellm_plan') || 'free';
+      if (plan === 'free') {
+        return (
+          <div className="mx-3 mb-3 bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-xl p-3">
+            <p className="text-white text-xs font-semibold mb-1">⚡ Upgrade to Pro</p>
+            <p className="text-gray-400 text-xs mb-2">Unlock all models and features</p>
+            <a href="/dashboard/billing" className="block text-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-2 rounded-lg transition-all">
+              Upgrade — $29/mo
+            </a>
+          </div>
+        );
+      }
+      return null;
+    })()}
+
     <div ref={profileRef} style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3 relative">
       <div className="flex items-center gap-3 px-2 py-2 mb-1" onClick={() => setProfilePopupOpen && setProfilePopupOpen(!profilePopupOpen)}>
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-black text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', boxShadow: '0 0 12px rgba(59,130,246,0.4)' }}>

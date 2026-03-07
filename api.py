@@ -342,6 +342,13 @@ async def route_prompt(data: dict):
         raise HTTPException(status_code=401, detail="Invalid subscription key")
     
     user = user_data.data[0]
+    user_plan = user.get('plan', 'free')
+    requested_model = data.get('model_override')
+    
+    # Block manual override for free users
+    if user_plan == 'free' and requested_model:
+        return {"error": "Manual model override is a Pro feature. Upgrade at llmlite.vercel.app/pricing"}
+    
     tokens_used = user.get("tokens_used", 0)
     token_limit = user.get("token_limit", 100000)
     
