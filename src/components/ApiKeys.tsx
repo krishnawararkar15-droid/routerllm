@@ -403,28 +403,28 @@ console.log(data);`,
                   <div className="flex flex-wrap gap-3">
                     <div className="bg-gray-900 rounded-lg px-3 py-2">
                       <p className="text-gray-500 text-xs">MODEL</p>
-                      <p className="text-white text-sm font-medium">{testResult.model || testResult.model_used || 'N/A'}</p>
+                      <p className="text-white text-sm font-medium">{testResult.model_used}</p>
                     </div>
                     <div className="bg-gray-900 rounded-lg px-3 py-2">
                       <p className="text-gray-500 text-xs">TYPE</p>
                       <p className={`text-sm font-medium ${testResult.prompt_type === 'SIMPLE' ? 'text-green-400' : 'text-orange-400'}`}>
-                        {testResult.prompt_type || 'N/A'}
+                        {testResult.prompt_type}
                       </p>
                     </div>
                     <div className="bg-gray-900 rounded-lg px-3 py-2">
                       <p className="text-gray-500 text-xs">TOKENS</p>
-                      <p className="text-white text-sm font-medium">{testResult.tokens_used || testResult.tokens || 'N/A'}</p>
+                      <p className="text-white text-sm font-medium">{testResult.tokens_used}</p>
                     </div>
                     <div className="bg-gray-900 rounded-lg px-3 py-2">
                       <p className="text-gray-500 text-xs">COST</p>
-                      <p className="text-green-400 text-sm font-medium">${(testResult.cost_usd || testResult.cost || 0).toFixed(6)}</p>
+                      <p className="text-green-400 text-sm font-medium">${Number(testResult.cost_usd).toFixed(6)}</p>
                     </div>
                   </div>
-                  {(testResult.response || testResult.content || testResult.text) && (
+                  {testResult.response && (
                     <div className="bg-gray-900 rounded-lg p-3">
                       <p className="text-gray-500 text-xs mb-2">AI RESPONSE</p>
                       <p className="text-gray-300 text-sm leading-relaxed">
-                        {testResult.response || testResult.content || testResult.text}
+                        {testResult.response}
                       </p>
                     </div>
                   )}

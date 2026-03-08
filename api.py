@@ -484,6 +484,7 @@ async def route_prompt(data: dict):
     return {
         "response": response_text,
         "model_used": model,
+        "prompt_type": prompt_type,
         "tokens_used": total_tokens,
         "cost_usd": cost,
         "requests_remaining": tokens_remaining

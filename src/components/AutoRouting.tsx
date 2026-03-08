@@ -330,16 +330,16 @@ export const AutoRouting = () => {
                     </div>
                     <ArrowRight className="w-4 h-4 text-white/30" />
                     <div className="bg-white/10 border border-white/10 px-3 py-1.5 rounded-lg text-xs font-black text-white">
-                      🤖 {testResult.model || testResult.model_used || 'N/A'}
+                      🤖 {testResult.model_used}
                     </div>
                     <div className="ml-auto flex items-center gap-4 text-xs text-white/30">
-                      <span>Tokens: <span className="text-white font-bold">{testResult.tokens_used || testResult.tokens || 'N/A'}</span></span>
-                      <span>Cost: <span className="text-green-400 font-bold">${Number(testResult.cost_usd || testResult.cost || 0).toFixed(4)}</span></span>
+                      <span>Tokens: <span className="text-white font-bold">{testResult.tokens_used}</span></span>
+                      <span>Cost: <span className="text-green-400 font-bold">${Number(testResult.cost_usd).toFixed(4)}</span></span>
                     </div>
                   </div>
                   <div className="bg-black/30 rounded-xl p-4">
                     <p className="text-[10px] text-white/30 uppercase tracking-widest mb-2">AI Response</p>
-                    <p className="text-sm text-white/80 leading-relaxed">{testResult.response || testResult.content || testResult.text || 'No response'}</p>
+                    <p className="text-sm text-white/80 leading-relaxed">{testResult.response}</p>
                   </div>
                 </div>
               )}
