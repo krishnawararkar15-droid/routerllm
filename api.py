@@ -10,7 +10,8 @@ supabase = create_client(
     os.environ.get("SUPABASE_KEY")
 )
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import requests
 import re
@@ -358,8 +359,64 @@ async def route_prompt(data: dict):
             detail=f"Token limit reached. Used {tokens_used}/{token_limit} tokens."
         )
 
+    # Check custom rules first
+    custom_model = None
+    try:
+        rules_result = supabase.table("routing_rules")\
+            .select("*")\
+            .eq("subscription_key", subscription_key)\
+            .eq("is_active", True)\
+            .order("priority", desc=True)\
+            .execute()
+        
+        if rules_result.data:
+            prompt_lower = prompt.lower()
+            word_count = len(prompt.split())
+            
+            for rule in rules_result.data:
+                rule_type = rule.get("rule_type")
+                condition = rule.get("condition_value", "")
+                
+                if rule_type == "keyword":
+                    if condition.lower() in prompt_lower:
+                        custom_model = rule.get("target_model")
+                        break
+                        
+                elif rule_type == "token_length":
+                    try:
+                        if word_count > int(condition):
+                            custom_model = rule.get("target_model")
+                            break
+                    except:
+                        pass
+                        
+                elif rule_type == "cost_cap":
+                    custom_model = rule.get("target_model")
+                    break
+                    
+                elif rule_type == "topic":
+                    if condition.lower() in prompt_lower:
+                        custom_model = rule.get("target_model")
+                        break
+                        
+                elif rule_type == "time_based":
+                    from datetime import datetime
+                    current_hour = datetime.now().hour
+                    try:
+                        from_hour, to_hour = condition.split("-")
+                        if int(from_hour) <= current_hour <= int(to_hour):
+                            custom_model = rule.get("target_model")
+                            break
+                    except:
+                        pass
+    except Exception as e:
+        print(f"Error checking custom rules: {e}")
+
     # If model_override provided skip classification
-    if model_override:
+    if custom_model:
+        model = custom_model
+        prompt_type = "CUSTOM_RULE"
+    elif model_override:
         model = model_override
         prompt_type = "MANUAL"
     else:
@@ -431,6 +488,46 @@ async def route_prompt(data: dict):
         "cost_usd": cost,
         "requests_remaining": tokens_remaining
     }
+
+@app.post("/rules")
+async def create_rule(request: Request):
+    data = await request.json()
+    subscription_key = data.get("subscription_key")
+
+    # Check plan
+    user = supabase.table("users").select("*").eq("subscription_key", subscription_key).execute()
+    if not user.data:
+        return JSONResponse(status_code=404, content={"error": "User not found"})
+
+    if user.data[0].get("plan") == "free":
+        return JSONResponse(status_code=403, content={"error": "Custom rules are a Pro feature"})
+
+    result = supabase.table("routing_rules").insert({
+        "subscription_key": subscription_key,
+        "rule_name": data.get("rule_name"),
+        "rule_type": data.get("rule_type"),
+        "condition_value": data.get("condition_value"),
+        "target_model": data.get("target_model"),
+        "priority": data.get("priority", 1),
+        "is_active": True
+    }).execute()
+
+    return {"success": True, "rule": result.data[0]}
+
+@app.get("/rules/{subscription_key}")
+async def get_rules(subscription_key: str):
+    result = supabase.table("routing_rules")\
+        .select("*")\
+        .eq("subscription_key", subscription_key)\
+        .eq("is_active", True)\
+        .order("priority", desc=True)\
+        .execute()
+    return {"rules": result.data}
+
+@app.delete("/rules/{rule_id}")
+async def delete_rule(rule_id: str):
+    supabase.table("routing_rules").delete().eq("id", rule_id).execute()
+    return {"success": True}
 
 @app.get("/subscription/{subscription_key}")
 async def get_subscription_info(subscription_key: str):
