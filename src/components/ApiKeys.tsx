@@ -24,6 +24,7 @@ export const ApiKeys = () => {
   const [testPrompt, setTestPrompt] = useState('');
   const [testResult, setTestResult] = useState<any>(null);
   const [testLoading, setTestLoading] = useState(false);
+  const [testError, setTestError] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -45,18 +46,31 @@ export const ApiKeys = () => {
   };
 
   const runTest = async () => {
-    if (!testPrompt) return;
+    if (!testPrompt.trim()) return;
     setTestLoading(true);
+    setTestResult(null);
+    setTestError('');
     try {
-      const res = await fetch('https://routerllm.onrender.com/route', {
+      const key = localStorage.getItem('routellm_key');
+      const response = await fetch('https://routerllm.onrender.com/route', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: testPrompt, subscription_key: userKey })
+        body: JSON.stringify({
+          prompt: testPrompt,
+          subscription_key: key
+        })
       });
-      const data = await res.json();
-      setTestResult(data);
-    } catch(e) { console.error(e); }
-    setTestLoading(false);
+      const data = await response.json();
+      if (data.error) {
+        setTestError(data.error);
+      } else {
+        setTestResult(data);
+      }
+    } catch (err) {
+      setTestError('Failed to connect to backend. Try again.');
+    } finally {
+      setTestLoading(false);
+    }
   };
 
   const codeExamples = {
@@ -371,15 +385,49 @@ console.log(data);`,
                   {testLoading ? 'Running...' : '▶ Run Test'}
                 </button>
               </div>
+              {testLoading && (
+                <div className="flex items-center gap-2 text-gray-400 text-sm mt-3">
+                  <div className="animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                  Routing your prompt...
+                </div>
+              )}
+
+              {testError && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mt-3">
+                  <p className="text-red-400 text-sm">{testError}</p>
+                </div>
+              )}
+
               {testResult && (
-                <div className="mt-4 bg-black/40 border border-white/10 rounded-lg p-4">
-                  <div className="flex gap-4 mb-2 text-xs">
-                    <span className="text-white/40">Model: <span className="text-blue-400 font-bold">{testResult.model_used}</span></span>
-                    <span className="text-white/40">Type: <span className="text-white font-bold">{testResult.prompt_type}</span></span>
-                    <span className="text-white/40">Tokens: <span className="text-white font-bold">{testResult.tokens_used}</span></span>
-                    <span className="text-white/40">Cost: <span className="text-green-400 font-bold">${testResult.cost_usd}</span></span>
+                <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 mt-3 space-y-3">
+                  <div className="flex flex-wrap gap-3">
+                    <div className="bg-gray-900 rounded-lg px-3 py-2">
+                      <p className="text-gray-500 text-xs">MODEL</p>
+                      <p className="text-white text-sm font-medium">{testResult.model || testResult.model_used || 'N/A'}</p>
+                    </div>
+                    <div className="bg-gray-900 rounded-lg px-3 py-2">
+                      <p className="text-gray-500 text-xs">TYPE</p>
+                      <p className={`text-sm font-medium ${testResult.prompt_type === 'SIMPLE' ? 'text-green-400' : 'text-orange-400'}`}>
+                        {testResult.prompt_type || 'N/A'}
+                      </p>
+                    </div>
+                    <div className="bg-gray-900 rounded-lg px-3 py-2">
+                      <p className="text-gray-500 text-xs">TOKENS</p>
+                      <p className="text-white text-sm font-medium">{testResult.tokens_used || testResult.tokens || 'N/A'}</p>
+                    </div>
+                    <div className="bg-gray-900 rounded-lg px-3 py-2">
+                      <p className="text-gray-500 text-xs">COST</p>
+                      <p className="text-green-400 text-sm font-medium">${(testResult.cost_usd || testResult.cost || 0).toFixed(6)}</p>
+                    </div>
                   </div>
-                  <p className="text-sm text-white/70 leading-relaxed">{testResult.response}</p>
+                  {(testResult.response || testResult.content || testResult.text) && (
+                    <div className="bg-gray-900 rounded-lg p-3">
+                      <p className="text-gray-500 text-xs mb-2">AI RESPONSE</p>
+                      <p className="text-gray-300 text-sm leading-relaxed">
+                        {testResult.response || testResult.content || testResult.text}
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

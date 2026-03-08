@@ -130,6 +130,7 @@ export const AutoRouting = () => {
   const [testPrompt, setTestPrompt] = useState('');
   const [testResult, setTestResult] = useState<any>(null);
   const [testLoading, setTestLoading] = useState(false);
+  const [error, setError] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -150,15 +151,23 @@ export const AutoRouting = () => {
     if (!p.trim()) return;
     setTestLoading(true);
     setTestResult(null);
+    setError('');
     try {
+      const key = localStorage.getItem('routellm_key');
       const res = await fetch('https://routerllm.onrender.com/route', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: p, subscription_key: userKey })
+        body: JSON.stringify({ prompt: p, subscription_key: key })
       });
       const data = await res.json();
-      setTestResult(data);
-    } catch(e) { console.error(e); }
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setTestResult(data);
+      }
+    } catch(e) { 
+      setError('Failed to connect to backend. Try again.'); 
+    }
     setTestLoading(false);
   };
 
@@ -307,6 +316,12 @@ export const AutoRouting = () => {
               </div>
 
               {/* Result */}
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
+
               {testResult && (
                 <div className={`rounded-xl border p-5 transition-all ${testResult.prompt_type === 'SIMPLE' ? 'bg-blue-500/[0.05] border-blue-500/30' : 'bg-purple-500/[0.05] border-purple-500/30'}`}>
                   <div className="flex items-center gap-3 mb-4">
@@ -315,16 +330,16 @@ export const AutoRouting = () => {
                     </div>
                     <ArrowRight className="w-4 h-4 text-white/30" />
                     <div className="bg-white/10 border border-white/10 px-3 py-1.5 rounded-lg text-xs font-black text-white">
-                      🤖 {testResult.model_used}
+                      🤖 {testResult.model || testResult.model_used || 'N/A'}
                     </div>
                     <div className="ml-auto flex items-center gap-4 text-xs text-white/30">
-                      <span>Tokens: <span className="text-white font-bold">{testResult.tokens_used}</span></span>
-                      <span>Cost: <span className="text-green-400 font-bold">${Number(testResult.cost_usd || 0).toFixed(4)}</span></span>
+                      <span>Tokens: <span className="text-white font-bold">{testResult.tokens_used || testResult.tokens || 'N/A'}</span></span>
+                      <span>Cost: <span className="text-green-400 font-bold">${Number(testResult.cost_usd || testResult.cost || 0).toFixed(4)}</span></span>
                     </div>
                   </div>
                   <div className="bg-black/30 rounded-xl p-4">
                     <p className="text-[10px] text-white/30 uppercase tracking-widest mb-2">AI Response</p>
-                    <p className="text-sm text-white/80 leading-relaxed">{testResult.response}</p>
+                    <p className="text-sm text-white/80 leading-relaxed">{testResult.response || testResult.content || testResult.text || 'No response'}</p>
                   </div>
                 </div>
               )}
