@@ -173,6 +173,8 @@ export const ModelsPage = () => {
   const userEmail = localStorage.getItem('routellm_email') || '';
   const navigate = useNavigate();
   const location = useLocation();
+  const plan = localStorage.getItem('routellm_plan') || 'free';
+  const isFree = plan === 'free';
 
   useEffect(() => {
     if (!userKey) { navigate('/login'); }
@@ -275,7 +277,24 @@ export const ModelsPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-4 lg:p-8 pb-32 lg:pb-8">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8 pb-32 lg:pb-8 relative">
+          {isFree && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center rounded-2xl"
+              style={{backdropFilter: 'blur(8px)', background: 'rgba(10,13,20,0.85)'}}>
+              <div className="text-center p-8 max-w-sm">
+                <div className="text-4xl mb-4">🔒</div>
+                <h3 className="text-white text-xl font-bold mb-2">100+ Models</h3>
+                <p className="text-gray-400 text-sm mb-6">
+                  Access GPT-4o, Claude 3.5 Sonnet, Gemini, and 100+ models. Route any prompt to exactly the model you need.
+                </p>
+                <a href="/dashboard/billing"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl inline-block transition-all">
+                  Upgrade to Pro — $29/mo →
+                </a>
+                <p className="text-gray-600 text-xs mt-3">7-day money back guarantee</p>
+              </div>
+            </div>
+          )}
           <div className="max-w-6xl mx-auto space-y-6">
 
             {/* Header */}

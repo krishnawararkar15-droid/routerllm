@@ -14,6 +14,8 @@ export const ApiKeys = () => {
   const navigate = useNavigate();
   const userKey = localStorage.getItem('routellm_key') || '';
   const userEmail = localStorage.getItem('routellm_email') || '';
+  const plan = localStorage.getItem('routellm_plan') || 'free';
+  const isFree = plan === 'free';
   const [showKey, setShowKey] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
@@ -329,10 +331,24 @@ console.log(data);`,
             <div className="bg-red-500/[0.05] border border-red-500/20 rounded-xl p-6">
               <h3 className="text-sm font-bold text-red-400 mb-1">Danger Zone</h3>
               <p className="text-white/30 text-xs mb-4">Regenerating your key will invalidate the current one. All existing integrations using the old key will stop working.</p>
-              <button onClick={() => alert('Regenerate key coming soon!')}
-                className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 font-bold px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2">
-                <RefreshCw className="w-4 h-4" /> Regenerate Key
-              </button>
+              {isFree ? (
+                <>
+                  <button
+                    disabled
+                    className="flex items-center gap-2 bg-gray-800 border border-gray-700 text-gray-500 px-4 py-2 rounded-lg cursor-not-allowed"
+                  >
+                    🔒 Regenerate Key — Pro Only
+                  </button>
+                  <p className="text-xs text-gray-500 mt-1">
+                    <a href="/dashboard/billing" className="text-blue-400 hover:underline">Upgrade to Pro</a> to regenerate your API key
+                  </p>
+                </>
+              ) : (
+                <button onClick={() => alert('Regenerate key coming soon!')}
+                  className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 font-bold px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2">
+                  <RefreshCw className="w-4 h-4" /> Regenerate Key
+                </button>
+              )}
             </div>
 
             {/* Quick Test Card */}
