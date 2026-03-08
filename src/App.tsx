@@ -278,7 +278,7 @@ const Hero = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center pt-24 pb-0 overflow-hidden bg-black text-white">
+    <section className="min-h-screen flex flex-col items-center justify-center pt-24 pb-0 overflow-hidden w-full max-w-full bg-black text-white">
       {/* Blue Radial Glow */}
       <div className="absolute inset-0 pointer-events-none" 
         style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(37,99,235,0.15), transparent)' }} 
@@ -290,13 +290,13 @@ const Hero = () => {
         className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] md:h-[500px] bg-gradient-to-b from-blue-500/10 to-transparent pointer-events-none"
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 overflow-x-hidden w-full">
+        <div className="text-center max-w-3xl mx-auto w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-500/30 text-blue-400 text-xs px-3 py-1 rounded-full mb-6 md:mb-8"
+            className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-500/30 text-blue-400 text-xs px-3 py-1 rounded-full mb-6 md:mb-8 mx-4 text-center"
           >
             <span>✦ Introducing LLMLite 1.0</span>
             <ArrowRight className="w-3 h-3" />
@@ -306,7 +306,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-            className="text-5xl md:text-6xl lg:text-7xl font-bold text-white text-center leading-tight"
+            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white text-center leading-tight px-4 w-full"
           >
             One API To Cut Your <br className="hidden md:block" /> AI Costs Forever
           </motion.h1>
@@ -315,7 +315,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            className="text-gray-400 text-center text-lg max-w-xl mx-auto mt-4"
+            className="text-gray-400 text-center text-base px-6 w-full max-w-xl mx-auto mt-4"
           >
             LLMLite automatically routes every prompt to the cheapest AI model that can handle it. Simple questions go to free models. Complex tasks go to powerful ones. Save 30–80% on every API bill — automatically.
           </motion.p>
@@ -324,13 +324,13 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-            className="flex justify-center"
+            className="flex justify-center w-full px-4"
           >
             <motion.button
               onClick={() => navigate('/signup')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition-all duration-200 mt-8"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition-all duration-200 mt-8 max-w-xs w-full sm:w-auto text-center"
             >
               Try it out →
             </motion.button>
