@@ -20,7 +20,8 @@ import {
   Menu,
   X,
   RefreshCw,
-  Shield
+  Shield,
+  Sliders
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -184,7 +185,7 @@ export const Dashboard = () => {
     </div>
   );
 
-  const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, label: string, active?: boolean, to?: string }) => (
+  const NavItem = ({ icon: Icon, label, active = false, to = "#", badge }: { icon: any, label: string, active?: boolean, to?: string, badge?: string }) => (
     <Link
       to={to}
       className="flex items-center gap-3 px-3 py-1.5 rounded-xl transition-all w-full mb-1"
@@ -205,7 +206,8 @@ export const Dashboard = () => {
       }}
     >
       <Icon className="w-3.5 h-3.5 flex-shrink-0" style={active ? { color: '#60a5fa' } : { color: 'rgba(255,255,255,0.4)' }} />
-      <span className="text-[12px] font-medium">{label}</span>
+      <span className="text-[12px] font-medium flex-1">{label}</span>
+      {badge && <span className="bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">{badge}</span>}
     </Link>
   );
 
@@ -231,6 +233,7 @@ export const Dashboard = () => {
         <SectionLabel label="Routing" />
         <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" />
         <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" />
+        <NavItem icon={Sliders} label="Custom Rules" to="/dashboard/rules" badge="PRO" />
 
         <SectionLabel label="Cost Control" />
         <NavItem icon={Bell} label="Budget Alerts" to="#" />

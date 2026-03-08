@@ -54,6 +54,7 @@ import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { RefundPolicy } from './components/RefundPolicy';
 import { Pricing } from './components/Pricing';
 import AuthCallback from './components/AuthCallback';
+import { CustomRules } from './components/CustomRules';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -1185,6 +1186,7 @@ export default function App() {
           <Route path="/dashboard/usage" element={<Usage />} />
           <Route path="/dashboard/routing" element={<AutoRouting />} />
           <Route path="/dashboard/override" element={<ManualOverride />} />
+          <Route path="/dashboard/rules" element={<CustomRules />} />
           <Route path="/dashboard/alerts" element={<BudgetAlerts />} />
           <Route path="/dashboard/models" element={<ModelsPage />} />
           <Route path="/dashboard/realtime" element={<RealTimeRouting />} />
