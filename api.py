@@ -124,12 +124,16 @@ async def send_welcome_email(email: str, subscription_key: str):
     """
 
     try:
+        brevo_key = os.getenv("BREVO_API_KEY")
+        print(f"Brevo key found: {brevo_key is not None}, length: {len(brevo_key) if brevo_key else 0}, starts with: {brevo_key[:10] if brevo_key else 'NONE'}")
+        
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 "https://api.brevo.com/v3/smtp/email",
                 headers={
-                    "api-key": os.getenv("BREVO_API_KEY"),
-                    "Content-Type": "application/json"
+                    "api-key": brevo_key,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
                 },
                 json={
                     "sender": {"name": "LLMLite", "email": "krishnawararkar15@gmail.com"},
@@ -138,6 +142,7 @@ async def send_welcome_email(email: str, subscription_key: str):
                     "htmlContent": html_content
                 }
             )
+            print(f"Brevo response: {response.status_code} - {response.text}")
             print(f"Welcome email sent to {email}: {response.status_code}")
     except Exception as e:
         print(f"Failed to send welcome email: {e}")
