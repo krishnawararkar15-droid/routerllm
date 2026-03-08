@@ -57,33 +57,31 @@ const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpe
 
     <div className="flex-1 overflow-y-auto px-2 py-3">
       <SectionLabel label="Navigation" />
-      <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" active={location.pathname === '/dashboard'} />
-      <NavItem icon={Key} label="API Keys" to="/dashboard/keys" active={location.pathname === '/dashboard/keys'} />
-      <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" active={location.pathname === '/dashboard/usage'} />
-      <NavItem icon={FileText} label="Documentation" to="/docs" active={location.pathname === '/docs'} />
+      <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" />
+      <NavItem icon={Key} label="API Keys" to="/dashboard/keys" />
+      <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" />
+      <NavItem icon={FileText} label="Documentation" to="/docs" />
 
       <SectionLabel label="Routing" />
-      <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" active={location.pathname === '/dashboard/routing'} />
-      <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" active={location.pathname === '/dashboard/override'} />
-      <NavItem icon={Sliders} label="Custom Rules" to="/dashboard/rules" active={location.pathname === '/dashboard/rules'} badge="PRO" />
+      <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" />
+      <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" />
+      <NavItem icon={Sliders} label="Custom Rules" to="/dashboard/rules" badge="PRO" />
 
       <SectionLabel label="Cost Control" />
-      <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" />
+      <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" badge="PRO" />
 
       <SectionLabel label="Model Access" />
-      <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" />
+      <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" badge="PRO" />
 
       <SectionLabel label="Developer Tools" />
-        <NavItem icon={FileText} label="Cost Transparency" to="/dashboard/cost" />
-
-      <SectionLabel label="Key Management" />
-      <NavItem icon={Key} label="Multiple Keys" to="/dashboard/keys" />
-      <NavItem icon={BarChart3} label="Usage Tracking" to="/dashboard/usage" />
+      <NavItem icon={FileText} label="Cost Transparency" to="/dashboard/cost" />
 
       <SectionLabel label="Plans & Security" />
-      <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" active={location.pathname === '/dashboard/freetier'} />
-      <NavItem icon={Shield} label="Secure & Private" to="/dashboard/security" active={location.pathname === '/dashboard/security'} />
-      <NavItem icon={Settings} label="Custom Rules" to="/dashboard/rules" />
+      <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" />
+      <NavItem icon={Shield} label="Secure & Private" to="/dashboard/security" />
+
+      <SectionLabel label="Key Management" />
+      <NavItem icon={Key} label="Multiple Keys" to="/dashboard/multiplekeys" />
     </div>
 
     {/* Upgrade Banner for Free Users */}

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Search, Copy, Check, X, ChevronUp, ChevronDown, CheckCircle2, AlertTriangle, Menu, Activity, DollarSign } from 'lucide-react';
+import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Search, Copy, Check, X, ChevronUp, ChevronDown, CheckCircle2, AlertTriangle, Menu, Activity, Sliders } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -14,7 +14,7 @@ const SectionLabel = ({ label }: { label: string }) => (
   </div>
 );
 
-const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, label: string, active?: boolean, to?: string }) => (
+const NavItem = ({ icon: Icon, label, active = false, to = "#", badge }: { icon: any, label: string, active?: boolean, to?: string, badge?: string }) => (
   <Link
     to={to}
     className="flex items-center gap-3 px-3 py-1.5 rounded-xl transition-all w-full mb-1"
@@ -36,6 +36,7 @@ const NavItem = ({ icon: Icon, label, active = false, to = "#" }: { icon: any, l
   >
     <Icon className="w-3.5 h-3.5 flex-shrink-0" style={active ? { color: '#60a5fa' } : { color: 'rgba(255,255,255,0.4)' }} />
     <span className="text-[12px] font-medium">{label}</span>
+    {badge && <span className="ml-auto bg-blue-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">{badge}</span>}
   </Link>
 );
 
@@ -54,25 +55,31 @@ const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpe
 
     <div className="flex-1 overflow-y-auto px-2 py-3">
       <SectionLabel label="Navigation" />
-      <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" active={location.pathname === '/dashboard'} />
-      <NavItem icon={Key} label="API Keys" to="/dashboard/keys" active={location.pathname === '/dashboard/keys'} />
-      <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" active={location.pathname === '/dashboard/usage'} />
-      <NavItem icon={FileText} label="Documentation" to="/docs" active={location.pathname === '/docs'} />
+      <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" />
+      <NavItem icon={Key} label="API Keys" to="/dashboard/keys" />
+      <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" />
+      <NavItem icon={FileText} label="Documentation" to="/docs" />
 
       <SectionLabel label="Routing" />
-      <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" active={location.pathname === '/dashboard/routing'} />
-      <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" active={location.pathname === '/dashboard/override'} />
+      <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" />
+      <NavItem icon={Settings} label="Manual Override" to="/dashboard/override" />
+      <NavItem icon={Sliders} label="Custom Rules" to="/dashboard/rules" badge="PRO" />
 
       <SectionLabel label="Cost Control" />
-      <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" active={location.pathname === '/dashboard/alerts'} />
-      <NavItem icon={DollarSign} label="Cost Transparency" to="/dashboard/cost" />
+      <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" badge="PRO" />
 
       <SectionLabel label="Model Access" />
-      <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" active={location.pathname === '/dashboard/models'} />
+      <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" badge="PRO" />
+
+      <SectionLabel label="Developer Tools" />
+      <NavItem icon={FileText} label="Cost Transparency" to="/dashboard/cost" />
 
       <SectionLabel label="Plans & Security" />
-      <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" active={location.pathname === '/dashboard/freetier'} />
-      <NavItem icon={Shield} label="Secure & Private" to="/dashboard/security" active={location.pathname === '/dashboard/security'} />
+      <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" />
+      <NavItem icon={Shield} label="Secure & Private" to="/dashboard/security" />
+
+      <SectionLabel label="Key Management" />
+      <NavItem icon={Key} label="Multiple Keys" to="/dashboard/multiplekeys" />
     </div>
 
     {/* Upgrade Banner for Free Users */}

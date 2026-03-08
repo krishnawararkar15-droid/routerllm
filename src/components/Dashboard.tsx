@@ -225,7 +225,7 @@ export const Dashboard = () => {
       <div className="flex-1 overflow-y-auto px-2 py-3">
 
         <SectionLabel label="Navigation" />
-        <NavItem icon={LayoutDashboard} label="Dashboard" active to="/dashboard" />
+        <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" />
         <NavItem icon={Key} label="API Keys" to="/dashboard/keys" />
         <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" />
         <NavItem icon={FileText} label="Documentation" to="/docs" />
@@ -236,22 +236,20 @@ export const Dashboard = () => {
         <NavItem icon={Sliders} label="Custom Rules" to="/dashboard/rules" badge="PRO" />
 
         <SectionLabel label="Cost Control" />
-        <NavItem icon={Bell} label="Budget Alerts" to="#" />
+        <NavItem icon={Bell} label="Budget Alerts" to="/dashboard/alerts" badge="PRO" />
 
         <SectionLabel label="Model Access" />
-        <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" />
+        <NavItem icon={Layers} label="100+ Models" to="/dashboard/models" badge="PRO" />
 
         <SectionLabel label="Developer Tools" />
         <NavItem icon={FileText} label="Cost Transparency" to="/dashboard/cost" />
 
-        <SectionLabel label="Key Management" />
-        <NavItem icon={Key} label="Multiple Keys" to="#" />
-        <NavItem icon={BarChart3} label="Usage Tracking" to="#" />
-
         <SectionLabel label="Plans & Security" />
-        <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" active={location.pathname === '/dashboard/freetier'} />
-        <NavItem icon={Shield} label="Secure & Private" to="/dashboard/security" active={location.pathname === '/dashboard/security'} />
-        <NavItem icon={Settings} label="Custom Rules" to="#" />
+        <NavItem icon={CreditCard} label="Free Tier" to="/dashboard/freetier" />
+        <NavItem icon={Shield} label="Secure & Private" to="/dashboard/security" />
+
+        <SectionLabel label="Key Management" />
+        <NavItem icon={Key} label="Multiple Keys" to="/dashboard/multiplekeys" />
 
       </div>
 
