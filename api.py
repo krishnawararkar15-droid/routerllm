@@ -72,16 +72,16 @@ async def send_budget_alert_email(email: str, tokens_used: int, token_limit: int
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                "https://api.resend.com/emails",
+                "https://api.brevo.com/v3/smtp/email",
                 headers={
-                    "Authorization": f"Bearer {os.getenv('RESEND_API_KEY')}",
+                    "api-key": os.getenv("BREVO_API_KEY"),
                     "Content-Type": "application/json"
                 },
                 json={
-                    "from": "LLMLite Alerts <onboarding@resend.dev>",
-                    "to": [email],
+                    "sender": {"name": "LLMLite", "email": "krishnawararkar15@gmail.com"},
+                    "to": [{"email": email}],
                     "subject": f"⚠️ LLMLite: You have used {percentage}% of your token limit",
-                    "html": html_content
+                    "htmlContent": html_content
                 }
             )
             print(f"Alert email sent to {email}: {response.status_code}")
@@ -99,32 +99,9 @@ async def send_welcome_email(email: str, subscription_key: str):
         </div>
 
         <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
-            <p style="color: #9ca3af; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">YOUR API KEY</p>
+            <p style="color: #9ca3af; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase;">YOUR API KEY</p>
             <p style="color: #3b82f6; font-size: 16px; font-family: monospace; font-weight: bold; margin: 0; word-break: break-all;">{subscription_key}</p>
             <p style="color: #6b7280; font-size: 12px; margin-top: 8px;">Keep this key secret. Do not share it with anyone.</p>
-        </div>
-
-        <div style="margin-bottom: 24px;">
-            <h2 style="color: #ffffff; font-size: 18px; margin-bottom: 16px;">Get started in 2 minutes</h2>
-
-            <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
-                <p style="color: #3b82f6; font-size: 12px; font-weight: bold; margin: 0 0 8px 0;">STEP 1 — Send your first request</p>
-                <pre style="color: #e5e7eb; font-size: 12px; margin: 0; overflow-x: auto;">import requests
-
-response = requests.post(
-    "https://routerllm.onrender.com/route",
-    json={{
-        "prompt": "Your prompt here",
-        "subscription_key": "{subscription_key}"
-    }}
-)
-print(response.json())</pre>
-            </div>
-
-            <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
-                <p style="color: #10b981; font-size: 12px; font-weight: bold; margin: 0 0 8px 0;">STEP 2 — See your savings</p>
-                <p style="color: #9ca3af; font-size: 14px; margin: 0;">Visit your dashboard to see real-time stats, token usage, and cost savings vs GPT-4o.</p>
-            </div>
         </div>
 
         <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
@@ -142,26 +119,23 @@ print(response.json())</pre>
             </a>
         </div>
 
-        <div style="border-top: 1px solid #374151; padding-top: 16px; text-align: center;">
-            <p style="color: #4b5563; font-size: 12px; margin: 0;">Questions? Reply to this email or contact llmlite.support@gmail.com</p>
-            <p style="color: #4b5563; font-size: 12px; margin-top: 4px;">LLMLite · Save 30-80% on AI API costs</p>
-        </div>
+        <p style="color: #4b5563; font-size: 12px; text-align: center;">Questions? Contact llmlite.support@gmail.com</p>
     </div>
     """
 
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                "https://api.resend.com/emails",
+                "https://api.brevo.com/v3/smtp/email",
                 headers={
-                    "Authorization": f"Bearer {os.getenv('RESEND_API_KEY')}",
+                    "api-key": os.getenv("BREVO_API_KEY"),
                     "Content-Type": "application/json"
                 },
                 json={
-                    "from": "LLMLite <onboarding@resend.dev>",
-                    "to": [email],
+                    "sender": {"name": "LLMLite", "email": "krishnawararkar15@gmail.com"},
+                    "to": [{"email": email}],
                     "subject": "Welcome to LLMLite — Your API Key Inside 🚀",
-                    "html": html_content
+                    "htmlContent": html_content
                 }
             )
             print(f"Welcome email sent to {email}: {response.status_code}")
