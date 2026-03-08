@@ -88,6 +88,86 @@ async def send_budget_alert_email(email: str, tokens_used: int, token_limit: int
     except Exception as e:
         print(f"Failed to send alert email: {e}")
 
+
+async def send_welcome_email(email: str, subscription_key: str):
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0d14; color: #ffffff; padding: 40px; border-radius: 12px;">
+
+        <div style="text-align: center; margin-bottom: 32px;">
+            <h1 style="color: #ffffff; font-size: 28px; margin: 0;">Welcome to LLMLite 🚀</h1>
+            <p style="color: #9ca3af; margin-top: 8px;">Your AI API router is ready to use</p>
+        </div>
+
+        <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+            <p style="color: #9ca3af; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">YOUR API KEY</p>
+            <p style="color: #3b82f6; font-size: 16px; font-family: monospace; font-weight: bold; margin: 0; word-break: break-all;">{subscription_key}</p>
+            <p style="color: #6b7280; font-size: 12px; margin-top: 8px;">Keep this key secret. Do not share it with anyone.</p>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <h2 style="color: #ffffff; font-size: 18px; margin-bottom: 16px;">Get started in 2 minutes</h2>
+
+            <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+                <p style="color: #3b82f6; font-size: 12px; font-weight: bold; margin: 0 0 8px 0;">STEP 1 — Send your first request</p>
+                <pre style="color: #e5e7eb; font-size: 12px; margin: 0; overflow-x: auto;">import requests
+
+response = requests.post(
+    "https://routerllm.onrender.com/route",
+    json={{
+        "prompt": "Your prompt here",
+        "subscription_key": "{subscription_key}"
+    }}
+)
+print(response.json())</pre>
+            </div>
+
+            <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+                <p style="color: #10b981; font-size: 12px; font-weight: bold; margin: 0 0 8px 0;">STEP 2 — See your savings</p>
+                <p style="color: #9ca3af; font-size: 14px; margin: 0;">Visit your dashboard to see real-time stats, token usage, and cost savings vs GPT-4o.</p>
+            </div>
+        </div>
+
+        <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+            <p style="color: #ffffff; font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Free Plan includes:</p>
+            <p style="color: #9ca3af; font-size: 13px; margin: 4px 0;">✅ 100,000 tokens per month</p>
+            <p style="color: #9ca3af; font-size: 13px; margin: 4px 0;">✅ Auto routing to free models</p>
+            <p style="color: #9ca3af; font-size: 13px; margin: 4px 0;">✅ Full usage dashboard</p>
+            <p style="color: #9ca3af; font-size: 13px; margin: 4px 0;">✅ 1 API key</p>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 24px;">
+            <a href="https://llmlite-woad.vercel.app/dashboard"
+               style="background: #3b82f6; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; display: inline-block;">
+                Go to Dashboard →
+            </a>
+        </div>
+
+        <div style="border-top: 1px solid #374151; padding-top: 16px; text-align: center;">
+            <p style="color: #4b5563; font-size: 12px; margin: 0;">Questions? Reply to this email or contact llmlite.support@gmail.com</p>
+            <p style="color: #4b5563; font-size: 12px; margin-top: 4px;">LLMLite · Save 30-80% on AI API costs</p>
+        </div>
+    </div>
+    """
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.resend.com/emails",
+                headers={
+                    "Authorization": f"Bearer {os.getenv('RESEND_API_KEY')}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "from": "LLMLite <onboarding@resend.dev>",
+                    "to": [email],
+                    "subject": "Welcome to LLMLite — Your API Key Inside 🚀",
+                    "html": html_content
+                }
+            )
+            print(f"Welcome email sent to {email}: {response.status_code}")
+    except Exception as e:
+        print(f"Failed to send welcome email: {e}")
+
 SUBSCRIPTION_KEYS = {
     "sub-basic-001": {"plan": "basic", "request_limit": 100, "requests_used": 0},
     "sub-basic-002": {"plan": "basic", "request_limit": 100, "requests_used": 0},
@@ -292,6 +372,10 @@ async def signup(data: dict):
             "token_limit": 100000,
             "password_hash": password_hash
         }).execute()
+        
+        # Send welcome email to new users only
+        await send_welcome_email(email, new_key)
+        
         return {
             "subscription_key": new_key,
             "plan": "free",
