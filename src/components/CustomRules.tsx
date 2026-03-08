@@ -138,16 +138,22 @@ const RULE_TYPES = [
   { value: 'fallback', label: 'If model fails, use backup' },
 ];
 
-const TARGET_MODELS = [
-  { value: 'gemma-3-4b:free', label: 'Gemma 3 4B', cost: '$0.00' },
-  { value: 'llama-3.1-8b:free', label: 'Llama 3.1 8B', cost: '$0.00' },
-  { value: 'mistral-7b:free', label: 'Mistral 7B', cost: '$0.00' },
-  { value: 'gpt-4o-mini', label: 'GPT-4o Mini', cost: '$0.15/1M' },
-  { value: 'gpt-4o', label: 'GPT-4o', cost: '$5.00/1M' },
-  { value: 'claude-3-haiku', label: 'Claude 3 Haiku', cost: '$0.25/1M' },
-  { value: 'claude-3.5-sonnet', label: 'Claude 3.5 Sonnet', cost: '$3.00/1M' },
-  { value: 'gemini-flash-1.5', label: 'Gemini Flash 1.5', cost: '$0.075/1M' },
+const FREE_MODELS = [
+  { value: 'google/gemma-3-4b-it:free', label: 'Gemma 3 4B', provider: 'Google', cost: '$0.00' },
+  { value: 'meta-llama/llama-3.1-8b-instruct:free', label: 'Llama 3.1 8B', provider: 'Meta', cost: '$0.00' },
+  { value: 'mistralai/mistral-7b-instruct:free', label: 'Mistral 7B', provider: 'Mistral', cost: '$0.00' },
 ];
+
+const PAID_MODELS = [
+  { value: 'openai/gpt-4o-mini', label: 'GPT-4o Mini', provider: 'OpenAI', cost: '$0.15/1M' },
+  { value: 'openai/gpt-4o', label: 'GPT-4o', provider: 'OpenAI', cost: '$5.00/1M' },
+  { value: 'anthropic/claude-3-haiku', label: 'Claude 3 Haiku', provider: 'Anthropic', cost: '$0.25/1M' },
+  { value: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet', provider: 'Anthropic', cost: '$3.00/1M' },
+  { value: 'google/gemini-flash-1.5', label: 'Gemini Flash 1.5', provider: 'Google', cost: '$0.075/1M' },
+  { value: 'meta-llama/llama-3.1-70b-instruct', label: 'Llama 3.1 70B', provider: 'Meta', cost: '$0.59/1M' },
+];
+
+const TARGET_MODELS = [...FREE_MODELS, ...PAID_MODELS];
 
 const RULE_TYPE_COLORS: Record<string, string> = {
   keyword: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
@@ -179,6 +185,24 @@ export const CustomRules = () => {
     target_model: 'gpt-4o-mini',
     priority: 1,
   });
+
+  const [ruleTypeDropdownOpen, setRuleTypeDropdownOpen] = useState(false);
+  const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
+  const ruleTypeRef = useRef<HTMLDivElement>(null);
+  const modelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ruleTypeRef.current && !ruleTypeRef.current.contains(e.target as Node)) {
+        setRuleTypeDropdownOpen(false);
+      }
+      if (modelRef.current && !modelRef.current.contains(e.target as Node)) {
+        setModelDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (!userKey) { navigate('/login'); return; }
@@ -337,17 +361,29 @@ export const CustomRules = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
+                  <div ref={ruleTypeRef}>
                     <label className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2 block">Rule Type</label>
-                    <select
-                      value={formData.rule_type}
-                      onChange={e => setFormData({ ...formData, rule_type: e.target.value, condition_value: '' })}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    <button
+                      type="button"
+                      onClick={() => setRuleTypeDropdownOpen(!ruleTypeDropdownOpen)}
+                      className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-left flex items-center justify-between"
                     >
-                      {RULE_TYPES.map(rt => (
-                        <option key={rt.value} value={rt.value}>{rt.label}</option>
-                      ))}
-                    </select>
+                      <span>{RULE_TYPES.find(rt => rt.value === formData.rule_type)?.label || 'Select...'}</span>
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    {ruleTypeDropdownOpen && (
+                      <div className="absolute z-50 w-full bg-gray-800 border border-gray-700 rounded-xl mt-1 overflow-hidden shadow-2xl">
+                        {RULE_TYPES.map(rt => (
+                          <div
+                            key={rt.value}
+                            className="px-4 py-3 hover:bg-gray-700 cursor-pointer text-white text-sm"
+                            onClick={() => { setFormData({ ...formData, rule_type: rt.value, condition_value: '' }); setRuleTypeDropdownOpen(false); }}
+                          >
+                            {rt.label}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -388,17 +424,58 @@ export const CustomRules = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
+                  <div ref={modelRef} className="relative">
                     <label className="text-xs font-bold text-white/60 uppercase tracking-widest mb-2 block">Target Model</label>
-                    <select
-                      value={formData.target_model}
-                      onChange={e => setFormData({ ...formData, target_model: e.target.value })}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    <button
+                      type="button"
+                      onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
+                      className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-left flex items-center justify-between"
                     >
-                      {TARGET_MODELS.map(m => (
-                        <option key={m.value} value={m.value}>{m.label} ({m.cost})</option>
-                      ))}
-                    </select>
+                      <span>{TARGET_MODELS.find(m => m.value === formData.target_model)?.label || 'Select...'}</span>
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    {modelDropdownOpen && (
+                      <div className="absolute z-50 w-full bg-gray-800 border border-gray-700 rounded-xl mt-1 overflow-hidden shadow-2xl max-h-80 overflow-y-auto">
+                        <div className="px-4 py-2 text-xs font-semibold text-green-400 uppercase bg-gray-900 border-t border-b border-gray-700">
+                          Free Models
+                        </div>
+                        {FREE_MODELS.map(m => (
+                          <div
+                            key={m.value}
+                            className={`flex items-center justify-between px-4 py-3 cursor-pointer text-sm ${formData.target_model === m.value ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                            onClick={() => { setFormData({ ...formData, target_model: m.value }); setModelDropdownOpen(false); }}
+                          >
+                            <div>
+                              <p className="text-white font-medium">{m.label}</p>
+                              <p className="text-gray-500 text-xs">{m.provider}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-green-400 text-xs">{m.cost}</span>
+                              <span className="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-full">FREE</span>
+                            </div>
+                          </div>
+                        ))}
+                        <div className="px-4 py-2 text-xs font-semibold text-blue-400 uppercase bg-gray-900 border-t border-b border-gray-700">
+                          Paid Models
+                        </div>
+                        {PAID_MODELS.map(m => (
+                          <div
+                            key={m.value}
+                            className={`flex items-center justify-between px-4 py-3 cursor-pointer text-sm ${formData.target_model === m.value ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                            onClick={() => { setFormData({ ...formData, target_model: m.value }); setModelDropdownOpen(false); }}
+                          >
+                            <div>
+                              <p className="text-white font-medium">{m.label}</p>
+                              <p className="text-gray-500 text-xs">{m.provider}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-blue-400 text-xs">{m.cost}</span>
+                              <span className="bg-blue-500/20 text-blue-400 text-xs px-2 py-0.5 rounded-full">PAID</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div>
