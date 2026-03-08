@@ -59,7 +59,7 @@ const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpe
       <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" />
       <NavItem icon={Key} label="API Keys" to="/dashboard/keys" />
       <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" />
-      <NavItem icon={FileText} label="Documentation" to="/docs" />
+      <NavItem icon={FileText} label="Integration" to="/docs" />
 
       <SectionLabel label="Routing" />
       <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" />

@@ -57,7 +57,7 @@ const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpe
       <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" active={location.pathname === '/dashboard'} />
       <NavItem icon={Key} label="API Keys" to="/dashboard/keys" active={location.pathname === '/dashboard/keys'} />
       <NavItem icon={BarChart3} label="Usage" to="/dashboard/usage" active={location.pathname === '/dashboard/usage'} />
-      <NavItem icon={FileText} label="Documentation" to="/docs" active={location.pathname === '/docs'} />
+      <NavItem icon={FileText} label="Integration" to="/docs" active={location.pathname === '/docs'} />
 
       <SectionLabel label="Routing" />
       <NavItem icon={Zap} label="Auto Routing" to="/dashboard/routing" active={location.pathname === '/dashboard/routing'} />
