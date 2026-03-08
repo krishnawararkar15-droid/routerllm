@@ -352,11 +352,18 @@ async def route_prompt(data: dict):
     
     tokens_used = user.get("tokens_used", 0)
     token_limit = user.get("token_limit", 100000)
-    
+    plan = user.get("plan", "free")
+
     if tokens_used >= token_limit:
-        raise HTTPException(
+        return JSONResponse(
             status_code=429,
-            detail=f"Token limit reached. Used {tokens_used}/{token_limit} tokens."
+            content={
+                "error": "token_limit_exceeded",
+                "message": f"You have used all {token_limit:,} tokens on your {plan.upper()} plan. Upgrade to continue.",
+                "tokens_used": tokens_used,
+                "token_limit": token_limit,
+                "upgrade_url": "https://llmlite-woad.vercel.app/dashboard/billing"
+            }
         )
 
     # Check custom rules first
