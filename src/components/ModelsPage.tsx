@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { LayoutDashboard, Key, BarChart3, FileText, Zap, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Search, Copy, Check, X, ChevronUp, ChevronDown, CheckCircle2, AlertTriangle, Menu, Activity, Sliders } from 'lucide-react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'motion/react';
@@ -175,6 +175,12 @@ export const ModelsPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [stats, setStats] = useState<any>(null);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [testingModel, setTestingModel] = useState<string | null>(null);
+  const [testPrompt, setTestPrompt] = useState('');
+  const [testResult, setTestResult] = useState<any>(null);
+  const [testLoading, setTestLoading] = useState(false);
+  const [monthlyTokens, setMonthlyTokens] = useState(1000000);
   const profileRef = useRef<HTMLDivElement>(null);
   const userKey = localStorage.getItem('routellm_key') || '';
   const userEmail = localStorage.getItem('routellm_email') || '';

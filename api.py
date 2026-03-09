@@ -320,17 +320,14 @@ async def signup(data: dict):
         password = (data.get("password") or "")[:72]
         if not email:
             return {"error": "Email required"}
-        from supabase import create_client
-        sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
-        # Always check existing first
-        existing = sb.table("users").select("*").eq("email", email).execute()
+        existing = supabase.table("users").select("*").eq("email", email).execute()
         if existing.data:
             user = existing.data[0]
             # Update password if provided
             if password:
                 from passlib.context import CryptContext
                 pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12, truncate_error=False)
-                sb.table("users").update({"password_hash": pwd_context.hash(password)}).eq("email", email).execute()
+                supabase.table("users").update({"password_hash": pwd_context.hash(password)}).eq("email", email).execute()
             return {
                 "subscription_key": user["subscription_key"],
                 "plan": user.get("plan", "free"),
@@ -343,7 +340,7 @@ async def signup(data: dict):
         pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12, truncate_error=False)
         new_key = "sk-rl-" + secrets.token_hex(16)
         password_hash = pwd_context.hash(password) if password else None
-        sb.table("users").insert({
+        supabase.table("users").insert({
             "email": email,
             "subscription_key": new_key,
             "plan": "free",
@@ -414,9 +411,7 @@ async def login(data: dict):
         password = (data.get("password") or "")[:72]
         if not email:
             return {"error": "Email required"}
-        from supabase import create_client
-        sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
-        result = sb.table("users").select("*").eq("email", email).execute()
+        result = supabase.table("users").select("*").eq("email", email).execute()
         if not result.data:
             return {"error": "No account found with this email"}
         user = result.data[0]
@@ -688,9 +683,7 @@ async def list_subscriptions():
 @app.get("/stats/{subscription_key}")
 async def get_stats(subscription_key: str):
     try:
-        from supabase import create_client
-        sb = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
-        requests_data = sb.table("requests").select("*").eq("subscription_key", subscription_key).execute()
+        requests_data = supabase.table("requests").select("*").eq("subscription_key", subscription_key).execute()
         rows = requests_data.data or []
         total_requests = len(rows)
         total_tokens = sum(r.get("tokens_used", 0) for r in rows)
