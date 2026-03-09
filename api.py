@@ -377,7 +377,7 @@ async def regenerate_key(request: Request):
             return JSONResponse(status_code=400, content={"error": "Email and key required"})
 
         # Find user by email only first
-        user_result = sb.table("users").select("*").eq("email", email).execute()
+        user_result = supabase.table("users").select("*").eq("email", email).execute()
 
         if not user_result.data:
             print(f"User not found for email: {email}")
@@ -390,14 +390,14 @@ async def regenerate_key(request: Request):
         new_key = "sk-rl-" + secrets.token_hex(16)
 
         # Update subscription key in users table
-        update_result = sb.table("users").update(
+        update_result = supabase.table("users").update(
             {"subscription_key": new_key}
         ).eq("email", email).execute()
 
         print(f"Key updated successfully. New key: {new_key[:20]}...")
 
         # Update requests table too
-        sb.table("requests").update(
+        supabase.table("requests").update(
             {"subscription_key": new_key}
         ).eq("subscription_key", old_key).execute()
 
