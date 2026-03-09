@@ -82,7 +82,6 @@ const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpe
       <NavItem icon={Key} label="Multiple Keys" to="/dashboard/multiplekeys" />
     </div>
 
-    {/* Upgrade Banner for Free Users */}
     {(() => {
       const plan = localStorage.getItem('routellm_plan') || 'free';
       if (plan === 'free') {
@@ -100,7 +99,10 @@ const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpe
     })()}
 
     <div ref={profileRef} style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#09090b' }} className="p-3 relative">
-      <div className="flex items-center gap-3 px-2 py-2 mb-1" onClick={() => setProfilePopupOpen && setProfilePopupOpen(!profilePopupOpen)}>
+      <div 
+        className="flex items-center gap-3 px-2 py-2 mb-1 cursor-pointer hover:bg-white/5 rounded-lg transition-all"
+        onClick={() => setProfilePopupOpen && setProfilePopupOpen(!profilePopupOpen)}
+      >
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-black text-xs font-bold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', boxShadow: '0 0 12px rgba(59,130,246,0.4)' }}>
           {userEmail ? userEmail[0].toUpperCase() : 'K'}
         </div>
@@ -109,124 +111,138 @@ const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpe
           <div className="text-[9px] text-white/30 uppercase tracking-wider">{(stats?.plan ?? 'free').charAt(0).toUpperCase() + (stats?.plan ?? 'free').slice(1)} Plan</div>
         </div>
       </div>
-      <Link
-        to="/login"
-        onClick={() => localStorage.clear()}
-        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all w-full"
-      >
-        <LogOut className="w-4 h-4" />
-        <span className="text-[13px] font-medium">Logout</span>
-      </Link>
-      {profilePopupOpen && setProfilePopupOpen && (<ProfilePopup userEmail={userEmail} userPlan={stats?.plan || 'free'} onClose={() => setProfilePopupOpen(false)} />)}
+      {profilePopupOpen && setProfilePopupOpen && (
+        <ProfilePopup 
+          userEmail={userEmail} 
+          userPlan={stats?.plan || 'free'} 
+          onClose={() => setProfilePopupOpen(false)} 
+        />
+      )}
     </div>
   </div>
   );
 };
 
-const Activity = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polyline points="22,12 18,12 15,21 9,3 6,12 2,12" />
-  </svg>
-);
-
-const pricing = [
-  { model: "gemma-3-4b-it:free", provider: "Google", perToken: 0, per1K: 0, per1M: 0, type: "FREE" },
-  { model: "llama-3.1-8b:free", provider: "Meta", perToken: 0, per1K: 0, per1M: 0, type: "FREE" },
-  { model: "mistral-7b:free", provider: "Mistral", perToken: 0, per1K: 0, per1M: 0, type: "FREE" },
-  { model: "gpt-4o-mini", provider: "OpenAI", perToken: 0.00000015, per1K: 0.00015, per1M: 0.15, type: "PAID" },
-  { model: "gpt-4o", provider: "OpenAI", perToken: 0.000005, per1K: 0.005, per1M: 5.00, type: "PAID" },
-  { model: "claude-3-haiku", provider: "Anthropic", perToken: 0.00000025, per1K: 0.00025, per1M: 0.25, type: "PAID" },
-  { model: "claude-3.5-sonnet", provider: "Anthropic", perToken: 0.000003, per1K: 0.003, per1M: 3.00, type: "PAID" },
-  { model: "gemini-flash-1.5", provider: "Google", perToken: 0.000000075, per1K: 0.000075, per1M: 0.075, type: "PAID" },
-  { model: "gemini-pro-1.5", provider: "Google", perToken: 0.0000035, per1K: 0.0035, per1M: 3.50, type: "PAID" },
-  { model: "llama-3.1-70b", provider: "Meta", perToken: 0.00000059, per1K: 0.00059, per1M: 0.59, type: "PAID" },
-];
-
-const getPriceRate = (model: string) => {
-  if (model.includes(':free')) return { rate: 0, label: "$0.0000 / token" };
-  if (model.includes('gpt-4o-mini')) return { rate: 0.00000015, label: "$0.00000015 / token" };
-  if (model.includes('gpt-4o')) return { rate: 0.000005, label: "$0.000005 / token" };
-  if (model.includes('claude-3-haiku')) return { rate: 0.00000025, label: "$0.00000025 / token" };
-  if (model.includes('claude-3.5-sonnet')) return { rate: 0.000003, label: "$0.000003 / token" };
-  if (model.includes('gemini-flash')) return { rate: 0.000000075, label: "$0.000000075 / token" };
-  return { rate: 0.000001, label: "$0.000001 / token" };
-};
-
 export const CostTransparency = () => {
-  const [stats, setStats] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<any>(null)
+  const [requests, setRequests] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  
-  const [promptsPerMonth, setPromptsPerMonth] = useState(50000);
-  const [simplePercent, setSimplePercent] = useState(70);
-  const [avgTokens, setAvgTokens] = useState(200);
-
   const userKey = localStorage.getItem('routellm_key') || '';
   const userEmail = localStorage.getItem('routellm_email') || '';
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (!userKey) { navigate('/login'); return; }
-    fetch(`https://routerllm.onrender.com/stats/${userKey}`)
-      .then(r => r.json())
-      .then(d => { setStats(d); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
-
-  const totalSpent = stats?.total_cost ?? 0;
-  const totalSaved = stats?.total_savings ?? (stats?.total_tokens ?? 0) * 0.000005 - totalSpent;
-  const totalRequests = stats?.total_requests ?? 0;
-  const costPerRequest = totalRequests > 0 ? totalSpent / totalRequests : 0;
-  const freeRequests = (stats?.recent_requests ?? []).filter((r: any) => r.cost_usd === 0 || r.cost_usd === null || r.cost_usd === undefined).length;
-  const freePercent = totalRequests > 0 ? Math.round((freeRequests / totalRequests) * 100) : 0;
-
-  const recentRequests = (stats?.recent_requests ?? []).slice(0, 50);
-
-  const toggleRow = (idx: number) => {
-    const newSet = new Set(expandedRows);
-    if (newSet.has(idx)) newSet.delete(idx);
-    else newSet.add(idx);
-    setExpandedRows(newSet);
-  };
-
-  const simplePrompts = Math.round(promptsPerMonth * (simplePercent / 100));
-  const complexPrompts = promptsPerMonth - simplePrompts;
-  const gpt4oCost = promptsPerMonth * avgTokens * 0.000005;
-  const routeLLMCost = complexPrompts * avgTokens * 0.000001;
-  const monthlySavings = gpt4oCost - routeLLMCost;
-  const proCost = 99;
-  const netSavings = monthlySavings - proCost;
-
-  const daysInMonth = 30;
-  const dayOfMonth = new Date().getDate();
-  const projectedMonthlyCost = totalSpent > 0 ? (totalSpent / dayOfMonth) * daysInMonth : 0;
-  const projectedSavings = totalSaved > 0 ? (totalSaved / dayOfMonth) * daysInMonth : 0;
-
-  const modelLeaderboard = (stats?.recent_requests ?? []).reduce((acc: any, r: any) => {
-    const model = r.model_used || 'unknown';
-    if (!acc[model]) {
-      acc[model] = { requests: 0, tokens: 0, cost: 0 };
+    const fetchData = async () => {
+      const key = localStorage.getItem('routellm_key')
+      if (!key) return
+      try {
+        const res = await fetch(`https://routerllm.onrender.com/stats/${key}`)
+        const data = await res.json()
+        setStats(data)
+        setRequests(data.recent_requests || [])
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
     }
-    acc[model].requests++;
-    acc[model].tokens += r.tokens_used || 0;
-    acc[model].cost += r.cost_usd || 0;
-    return acc;
-  }, {});
-  const leaderboard = Object.entries(modelLeaderboard)
-    .map(([model, data]: [string, any]) => ({ model, ...data }))
-    .sort((a, b) => b.requests - a.requests);
+    fetchData()
+  }, [])
 
-  const freeModels = leaderboard.filter((m: any) => m.model.includes(':free'));
-  const freeModelNames = [...new Set(freeModels.map((m: any) => m.model))].join(', ');
+  if (loading) return (
+    <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+    </div>
+  )
+
+  const totalCost = stats?.total_cost ?? 0
+  const totalTokens = stats?.total_tokens ?? 0
+  const totalRequests = stats?.total_requests ?? 0
+  const totalSavings = stats?.total_savings ?? 0
+  const avgCostPerRequest = totalRequests > 0 ? totalCost / totalRequests : 0
+  const gpt4oCost = (totalTokens / 1000000) * 5.00
+  const savingsPercent = gpt4oCost > 0 ? ((gpt4oCost - totalCost) / gpt4oCost * 100) : 0
+  const optimizationScore = Math.min(100, Math.round(savingsPercent))
+  const scoreColor = optimizationScore >= 70 ? 'text-green-400' : optimizationScore >= 40 ? 'text-yellow-400' : 'text-red-400'
+  const scoreLabel = optimizationScore >= 70 ? 'Excellent' : optimizationScore >= 40 ? 'Good' : 'Needs Work'
+
+  const getRecommendations = () => {
+    const recs = []
+    const complexCount = requests.filter(r => r.prompt_type === 'COMPLEX').length
+    const simpleCount = requests.filter(r => r.prompt_type === 'SIMPLE').length
+    const paidRequests = requests.filter(r => r.cost_usd > 0)
+
+    if (complexCount > simpleCount) {
+      recs.push({
+        icon: '⚡',
+        title: 'High Complex Request Rate',
+        description: `${complexCount} of your requests are classified as COMPLEX. Review if all need expensive models.`,
+        saving: 'Potential saving: up to 60%',
+        action: 'Add Custom Rule',
+        link: '/dashboard/rules',
+        color: 'yellow'
+      })
+    }
+    if (paidRequests.length === 0 && totalRequests > 0) {
+      recs.push({
+        icon: '🎉',
+        title: 'Running 100% Free',
+        description: 'All your requests are using free models. Maximum savings achieved.',
+        saving: 'Saving: 100% vs GPT-4o',
+        action: null,
+        color: 'green'
+      })
+    }
+    if (totalRequests > 10 && savingsPercent < 30) {
+      recs.push({
+        icon: '🔧',
+        title: 'Routing Not Optimized',
+        description: 'Your routing could be more efficient. Enable smarter rules to reduce costs.',
+        saving: 'Potential saving: up to 40%',
+        action: 'Configure Auto Routing',
+        link: '/dashboard/routing',
+        color: 'red'
+      })
+    }
+    if (recs.length === 0) {
+      recs.push({
+        icon: '✅',
+        title: 'Well Optimized',
+        description: 'Your routing is working efficiently. Keep monitoring for opportunities.',
+        saving: `Current savings: ${savingsPercent.toFixed(1)}%`,
+        action: null,
+        color: 'green'
+      })
+    }
+    return recs
+  }
+
+  const modelBreakdown = requests.reduce((acc: any, req: any) => {
+    const model = req.model_used?.split('/').pop() || 'unknown'
+    if (!acc[model]) acc[model] = { tokens: 0, cost: 0, count: 0 }
+    acc[model].tokens += req.tokens_used || 0
+    acc[model].cost += req.cost_usd || 0
+    acc[model].count += 1
+    return acc
+  }, {})
+
+  const modelBreakdownArray = Object.entries(modelBreakdown)
+    .map(([name, data]: [string, any]) => ({ name, ...data }))
+    .sort((a, b) => b.count - a.count)
+
+  const today = new Date()
+  const dayOfMonth = today.getDate()
+  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
+  const projectedCost = dayOfMonth > 0 ? (totalCost / dayOfMonth) * daysInMonth : 0
+  const projectedTokens = dayOfMonth > 0 ? (totalTokens / dayOfMonth) * daysInMonth : 0
+  const projectedSavings = dayOfMonth > 0 ? (totalSavings / dayOfMonth) * daysInMonth : 0
 
   return (
     <div className="min-h-screen bg-black text-white flex font-sans">
-
-      {/* Mobile Sidebar */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -245,10 +261,7 @@ export const CostTransparency = () => {
               className="fixed inset-y-0 left-0 w-64 bg-[#050505] border-r border-white/[0.06] z-50 lg:hidden overflow-y-auto"
             >
               <div className="absolute top-4 right-4">
-                <button 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 text-white/40 hover:text-white transition-colors"
-                >
+                <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-white/40 hover:text-white">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -258,276 +271,213 @@ export const CostTransparency = () => {
         )}
       </AnimatePresence>
 
-      {/* Desktop Sidebar */}
       <aside className="w-64 bg-[#050505] border-r border-white/[0.06] flex-col hidden lg:flex">
         <SidebarContent userEmail={userEmail} stats={stats} profilePopupOpen={profilePopupOpen} setProfilePopupOpen={setProfilePopupOpen} profileRef={profileRef} />
       </aside>
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="h-14 border-b border-white/[0.06] flex items-center px-4 lg:px-8 bg-black/50 backdrop-blur-xl sticky top-0 z-20">
+          <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 -ml-2 text-white/40 hover:text-white">
+            <Menu className="w-5 h-5" />
+          </button>
           <div className="flex items-center gap-3">
-            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden p-2 -ml-2 text-white/40 hover:text-white transition-colors">
-              <Menu className="w-5 h-5" />
-            </button>
-            <DollarSign className="w-4 h-4 text-green-400" />
+            <Calculator className="w-4 h-4 text-blue-400" />
             <h1 className="text-sm font-bold text-white/60">Cost Transparency</h1>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-4 lg:p-8 pb-32 lg:pb-8">
-          <div className="max-w-6xl mx-auto space-y-6">
-
-            {/* Section 1: Top Summary Bar */}
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8">
+          <div className="max-w-5xl mx-auto space-y-6">
+            {/* Header */}
             <div>
-              <h2 className="text-lg font-bold mb-4">Cost Summary</h2>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4">
-                  <div className="text-[10px] text-white/30 uppercase mb-1">Total Spent</div>
-                  <div className="text-2xl font-black">${totalSpent.toFixed(4)}</div>
-                </div>
-                <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4">
-                  <div className="text-[10px] text-white/30 uppercase mb-1">Total Saved vs GPT-4o</div>
-                  <div className="text-2xl font-black text-green-400">${Math.max(0, totalSaved).toFixed(2)}</div>
-                </div>
-                <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4">
-                  <div className="text-[10px] text-white/30 uppercase mb-1">Cost Per Request</div>
-                  <div className="text-2xl font-black">${costPerRequest.toFixed(6)}</div>
-                </div>
-                <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4">
-                  <div className="text-[10px] text-white/30 uppercase mb-1">Free Request %</div>
-                  <div className="text-2xl font-black text-green-400">{freePercent}% free</div>
-                </div>
+              <h1 className="text-2xl font-extrabold mb-1">Cost Transparency</h1>
+              <p className="text-white/40 text-sm">Every token. Every dollar. Fully transparent.</p>
+            </div>
+
+            {/* Cost Overview Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+                <p className="text-gray-500 text-xs uppercase mb-1">Total Spent</p>
+                <p className="text-white text-2xl font-bold">${totalCost.toFixed(4)}</p>
+                <p className="text-gray-500 text-xs mt-1">this month</p>
+              </div>
+              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+                <p className="text-gray-500 text-xs uppercase mb-1">Total Saved</p>
+                <p className="text-green-400 text-2xl font-bold">${totalSavings.toFixed(4)}</p>
+                <p className="text-gray-500 text-xs mt-1">vs GPT-4o</p>
+              </div>
+              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+                <p className="text-gray-500 text-xs uppercase mb-1">Savings Rate</p>
+                <p className="text-blue-400 text-2xl font-bold">{savingsPercent.toFixed(1)}%</p>
+                <p className="text-gray-500 text-xs mt-1">cost reduction</p>
+              </div>
+              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+                <p className="text-gray-500 text-xs uppercase mb-1">Avg Cost</p>
+                <p className="text-purple-400 text-2xl font-bold">${avgCostPerRequest.toFixed(6)}</p>
+                <p className="text-gray-500 text-xs mt-1">per request</p>
               </div>
             </div>
 
-            {/* Section 2: Per Request Cost Breakdown */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl overflow-hidden">
-              <div className="p-4 border-b border-white/[0.06]">
-                <h3 className="text-sm font-bold mb-1">Every Request. Every Penny. Full Transparency.</h3>
-                <p className="text-xs text-white/30">Nothing is hidden. See the exact cost calculation for each request.</p>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left min-w-[600px]">
-                  <thead>
-                    <tr className="border-b border-white/[0.06]">
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">#</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Model</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Type</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Tokens</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Price Rate</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Calculation</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Cost</th>
-                      <th className="px-4 py-3"></th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/[0.04]">
-                    {loading ? (
-                      <tr><td colSpan={8} className="text-center py-8 text-white/30 text-sm">Loading...</td></tr>
-                    ) : recentRequests.length === 0 ? (
-                      <tr><td colSpan={8} className="text-center py-8 text-white/30 text-sm">No requests yet</td></tr>
-                    ) : recentRequests.map((req: any, idx: number) => {
-                      const priceInfo = getPriceRate(req.model_used || '');
-                      const tokens = req.tokens_used || 0;
-                      const cost = req.cost_usd || 0;
-                      const gpt4Cost = tokens * 0.000005;
-                      const saved = gpt4Cost - cost;
-                      const expanded = expandedRows.has(idx);
-                      return (
-                        <motion.tr key={idx} className="hover:bg-white/[0.02]">
-                          <td className="px-4 py-3 text-xs text-white/40">{idx + 1}</td>
-                          <td className="px-4 py-3 text-xs font-medium">{req.model_used}</td>
-                          <td className="px-4 py-3">
-                            <span className={cn("px-2 py-0.5 rounded text-[9px] font-bold", req.prompt_type === 'SIMPLE' ? "bg-green-500/20 text-green-400 border border-green-500/30" : "bg-orange-500/20 text-orange-400 border border-orange-500/30")}>
-                              {req.prompt_type}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-xs">{tokens}</td>
-                          <td className="px-4 py-3 text-[10px] text-white/40 font-mono">{priceInfo.label}</td>
-                          <td className="px-4 py-3 text-[10px] text-white/40 font-mono">{tokens} × ${priceInfo.rate.toFixed(10)}</td>
-                          <td className="px-4 py-3 text-xs font-bold text-green-400">${cost.toFixed(4)}</td>
-                          <td className="px-4 py-3">
-                            <button onClick={() => toggleRow(idx)} className="text-white/30 hover:text-white">
-                              {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                            </button>
-                          </td>
-                          {expanded && (
-                            <motion.td colSpan={7} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                              <div className="p-4 bg-gray-900/50 border border-dashed border-gray-600 rounded-xl m-4 font-mono text-xs">
-                                <div className="border-b border-gray-700 pb-2 mb-2 font-bold">COST RECEIPT</div>
-                                <div>Model: {req.model_used}</div>
-                                <div>Type: {req.prompt_type}</div>
-                                <div className="my-2"></div>
-                                <div>Input tokens: ~{Math.floor(tokens * 0.7)}</div>
-                                <div>Output tokens: ~{Math.ceil(tokens * 0.3)}</div>
-                                <div>Total tokens: {tokens}</div>
-                                <div className="my-2"></div>
-                                <div>Price per token: ${priceInfo.rate.toFixed(10)}</div>
-                                <div>Total cost: ${cost.toFixed(4)}</div>
-                                <div className="my-2 border-t border-gray-700 pt-2"></div>
-                                <div>GPT-4o would cost: ${gpt4Cost.toFixed(4)}</div>
-                                <div className="text-green-400">You saved: ${saved.toFixed(4)}</div>
-                              </div>
-                            </motion.td>
-                          )}
-                        </motion.tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Section 3: Full Model Pricing Table */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl overflow-hidden">
-              <div className="p-4 border-b border-white/[0.06]">
-                <h3 className="text-sm font-bold mb-1">Model Pricing — Complete Breakdown</h3>
-                <p className="text-xs text-white/30">Exact prices from OpenRouter. Updated monthly.</p>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left min-w-[500px]">
-                  <thead>
-                    <tr className="border-b border-white/[0.06]">
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Model</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Provider</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Per Token</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Per 1K</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Per 1M</th>
-                      <th className="px-4 py-3 text-[9px] font-bold text-white/30 uppercase">Type</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/[0.04]">
-                    {pricing.map((p, idx) => (
-                      <tr key={idx} className={p.type === 'FREE' ? 'bg-green-500/5' : ''}>
-                        <td className="px-4 py-3 text-xs font-medium">{p.model}</td>
-                        <td className="px-4 py-3 text-xs text-white/60">{p.provider}</td>
-                        <td className="px-4 py-3 text-xs font-mono">${p.perToken.toFixed(10)}</td>
-                        <td className="px-4 py-3 text-xs font-mono">${p.per1K.toFixed(6)}</td>
-                        <td className="px-4 py-3 text-xs font-mono">${p.per1M.toFixed(2)}</td>
-                        <td className="px-4 py-3">
-                          <span className={cn("px-2 py-0.5 rounded text-[9px] font-bold", p.type === 'FREE' ? "bg-green-500/20 text-green-400 border border-green-500/30" : "bg-blue-500/20 text-blue-400 border border-blue-500/30")}>
-                            {p.type}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Section 4: Cost Calculator */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
-              <h3 className="text-sm font-bold mb-4">Calculate Your Exact Costs</h3>
-              <div className="grid md:grid-cols-3 gap-6 mb-6">
-                <div>
-                  <label className="text-[10px] text-white/30 uppercase mb-2 block">Prompts per month: {promptsPerMonth.toLocaleString()}</label>
-                  <input type="range" min="1000" max="1000000" step="1000" value={promptsPerMonth} onChange={e => setPromptsPerMonth(Number(e.target.value))} className="w-full" />
+            {/* Optimization Score */}
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 className="text-white font-bold text-lg mb-4">🎯 Your Optimization Score</h3>
+              <div className="flex items-center gap-8">
+                <div className="text-center">
+                  <div className={`text-6xl font-bold ${scoreColor}`}>{optimizationScore}</div>
+                  <div className={`text-sm font-semibold mt-1 ${scoreColor}`}>{scoreLabel}</div>
+                  <div className="text-gray-500 text-xs mt-1">out of 100</div>
                 </div>
-                <div>
-                  <label className="text-[10px] text-white/30 uppercase mb-2 block">% Simple: {simplePercent}%</label>
-                  <input type="range" min="0" max="100" step="5" value={simplePercent} onChange={e => setSimplePercent(Number(e.target.value))} className="w-full" />
-                </div>
-                <div>
-                  <label className="text-[10px] text-white/30 uppercase mb-2 block">Avg tokens/prompt: {avgTokens}</label>
-                  <input type="range" min="50" max="2000" step="50" value={avgTokens} onChange={e => setAvgTokens(Number(e.target.value))} className="w-full" />
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/5">
-                  <div className="text-sm font-bold text-red-400 mb-3">Without LLMLite (all GPT-4o)</div>
-                  <div className="space-y-2 text-xs">
-                    <div>Simple: {simplePrompts} × {avgTokens} × $0.000005 = <span className="text-red-400 font-bold">${(simplePrompts * avgTokens * 0.000005).toFixed(2)}</span></div>
-                    <div>Complex: {complexPrompts} × {avgTokens} × $0.000005 = <span className="text-red-400 font-bold">${(complexPrompts * avgTokens * 0.000005).toFixed(2)}</span></div>
-                    <div className="pt-2 border-t border-red-500/20 font-bold text-red-400">Total: ${gpt4oCost.toFixed(2)}</div>
+                <div className="flex-1">
+                  <div className="bg-gray-800 rounded-full h-4 mb-3">
+                    <div className={`h-4 rounded-full transition-all ${optimizationScore >= 70 ? 'bg-green-500' : optimizationScore >= 40 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                      style={{width: `${optimizationScore}%`}}></div>
                   </div>
-                </div>
-                <div className="p-4 rounded-xl border border-green-500/30 bg-green-500/5">
-                  <div className="text-sm font-bold text-green-400 mb-3">With LLMLite</div>
-                  <div className="space-y-2 text-xs">
-                    <div>Simple: {simplePrompts} × {avgTokens} × $0.00 = <span className="text-green-400 font-bold">$0.00</span></div>
-                    <div>Complex: {complexPrompts} × {avgTokens} × $0.000001 = <span className="text-green-400 font-bold">${routeLLMCost.toFixed(2)}</span></div>
-                    <div className="pt-2 border-t border-green-500/20 font-bold text-green-400">Total: ${routeLLMCost.toFixed(2)}</div>
+                  <div className="space-y-2">
+                    {optimizationScore < 70 && (
+                      <p className="text-yellow-400 text-sm">💡 Tip: Enable auto-routing to route simple prompts to free models</p>
+                    )}
+                    {savingsPercent < 50 && (
+                      <p className="text-blue-400 text-sm">💡 Tip: Use Custom Rules to always route short prompts to Gemma (free)</p>
+                    )}
+                    {optimizationScore >= 70 && (
+                      <p className="text-green-400 text-sm">✅ Great job! You are saving significantly vs using GPT-4o for everything</p>
+                    )}
                   </div>
                 </div>
               </div>
-              <div className="mt-6 p-4 rounded-xl bg-green-500/10 border border-green-500/30">
-                <div className="text-[10px] text-green-400 uppercase mb-1">Your Monthly Savings</div>
-                <div className="text-4xl font-black text-green-400">${monthlySavings.toFixed(2)}</div>
-                {proCost > 0 && (
-                  <div className="mt-2 text-xs text-white/40">
-                    After LLMLite Pro ($99/mo): <span className={netSavings > 0 ? "text-green-400" : "text-white/60"}>${netSavings.toFixed(2)}</span>
-                  </div>
-                )}
-              </div>
             </div>
 
-            {/* Section 5: Monthly Cost Projection */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
-              <h3 className="text-sm font-bold mb-4">End of Month Projection</h3>
-              <div className="grid md:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <div className="text-[10px] text-white/30 uppercase mb-1">Projected Monthly Spend</div>
-                  <div className="text-2xl font-black text-yellow-400">${projectedMonthlyCost.toFixed(2)}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-white/30 uppercase mb-1">Projected Savings</div>
-                  <div className="text-2xl font-black text-green-400">${projectedSavings.toFixed(2)}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-white/30 uppercase mb-1">Days Left in Month</div>
-                  <div className="text-2xl font-black">{daysInMonth - dayOfMonth} days</div>
-                </div>
-              </div>
-              <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(dayOfMonth / daysInMonth) * 100}%` }} />
-              </div>
-              <div className="text-xs text-white/30 mt-2">{dayOfMonth} of {daysInMonth} days elapsed</div>
-            </div>
-
-            {/* Section 6: Cost Leaderboard */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
-              <h3 className="text-sm font-bold mb-4">Your Most Used Models</h3>
+            {/* Recommendations */}
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 className="text-white font-bold text-lg mb-4">💡 Cost Recommendations</h3>
               <div className="space-y-3">
-                {leaderboard.slice(0, 10).map((model: any, idx: number) => (
-                  <div key={idx} className="flex items-center gap-4 p-3 bg-black/30 rounded-lg">
-                    <div className="w-8 text-center font-black text-lg text-white/20">#{idx + 1}</div>
-                    <div className="flex-1">
-                      <div className="text-sm font-bold">{model.model}</div>
-                      <div className="h-1.5 bg-white/10 rounded-full mt-1 overflow-hidden">
-                        <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(model.requests / leaderboard[0].requests) * 100}%` }} />
+                {getRecommendations().map((rec, i) => (
+                  <div key={i} className={`border rounded-xl p-4 flex items-start justify-between gap-4 ${
+                    rec.color === 'green' ? 'border-green-500/30 bg-green-500/5' :
+                    rec.color === 'yellow' ? 'border-yellow-500/30 bg-yellow-500/5' :
+                    'border-red-500/30 bg-red-500/5'
+                  }`}>
+                    <div className="flex gap-3">
+                      <span className="text-2xl">{rec.icon}</span>
+                      <div>
+                        <p className="text-white font-semibold text-sm">{rec.title}</p>
+                        <p className="text-gray-400 text-xs mt-1">{rec.description}</p>
+                        <p className={`text-xs mt-1 font-semibold ${
+                          rec.color === 'green' ? 'text-green-400' : 'text-yellow-400'
+                        }`}>{rec.saving}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-bold">{model.requests} reqs</div>
-                      <div className={cn("text-xs font-bold", model.cost === 0 ? "text-green-400" : "text-white/60")}>
-                        {model.cost === 0 ? "FREE" : `$${model.cost.toFixed(2)}`}
-                      </div>
-                    </div>
+                    {rec.action && rec.link && (
+                      <a href={rec.link}
+                        className="shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-lg transition-all">
+                        {rec.action} →
+                      </a>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Section 7: Zero Cost Proof */}
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6">
-              <h3 className="text-sm font-bold mb-4">Why Your Requests Cost $0.00</h3>
-              <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl mb-4">
-                <div className="text-sm">{freeRequests} out of {totalRequests} total requests used free models</div>
-                <div className="text-xs text-white/40 mt-1">Free models used: {freeModelNames || 'gemma-3-4b-it:free, llama-3.1-8b:free'}</div>
-              </div>
-              <div className="flex items-center justify-center gap-2 md:gap-4 text-xs md:text-sm flex-wrap">
-                <div className="px-3 py-2 bg-blue-500/20 rounded-lg">Your Prompt</div>
-                <div className="text-white/40">→</div>
-                <div className="px-3 py-2 bg-purple-500/20 rounded-lg">LLMLite Classifier</div>
-                <div className="text-white/40">→</div>
-                <div className="flex gap-2">
-                  <div className="px-3 py-2 bg-green-500/20 border border-green-500/30 rounded-lg">SIMPLE → Free Model</div>
-                  <div className="text-green-400">$0.00</div>
+            {/* Cost by Model */}
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 className="text-white font-bold text-lg mb-4">📊 Cost by Model</h3>
+              {modelBreakdownArray.length === 0 ? (
+                <p className="text-gray-500 text-sm">No requests yet. Start using the API to see breakdown.</p>
+              ) : (
+                <div className="space-y-3">
+                  {modelBreakdownArray.map((model: any) => (
+                    <div key={model.name}>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-white text-sm font-medium">{model.name}</span>
+                          <span className="text-gray-500 text-xs">{model.count} requests</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-white text-sm font-mono">${model.cost.toFixed(6)}</span>
+                          <span className="text-gray-500 text-xs ml-2">{model.tokens.toLocaleString()} tokens</span>
+                        </div>
+                      </div>
+                      <div className="bg-gray-800 rounded-full h-2">
+                        <div className="bg-blue-500 h-2 rounded-full"
+                          style={{width: `${totalRequests > 0 ? (model.count / totalRequests * 100) : 0}%`}}></div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="text-white/40">or</div>
-                <div className="flex gap-2">
-                  <div className="px-3 py-2 bg-orange-500/20 border border-orange-500/30 rounded-lg">COMPLEX → Paid Model</div>
-                  <div className="text-yellow-400">small cost</div>
+              )}
+            </div>
+
+            {/* Request Receipts */}
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-white font-bold text-lg">🧾 Request Receipts</h3>
+                <span className="text-gray-500 text-xs">Last {requests.length} requests</span>
+              </div>
+              {requests.length === 0 ? (
+                <p className="text-gray-500 text-sm">No requests yet.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-gray-500 text-xs uppercase border-b border-gray-800">
+                        <th className="text-left pb-3">Model</th>
+                        <th className="text-left pb-3">Type</th>
+                        <th className="text-right pb-3">Tokens</th>
+                        <th className="text-right pb-3">Cost</th>
+                        <th className="text-right pb-3">Saved vs GPT-4o</th>
+                        <th className="text-right pb-3">Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {requests.map((req: any, i: number) => {
+                        const gpt4oEquivalentCost = ((req.tokens_used || 0) / 1000000) * 5.00
+                        const saved = gpt4oEquivalentCost - (req.cost_usd || 0)
+                        return (
+                          <tr key={i} className="border-b border-gray-800/50 hover:bg-gray-800/30">
+                            <td className="py-3 text-white text-xs font-mono">{req.model_used?.split('/').pop() || 'N/A'}</td>
+                            <td className="py-3">
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                req.prompt_type === 'SIMPLE' ? 'bg-green-500/20 text-green-400' : 'bg-orange-500/20 text-orange-400'
+                              }`}>{req.prompt_type || 'N/A'}</span>
+                            </td>
+                            <td className="py-3 text-right text-gray-300 text-xs">{(req.tokens_used || 0).toLocaleString()}</td>
+                            <td className="py-3 text-right text-white text-xs font-mono">${(req.cost_usd || 0).toFixed(6)}</td>
+                            <td className="py-3 text-right text-green-400 text-xs font-mono">+${saved.toFixed(6)}</td>
+                            <td className="py-3 text-right text-gray-500 text-xs">{req.created_at ? new Date(req.created_at).toLocaleTimeString() : 'N/A'}</td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t-2 border-gray-700">
+                        <td colSpan={2} className="pt-3 text-gray-400 text-xs font-semibold">TOTAL</td>
+                        <td className="pt-3 text-right text-white text-xs font-mono">{totalTokens.toLocaleString()}</td>
+                        <td className="pt-3 text-right text-white text-xs font-mono">${totalCost.toFixed(6)}</td>
+                        <td className="pt-3 text-right text-green-400 text-xs font-mono">+${totalSavings.toFixed(6)}</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* Forecast */}
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 className="text-white font-bold text-lg mb-1">📈 Month Forecast</h3>
+              <p className="text-gray-500 text-xs mb-4">Based on your usage so far this month (Day {dayOfMonth} of {daysInMonth})</p>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-gray-800 rounded-xl p-4 text-center">
+                  <p className="text-gray-500 text-xs uppercase mb-1">Projected Cost</p>
+                  <p className="text-white text-2xl font-bold">${projectedCost.toFixed(4)}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl p-4 text-center">
+                  <p className="text-gray-500 text-xs uppercase mb-1">Projected Tokens</p>
+                  <p className="text-blue-400 text-2xl font-bold">{Math.round(projectedTokens).toLocaleString()}</p>
+                </div>
+                <div className="bg-gray-800 rounded-xl p-4 text-center">
+                  <p className="text-gray-500 text-xs uppercase mb-1">Projected Savings</p>
+                  <p className="text-green-400 text-2xl font-bold">${projectedSavings.toFixed(4)}</p>
                 </div>
               </div>
             </div>
@@ -535,24 +485,6 @@ export const CostTransparency = () => {
           </div>
         </div>
       </main>
-
-      {/* Mobile Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[#050505]/95 backdrop-blur-xl border-t border-white/[0.08]">
-        <div className="flex items-center justify-around px-2 py-2">
-          {[
-            { label: 'Home', path: '/dashboard', icon: '🏠' },
-            { label: 'Routing', path: '/dashboard/routing', icon: '⚡' },
-            { label: 'Savings', path: '/dashboard/savings', icon: '💰' },
-            { label: 'Usage', path: '/dashboard/usage', icon: '📊' },
-            { label: 'Docs', path: '/docs', icon: '📄' },
-          ].map(item => (
-            <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${location.pathname === item.path ? 'bg-white/10' : ''}`}>
-              <span className="text-lg leading-none">{item.icon}</span>
-              <span className={`text-[9px] font-bold ${location.pathname === item.path ? 'text-white' : 'text-white/30'}`}>{item.label}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
