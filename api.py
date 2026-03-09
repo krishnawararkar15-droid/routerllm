@@ -364,33 +364,48 @@ async def signup(data: dict):
     except Exception as e:
         return {"error": str(e)}
 
-import secrets
-
 @app.post("/regenerate-key")
 async def regenerate_key(request: Request):
-    data = await request.json()
-    email = data.get("email")
-    old_key = data.get("subscription_key")
+    try:
+        data = await request.json()
+        email = data.get("email", "").strip().lower()
+        old_key = data.get("subscription_key", "").strip()
 
-    if not email or not old_key:
-        return JSONResponse(status_code=400, content={"error": "Email and key required"})
+        print(f"Regenerate key request - email: {email}, old_key: {old_key[:20]}...")
 
-    # Verify user exists with this email and key
-    user_result = sb.table("users").select("*").eq("email", email).eq("subscription_key", old_key).execute()
+        if not email or not old_key:
+            return JSONResponse(status_code=400, content={"error": "Email and key required"})
 
-    if not user_result.data:
-        return JSONResponse(status_code=404, content={"error": "User not found or key mismatch"})
+        # Find user by email only first
+        user_result = sb.table("users").select("*").eq("email", email).execute()
 
-    # Generate new key
-    new_key = "sk-rl-" + secrets.token_hex(16)
+        if not user_result.data:
+            print(f"User not found for email: {email}")
+            return JSONResponse(status_code=404, content={"error": "User not found"})
 
-    # Update in database
-    sb.table("users").update({"subscription_key": new_key}).eq("email", email).execute()
+        user = user_result.data[0]
+        print(f"User found: {user.get('email')}, plan: {user.get('plan')}")
 
-    # Also update all existing requests to new key
-    sb.table("requests").update({"subscription_key": new_key}).eq("subscription_key", old_key).execute()
+        # Generate new key
+        new_key = "sk-rl-" + secrets.token_hex(16)
 
-    return {"success": True, "new_key": new_key}
+        # Update subscription key in users table
+        update_result = sb.table("users").update(
+            {"subscription_key": new_key}
+        ).eq("email", email).execute()
+
+        print(f"Key updated successfully. New key: {new_key[:20]}...")
+
+        # Update requests table too
+        sb.table("requests").update(
+            {"subscription_key": new_key}
+        ).eq("subscription_key", old_key).execute()
+
+        return {"success": True, "new_key": new_key}
+
+    except Exception as e:
+        print(f"Regenerate key error: {str(e)}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/login")
 async def login(data: dict):
