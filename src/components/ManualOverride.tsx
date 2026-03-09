@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Settings, Play, RefreshCw, Zap, Copy, Check, Menu, X } from 'lucide-react';
 import { LayoutDashboard, Key, BarChart3, FileText, Bell, Layers, Code2, CreditCard, Shield, LogOut, Sliders } from 'lucide-react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'motion/react';
@@ -157,8 +157,16 @@ export const ManualOverride = () => {
   const userKey = localStorage.getItem('routellm_key') || '';
   const userEmail = localStorage.getItem('routellm_email') || '';
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const plan = localStorage.getItem('routellm_plan') || 'free';
   const isFree = plan === 'free';
+
+  useEffect(() => {
+    const modelFromUrl = searchParams.get('model')
+    if (modelFromUrl) {
+      setSelectedModel(modelFromUrl)
+    }
+  }, [])
 
   useEffect(() => {
     if (!userKey) { navigate('/login'); return; }

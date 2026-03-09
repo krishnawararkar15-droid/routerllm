@@ -186,8 +186,69 @@ export const ModelsPage = () => {
   const userEmail = localStorage.getItem('routellm_email') || '';
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const plan = localStorage.getItem('routellm_plan') || 'free';
   const isFree = plan === 'free';
+
+  useEffect(() => {
+    const modelFromUrl = searchParams.get('model');
+    if (modelFromUrl) {
+      const model = models.find(m => m.id === modelFromUrl);
+      if (model) {
+        setSearch(model.id);
+      }
+    }
+  }, []);
+
+  const copyModelId = async (modelId: string) => {
+    await navigator.clipboard.writeText(modelId)
+    setCopiedId(modelId)
+    setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  const handleUseInOverride = (modelId: string) => {
+    const model = models.find(m => m.id === modelId)
+    if (model?.type === 'paid' && plan === 'free') {
+      setShowUpgradeModal(true)
+      return
+    }
+    navigate(`/dashboard/override?model=${encodeURIComponent(modelId)}`)
+  }
+
+  const handleTestModel = (modelId: string) => {
+    const model = models.find(m => m.id === modelId)
+    if (model?.type === 'paid' && plan === 'free') {
+      setShowUpgradeModal(true)
+      return
+    }
+    setTestingModel(modelId)
+    setTestResult(null)
+    setTestPrompt('')
+  }
+
+  const runModelTest = async () => {
+    if (!testPrompt.trim() || !testingModel) return
+    setTestLoading(true)
+    setTestResult(null)
+    try {
+      const key = localStorage.getItem('routellm_key')
+      const res = await fetch('https://routerllm.onrender.com/route', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: testPrompt,
+          subscription_key: key,
+          model: testingModel
+        })
+      })
+      const data = await res.json()
+      setTestResult(data)
+    } catch (err) {
+      setTestResult({ response: 'Error connecting to backend. Try again.' })
+    } finally {
+      setTestLoading(false)
+    }
+  }
 
   useEffect(() => {
     if (!userKey) { navigate('/login'); }
@@ -224,9 +285,7 @@ export const ModelsPage = () => {
   const clearSelection = () => setSelectedModels([]);
 
   const useInOverride = (id: string) => {
-    localStorage.setItem('routellm_override_model', id);
-    setToast('Model selected for override!');
-    setTimeout(() => setToast(null), 2000);
+    handleUseInOverride(id);
   };
 
   const getSpeedColor = (speed: string) => {
@@ -328,6 +387,50 @@ export const ModelsPage = () => {
               />
             </div>
 
+            {/* Cost Calculator */}
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
+              <h3 className="text-white font-bold mb-1">💰 Cost Calculator</h3>
+              <p className="text-gray-400 text-sm mb-4">How much will you spend per month?</p>
+              <div className="flex items-center gap-4 mb-4">
+                <label className="text-gray-400 text-sm">Monthly tokens:</label>
+                <input
+                  type="number"
+                  value={monthlyTokens}
+                  onChange={(e) => setMonthlyTokens(Number(e.target.value))}
+                  className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm w-40 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-gray-500 text-xs uppercase">
+                      <th className="text-left pb-2">Model</th>
+                      <th className="text-right pb-2">Monthly Cost</th>
+                      <th className="text-right pb-2">vs GPT-4o</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...models].sort((a,b) => a.cost - b.cost).slice(0, 10).map(model => {
+                      const monthlyCost = (monthlyTokens / 1000000) * model.cost
+                      const gpt4oCost = (monthlyTokens / 1000000) * 5.00
+                      const savings = gpt4oCost - monthlyCost
+                      return (
+                        <tr key={model.id} className="border-t border-gray-800">
+                          <td className="py-2 text-white">{model.name}</td>
+                          <td className={`py-2 text-right font-mono font-bold ${model.cost === 0 ? 'text-green-400' : 'text-white'}`}>
+                            ${monthlyCost.toFixed(2)}
+                          </td>
+                          <td className="py-2 text-right text-green-400 text-xs">
+                            {model.id.includes('gpt-4o') && !model.id.includes('mini') ? 'Baseline' : `Save $${savings.toFixed(2)}`}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             {/* Filter Bar */}
             <div className="flex flex-wrap gap-2">
               {['all', 'free', 'OpenAI', 'Anthropic', 'Google', 'Meta', 'Mistral'].map(f => (
@@ -409,6 +512,12 @@ export const ModelsPage = () => {
                       {copiedId === model.id ? 'Copied!' : 'Copy ID'}
                     </button>
                     <button
+                      onClick={() => handleTestModel(model.id)}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-2 rounded-lg transition-all"
+                    >
+                      ⚡ Test
+                    </button>
+                    <button
                       onClick={() => useInOverride(model.id)}
                       className="flex-1 py-2 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-500 transition-all"
                     >
@@ -422,6 +531,55 @@ export const ModelsPage = () => {
           </div>
         </div>
       </main>
+
+      {/* Test Model Panel */}
+      {testingModel && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 border-t border-gray-700 shadow-2xl">
+          <div className="max-w-4xl mx-auto p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-white font-semibold text-sm">
+                  ⚡ Testing: <span className="text-blue-400">{models.find(m => m.id === testingModel)?.name}</span>
+                </p>
+                <p className="text-gray-500 text-xs">{testingModel}</p>
+              </div>
+              <button onClick={() => { setTestingModel(null); setTestResult(null); setTestPrompt('') }}
+                className="text-gray-500 hover:text-white text-xl">✕</button>
+            </div>
+            <div className="flex gap-3">
+              <input
+                value={testPrompt}
+                onChange={(e) => setTestPrompt(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && runModelTest()}
+                placeholder="Type any prompt to test this model..."
+                className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500"
+              />
+              <button
+                onClick={runModelTest}
+                disabled={testLoading || !testPrompt.trim()}
+                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-6 py-3 rounded-xl font-medium transition-all"
+              >
+                {testLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                    Running...
+                  </div>
+                ) : 'Run →'}
+              </button>
+            </div>
+            {testResult && (
+              <div className="mt-3 bg-gray-800 rounded-xl p-4">
+                <div className="flex gap-4 mb-2">
+                  <span className="text-gray-500 text-xs">Tokens: <span className="text-white">{testResult.tokens_used}</span></span>
+                  <span className="text-gray-500 text-xs">Cost: <span className="text-green-400">${typeof testResult.cost_usd === 'number' ? testResult.cost_usd.toFixed(6) : '0.000000'}</span></span>
+                  <span className="text-gray-500 text-xs">Type: <span className="text-blue-400">{testResult.prompt_type}</span></span>
+                </div>
+                <p className="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">{testResult.response || 'No response'}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Compare Panel */}
       {selectedModels.length >= 2 && (
@@ -474,6 +632,27 @@ export const ModelsPage = () => {
       {toast && (
         <div className="fixed top-20 right-4 z-50 bg-green-600 text-white px-4 py-3 rounded-xl text-sm font-bold shadow-lg animate-in fade-in slide-in-from-top-2">
           {toast}
+        </div>
+      )}
+
+      {/* Upgrade Modal */}
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-sm w-full mx-4 text-center">
+            <div className="text-4xl mb-4">🔒</div>
+            <h3 className="text-white text-xl font-bold mb-2">Paid Models — Pro Only</h3>
+            <p className="text-gray-400 text-sm mb-6">
+              Access GPT-4o, Claude 3.5, Gemini and all paid models with a Pro plan.
+            </p>
+            <a href="/dashboard/billing"
+              className="block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl mb-3 transition-all">
+              Upgrade to Pro — $29/mo →
+            </a>
+            <button onClick={() => setShowUpgradeModal(false)}
+              className="text-gray-500 text-sm hover:text-gray-300">
+              Cancel
+            </button>
+          </div>
         </div>
       )}
 
