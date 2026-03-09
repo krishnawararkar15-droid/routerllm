@@ -364,6 +364,34 @@ async def signup(data: dict):
     except Exception as e:
         return {"error": str(e)}
 
+import secrets
+
+@app.post("/regenerate-key")
+async def regenerate_key(request: Request):
+    data = await request.json()
+    email = data.get("email")
+    old_key = data.get("subscription_key")
+
+    if not email or not old_key:
+        return JSONResponse(status_code=400, content={"error": "Email and key required"})
+
+    # Verify user exists with this email and key
+    user_result = sb.table("users").select("*").eq("email", email).eq("subscription_key", old_key).execute()
+
+    if not user_result.data:
+        return JSONResponse(status_code=404, content={"error": "User not found or key mismatch"})
+
+    # Generate new key
+    new_key = "sk-rl-" + secrets.token_hex(16)
+
+    # Update in database
+    sb.table("users").update({"subscription_key": new_key}).eq("email", email).execute()
+
+    # Also update all existing requests to new key
+    sb.table("requests").update({"subscription_key": new_key}).eq("subscription_key", old_key).execute()
+
+    return {"success": True, "new_key": new_key}
+
 @app.post("/login")
 async def login(data: dict):
     try:

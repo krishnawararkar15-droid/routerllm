@@ -25,6 +25,9 @@ export const ApiKeys = () => {
   const [testResult, setTestResult] = useState<any>(null);
   const [testLoading, setTestLoading] = useState(false);
   const [testError, setTestError] = useState('');
+  const [regenerating, setRegenerating] = useState(false)
+  const [regenerateError, setRegenerateError] = useState('')
+  const [showConfirm, setShowConfirm] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -44,6 +47,37 @@ export const ApiKeys = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const handleRegenerateKey = async () => {
+    setRegenerating(true)
+    setRegenerateError('')
+    try {
+      const email = localStorage.getItem('routellm_email')
+      const oldKey = localStorage.getItem('routellm_key')
+
+      const response = await fetch('https://routerllm.onrender.com/regenerate-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          subscription_key: oldKey
+        })
+      })
+      const data = await response.json()
+
+      if (data.new_key) {
+        localStorage.setItem('routellm_key', data.new_key)
+        setShowConfirm(false)
+        window.location.reload()
+      } else {
+        setRegenerateError(data.error || 'Failed to regenerate key')
+      }
+    } catch (err) {
+      setRegenerateError('Failed to connect. Try again.')
+    } finally {
+      setRegenerating(false)
+    }
+  }
 
   const runTest = async () => {
     if (!testPrompt.trim()) return;
@@ -358,10 +392,37 @@ console.log(data);`,
                   </p>
                 </>
               ) : (
-                <button onClick={() => alert('Regenerate key coming soon!')}
-                  className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 font-bold px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2">
-                  <RefreshCw className="w-4 h-4" /> Regenerate Key
-                </button>
+                <>
+                  {!showConfirm ? (
+                    <button
+                      onClick={() => setShowConfirm(true)}
+                      className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all text-sm font-medium"
+                    >
+                      🔄 Regenerate Key
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <p className="text-yellow-400 text-sm">Are you sure? Old key stops working immediately.</p>
+                      <button
+                        onClick={handleRegenerateKey}
+                        disabled={regenerating}
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+                      >
+                        {regenerating ? 'Regenerating...' : 'Yes, Regenerate'}
+                      </button>
+                      <button
+                        onClick={() => setShowConfirm(false)}
+                        className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+
+                  {regenerateError && (
+                    <p className="text-red-400 text-sm mt-2">{regenerateError}</p>
+                  )}
+                </>
               )}
             </div>
 
