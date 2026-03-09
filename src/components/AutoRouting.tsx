@@ -322,27 +322,36 @@ export const AutoRouting = () => {
                 </div>
               )}
 
-              {testResult && (
-                <div className={`rounded-xl border p-5 transition-all ${testResult.prompt_type === 'SIMPLE' ? 'bg-blue-500/[0.05] border-blue-500/30' : 'bg-purple-500/[0.05] border-purple-500/30'}`}>
+              {testResult && (() => {
+                const data = testResult;
+                const model = data?.model_used || 'N/A';
+                const type = data?.prompt_type || 'AUTO';
+                const tokens = data?.tokens_used || 0;
+                const cost = typeof data?.cost_usd === 'number' ? data.cost_usd : 0;
+                const aiResponse = data?.response || '';
+                
+                return (
+                <div className={`rounded-xl border p-5 transition-all ${type === 'SIMPLE' ? 'bg-blue-500/[0.05] border-blue-500/30' : 'bg-purple-500/[0.05] border-purple-500/30'}`}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className={`px-3 py-1.5 rounded-lg text-xs font-black ${testResult.prompt_type === 'SIMPLE' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-purple-500/20 text-purple-400 border border-purple-500/30'}`}>
-                      {testResult.prompt_type === 'SIMPLE' ? '⚡ SIMPLE' : '🧠 COMPLEX'}
+                    <div className={`px-3 py-1.5 rounded-lg text-xs font-black ${type === 'SIMPLE' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-purple-500/20 text-purple-400 border border-purple-500/30'}`}>
+                      {type === 'SIMPLE' ? '⚡ SIMPLE' : '🧠 COMPLEX'}
                     </div>
                     <ArrowRight className="w-4 h-4 text-white/30" />
                     <div className="bg-white/10 border border-white/10 px-3 py-1.5 rounded-lg text-xs font-black text-white">
-                      🤖 {testResult.model_used}
+                      🤖 {model}
                     </div>
                     <div className="ml-auto flex items-center gap-4 text-xs text-white/30">
-                      <span>Tokens: <span className="text-white font-bold">{testResult.tokens_used}</span></span>
-                      <span>Cost: <span className="text-green-400 font-bold">${Number(testResult.cost_usd).toFixed(4)}</span></span>
+                      <span>Tokens: <span className="text-white font-bold">{tokens}</span></span>
+                      <span>Cost: <span className="text-green-400 font-bold">${cost.toFixed(4)}</span></span>
                     </div>
                   </div>
                   <div className="bg-black/30 rounded-xl p-4">
                     <p className="text-[10px] text-white/30 uppercase tracking-widest mb-2">AI Response</p>
-                    <p className="text-sm text-white/80 leading-relaxed">{testResult.response}</p>
+                    <p className="text-sm text-white/80 leading-relaxed">{aiResponse}</p>
                   </div>
                 </div>
-              )}
+                );
+              })()}
             </div>
 
             {/* Stats + Pie chart */}

@@ -551,12 +551,15 @@ async def route_prompt(data: dict):
     }).execute()
     print(f"Saved to Supabase with key: '{subscription_key}'")
 
+    if not prompt_type:
+        prompt_type = "CUSTOM_RULE" if custom_model else "COMPLEX"
+
     return {
         "response": response_text,
         "model_used": model,
-        "prompt_type": prompt_type,
-        "tokens_used": total_tokens,
-        "cost_usd": cost,
+        "prompt_type": prompt_type if prompt_type else "SIMPLE",
+        "tokens_used": total_tokens if total_tokens else 0,
+        "cost_usd": float(cost) if cost else 0.0,
         "requests_remaining": tokens_remaining
     }
 

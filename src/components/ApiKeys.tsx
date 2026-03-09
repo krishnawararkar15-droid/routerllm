@@ -398,38 +398,49 @@ console.log(data);`,
                 </div>
               )}
 
-              {testResult && (
+              {testResult && (() => {
+                const data = testResult;
+                const model = data?.model_used || 'N/A';
+                const type = data?.prompt_type || 'AUTO';
+                const tokens = data?.tokens_used || 0;
+                const cost = typeof data?.cost_usd === 'number' ? data.cost_usd : 0;
+                const aiResponse = data?.response || '';
+                
+                return (
                 <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 mt-3 space-y-3">
                   <div className="flex flex-wrap gap-3">
                     <div className="bg-gray-900 rounded-lg px-3 py-2">
                       <p className="text-gray-500 text-xs">MODEL</p>
-                      <p className="text-white text-sm font-medium">{testResult.model_used}</p>
+                      <p className="text-white text-sm font-medium">{model}</p>
                     </div>
                     <div className="bg-gray-900 rounded-lg px-3 py-2">
                       <p className="text-gray-500 text-xs">TYPE</p>
-                      <p className={`text-sm font-medium ${testResult.prompt_type === 'SIMPLE' ? 'text-green-400' : 'text-orange-400'}`}>
-                        {testResult.prompt_type}
+                      <p className={`text-sm font-medium ${type === 'SIMPLE' ? 'text-green-400' : 'text-orange-400'}`}>
+                        {type}
                       </p>
                     </div>
                     <div className="bg-gray-900 rounded-lg px-3 py-2">
                       <p className="text-gray-500 text-xs">TOKENS</p>
-                      <p className="text-white text-sm font-medium">{testResult.tokens_used}</p>
+                      <p className="text-white text-sm font-medium">{tokens}</p>
                     </div>
                     <div className="bg-gray-900 rounded-lg px-3 py-2">
                       <p className="text-gray-500 text-xs">COST</p>
-                      <p className="text-green-400 text-sm font-medium">${Number(testResult.cost_usd).toFixed(6)}</p>
+                      <p className="text-green-400 text-sm font-medium">
+                        ${cost.toFixed(6)}
+                      </p>
                     </div>
                   </div>
-                  {testResult.response && (
+                  {aiResponse && (
                     <div className="bg-gray-900 rounded-lg p-3">
                       <p className="text-gray-500 text-xs mb-2">AI RESPONSE</p>
                       <p className="text-gray-300 text-sm leading-relaxed">
-                        {testResult.response}
+                        {aiResponse}
                       </p>
                     </div>
                   )}
                 </div>
-              )}
+                );
+              })()}
             </div>
 
             {/* How it works Card */}
