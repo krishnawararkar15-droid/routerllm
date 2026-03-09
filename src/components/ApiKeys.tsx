@@ -52,8 +52,10 @@ export const ApiKeys = () => {
     setRegenerating(true)
     setRegenerateError('')
     try {
-      const email = localStorage.getItem('routellm_email')
-      const oldKey = localStorage.getItem('routellm_key')
+      const email = localStorage.getItem('routellm_email') || ''
+      const oldKey = localStorage.getItem('routellm_key') || ''
+
+      console.log('Regenerating key for email:', email)
 
       const response = await fetch('https://routerllm.onrender.com/regenerate-key', {
         method: 'POST',
@@ -63,17 +65,21 @@ export const ApiKeys = () => {
           subscription_key: oldKey
         })
       })
+
       const data = await response.json()
+      console.log('Regenerate response:', data)
 
       if (data.new_key) {
         localStorage.setItem('routellm_key', data.new_key)
         setShowConfirm(false)
+        alert('Key regenerated successfully!')
         window.location.reload()
       } else {
         setRegenerateError(data.error || 'Failed to regenerate key')
       }
     } catch (err) {
-      setRegenerateError('Failed to connect. Try again.')
+      console.error('Regenerate error:', err)
+      setRegenerateError('Connection failed. Check if backend is running.')
     } finally {
       setRegenerating(false)
     }
