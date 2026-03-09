@@ -162,6 +162,8 @@ export const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('24h');
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showUpgradePopup, setShowUpgradePopup] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const userKey = localStorage.getItem('routellm_key');
   const userEmail = localStorage.getItem('routellm_email') || '';
@@ -169,6 +171,26 @@ export const Dashboard = () => {
   const chartData = React.useMemo(() => {
     return processChartData(stats?.recent_requests || [], activeFilter);
   }, [stats, activeFilter]);
+
+  const filteredRequests = (stats?.recent_requests || []).filter((req: any) => {
+    if (!searchQuery.trim()) return true
+    const query = searchQuery.toLowerCase()
+    return (
+      req.model_used?.toLowerCase().includes(query) ||
+      req.prompt_type?.toLowerCase().includes(query) ||
+      req.subscription_key?.toLowerCase().includes(query)
+    )
+  })
+
+  const plan = localStorage.getItem('routellm_plan') || 'free'
+
+  const handleNewKey = () => {
+    if (plan === 'free') {
+      setShowUpgradePopup(true)
+    } else {
+      navigate('/dashboard/keys')
+    }
+  }
 
   useEffect(() => {
     if (!userKey) { navigate('/login'); return; }
@@ -349,7 +371,9 @@ export const Dashboard = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/20" />
               <input 
                 type="text" 
-                placeholder="Search requests..." 
+                placeholder="Search requests..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-white/5 border border-white/[0.06] rounded-full pl-9 pr-4 py-1.5 text-[12px] sm:text-[13px] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/50 transition-all"
               />
             </div>
@@ -365,8 +389,11 @@ export const Dashboard = () => {
             }} className="hidden sm:block p-2 text-white/40 hover:text-white transition-colors">
               <RefreshCw className="w-4.5 h-4.5" />
             </button>
-            <button className="bg-[#3b82f6] text-white font-bold px-3 sm:px-3.5 py-1.5 rounded-lg text-[11px] sm:text-[13px] hover:bg-[#60a5fa] transition-all whitespace-nowrap">
-              New Key
+            <button
+              onClick={handleNewKey}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2"
+            >
+              + New Key
             </button>
           </div>
         </header>
@@ -469,9 +496,9 @@ export const Dashboard = () => {
                   <tbody className="divide-y divide-white/[0.06]">
                     {loading ? (
                       <tr><td colSpan={5} className="text-center py-8 text-white/30 text-sm">Loading...</td></tr>
-                    ) : (stats?.recent_requests ?? []).length === 0 ? (
-                      <tr><td colSpan={5} className="text-center py-8 text-white/30 text-sm">No requests yet. Make your first API call!</td></tr>
-                    ) : (stats?.recent_requests ?? []).map((req: any, i: number) => (
+                    ) : filteredRequests.length === 0 ? (
+                      <tr><td colSpan={5} className="text-center py-8 text-white/30 text-sm">{searchQuery ? `No requests found for "${searchQuery}"` : 'No requests yet. Make your first API call!'}</td></tr>
+                    ) : filteredRequests.map((req: any, i: number) => (
                       <tr key={i} className="h-[44px] hover:bg-white/[0.02] transition-colors">
                         <td className="px-6 py-2">
                           <div className="flex items-center gap-2">
@@ -494,6 +521,30 @@ export const Dashboard = () => {
           </div>
         </div>
       </main>
+
+      {showUpgradePopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-sm w-full mx-4 text-center">
+            <div className="text-4xl mb-4">🔒</div>
+            <h3 className="text-white text-xl font-bold mb-2">Multiple API Keys</h3>
+            <p className="text-gray-400 text-sm mb-6">
+              Create multiple API keys to separate projects and track usage independently. Available on Pro plan.
+            </p>
+            <a
+              href="/dashboard/billing"
+              className="block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl mb-3 transition-all"
+            >
+              Upgrade to Pro — $29/mo →
+            </a>
+            <button
+              onClick={() => setShowUpgradePopup(false)}
+              className="text-gray-500 text-sm hover:text-gray-300"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
