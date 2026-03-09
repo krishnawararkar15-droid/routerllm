@@ -143,6 +143,7 @@ export const ManualOverride = () => {
   const [prompt, setPrompt] = useState('');
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [compareModel1, setCompareModel1] = useState('google/gemma-3-4b-it:free');
   const [compareModel2, setCompareModel2] = useState('openai/gpt-4o-mini');
   const [comparePrompt, setComparePrompt] = useState('');
@@ -167,20 +168,32 @@ export const ManualOverride = () => {
   }, []);
 
   const runTest = async () => {
-    if (!prompt.trim()) return;
-    setLoading(true);
-    setResult(null);
+    if (!prompt.trim() || !selectedModel) return
+    setLoading(true)
+    setResult(null)
+    setError('')
     try {
-      const body: any = { prompt, subscription_key: userKey };
-      if (selectedModel !== 'auto') body.model_override = selectedModel;
-      const res = await fetch('https://routerllm.onrender.com/route', {
+      const key = localStorage.getItem('routellm_key')
+      const response = await fetch('https://routerllm.onrender.com/route', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      setResult(await res.json());
-    } catch(e) { console.error(e); }
-    setLoading(false);
+        body: JSON.stringify({
+          prompt: prompt,
+          subscription_key: key,
+          model: selectedModel
+        })
+      })
+      const data = await response.json()
+      if (data.error) {
+        setError(data.error)
+      } else {
+        setResult(data)
+      }
+    } catch (err) {
+      setError('Failed to connect. Try again.')
+    } finally {
+      setLoading(false)
+    }
   };
 
   const runCompare = async () => {
@@ -346,15 +359,38 @@ export const ManualOverride = () => {
               </div>
 
               {/* Result */}
+              {loading && (
+                <div className="flex items-center gap-3 p-4 bg-gray-800 rounded-xl mt-4">
+                  <div className="animate-spin w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                  <p className="text-gray-400 text-sm">Running on {selectedModel}...</p>
+                </div>
+              )}
+
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mt-4">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
+
               {result && (
-                <div className="mt-4 bg-black/30 border border-white/[0.08] rounded-xl p-5">
-                  <div className="flex items-center gap-3 mb-3 flex-wrap">
-                    <div className="bg-white/10 border border-white/10 px-3 py-1.5 rounded-lg text-xs font-black">🤖 {result.model_used}</div>
-                    <div className="bg-blue-500/20 border border-blue-500/20 px-3 py-1.5 rounded-lg text-xs font-black text-blue-400">{result.prompt_type}</div>
-                    <div className="text-xs text-white/30">Tokens: <span className="text-white font-bold">{result.tokens_used}</span></div>
-                    <div className="text-xs text-white/30">Cost: <span className="text-green-400 font-bold">${Number(result.cost_usd || 0).toFixed(6)}</span></div>
+                <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 mt-4 space-y-3">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium">
+                      {result.model_used}
+                    </span>
+                    <span className="text-gray-500 text-xs">
+                      {result.tokens_used} tokens
+                    </span>
+                    <span className="text-green-400 text-xs">
+                      ${typeof result.cost_usd === 'number' ? result.cost_usd.toFixed(6) : '0.000000'}
+                    </span>
                   </div>
-                  <p className="text-sm text-white/80 leading-relaxed">{result.response}</p>
+                  <div className="bg-gray-900 rounded-xl p-4">
+                    <p className="text-gray-500 text-xs uppercase mb-2">AI Response</p>
+                    <p className="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">
+                      {result.response || 'No response received'}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
