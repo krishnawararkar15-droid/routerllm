@@ -258,11 +258,11 @@ def is_simple(prompt):
 
 # Try models in order until one works
 FREE_MODELS = [
-    "meta-llama/llama-4-scout:free",
-    "meta-llama/llama-4-maverick:free",
     "google/gemini-2.0-flash-exp:free",
-    "deepseek/deepseek-r1:free",
-    "mistralai/mistral-small-3.1-24b-instruct:free",
+    "deepseek/deepseek-r1:free", 
+    "meta-llama/llama-3.1-8b-instruct:free",
+    "mistralai/mistral-7b-instruct:free",
+    "google/gemma-2-9b-it:free",
 ]
 
 async def call_openrouter(model: str, prompt: str, openrouter_key: str):
@@ -286,11 +286,11 @@ async def call_openrouter(model: str, prompt: str, openrouter_key: str):
 
 def calculate_cost(model, prompt_tokens, completion_tokens):
     prices_per_million = {
-        "meta-llama/llama-4-scout:free": {"prompt": 0.0, "completion": 0.0},
-        "meta-llama/llama-4-maverick:free": {"prompt": 0.0, "completion": 0.0},
         "google/gemini-2.0-flash-exp:free": {"prompt": 0.0, "completion": 0.0},
         "deepseek/deepseek-r1:free": {"prompt": 0.0, "completion": 0.0},
-        "mistralai/mistral-small-3.1-24b-instruct:free": {"prompt": 0.0, "completion": 0.0},
+        "meta-llama/llama-3.1-8b-instruct:free": {"prompt": 0.0, "completion": 0.0},
+        "mistralai/mistral-7b-instruct:free": {"prompt": 0.0, "completion": 0.0},
+        "google/gemma-2-9b-it:free": {"prompt": 0.0, "completion": 0.0},
     }
 
     if model not in prices_per_million:
@@ -572,10 +572,10 @@ async def route_request(request: Request):
             is_complex = word_count > 50 or any(kw in prompt.lower() for kw in complex_keywords)
 
             if is_complex:
-                selected_model = "meta-llama/llama-4-maverick:free"
+                selected_model = "deepseek/deepseek-r1:free"
                 prompt_type = "COMPLEX"
             else:
-                selected_model = "meta-llama/llama-4-scout:free"
+                selected_model = "google/gemini-2.0-flash-exp:free"
                 prompt_type = "SIMPLE"
             print(f"Auto routing → {selected_model} ({prompt_type})")
 
@@ -618,11 +618,11 @@ async def route_request(request: Request):
 
         # Calculate cost
         model_costs = {
-            "meta-llama/llama-4-scout:free": 0.0,
-            "meta-llama/llama-4-maverick:free": 0.0,
             "google/gemini-2.0-flash-exp:free": 0.0,
             "deepseek/deepseek-r1:free": 0.0,
-            "mistralai/mistral-small-3.1-24b-instruct:free": 0.0,
+            "meta-llama/llama-3.1-8b-instruct:free": 0.0,
+            "mistralai/mistral-7b-instruct:free": 0.0,
+            "google/gemma-2-9b-it:free": 0.0,
             "openai/gpt-4o-mini": 0.00015,
             "openai/gpt-4o": 0.005,
             "anthropic/claude-3-haiku": 0.00025,
