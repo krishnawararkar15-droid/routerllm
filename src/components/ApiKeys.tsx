@@ -465,49 +465,37 @@ console.log(data);`,
                 </div>
               )}
 
-              {testResult && (() => {
-                const data = testResult;
-                const model = data?.model_used || 'N/A';
-                const type = data?.prompt_type || 'AUTO';
-                const tokens = data?.tokens_used || 0;
-                const cost = typeof data?.cost_usd === 'number' ? data.cost_usd : 0;
-                const aiResponse = data?.response || '';
-                
-                return (
-                <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 mt-3 space-y-3">
-                  <div className="flex flex-wrap gap-3">
-                    <div className="bg-gray-900 rounded-lg px-3 py-2">
-                      <p className="text-gray-500 text-xs">MODEL</p>
-                      <p className="text-white text-sm font-medium">{model}</p>
+              {testResult && (
+                  <div className="mt-4 space-y-3">
+                    {/* Stats row */}
+                    <div className="grid grid-cols-4 gap-3">
+                      <div className="rounded-xl p-3 text-center" style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)'}}>
+                        <p className="text-gray-500 text-xs uppercase mb-1">MODEL</p>
+                        <p className="text-white text-xs font-semibold break-all">{testResult.model_used?.split('/').pop() || 'N/A'}</p>
+                      </div>
+                      <div className="rounded-xl p-3 text-center" style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)'}}>
+                        <p className="text-gray-500 text-xs uppercase mb-1">TYPE</p>
+                        <p className="text-yellow-400 text-xs font-semibold">{testResult.prompt_type || 'AUTO'}</p>
+                      </div>
+                      <div className="rounded-xl p-3 text-center" style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)'}}>
+                        <p className="text-gray-500 text-xs uppercase mb-1">TOKENS</p>
+                        <p className="text-white text-xs font-semibold">{testResult.tokens_used || 0}</p>
+                      </div>
+                      <div className="rounded-xl p-3 text-center" style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)'}}>
+                        <p className="text-gray-500 text-xs uppercase mb-1">COST</p>
+                        <p className="text-green-400 text-xs font-semibold">${typeof testResult.cost_usd === 'number' ? testResult.cost_usd.toFixed(6) : '0.000000'}</p>
+                      </div>
                     </div>
-                    <div className="bg-gray-900 rounded-lg px-3 py-2">
-                      <p className="text-gray-500 text-xs">TYPE</p>
-                      <p className={`text-sm font-medium ${type === 'SIMPLE' ? 'text-green-400' : 'text-orange-400'}`}>
-                        {type}
-                      </p>
-                    </div>
-                    <div className="bg-gray-900 rounded-lg px-3 py-2">
-                      <p className="text-gray-500 text-xs">TOKENS</p>
-                      <p className="text-white text-sm font-medium">{tokens}</p>
-                    </div>
-                    <div className="bg-gray-900 rounded-lg px-3 py-2">
-                      <p className="text-gray-500 text-xs">COST</p>
-                      <p className="text-green-400 text-sm font-medium">
-                        ${cost.toFixed(6)}
+
+                    {/* AI Response */}
+                    <div className="rounded-xl p-4" style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)'}}>
+                      <p className="text-gray-500 text-xs uppercase mb-2">AI Response</p>
+                      <p className="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">
+                        {testResult.response || testResult.error || 'No response received'}
                       </p>
                     </div>
                   </div>
-                  {aiResponse && (
-                    <div className="bg-gray-900 rounded-lg p-3">
-                      <p className="text-gray-500 text-xs mb-2">AI RESPONSE</p>
-                      <p className="text-gray-300 text-sm leading-relaxed">
-                        {aiResponse}
-                      </p>
-                    </div>
-                  )}
-                </div>
-                );
-              })()}
+                )}
             </div>
 
             {/* How it works Card */}
