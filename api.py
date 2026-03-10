@@ -404,6 +404,82 @@ async def regenerate_key(request: Request):
         print(f"Regenerate key error: {str(e)}")
         return JSONResponse(status_code=500, content={"error": str(e)})
 
+@app.get("/keys/{email}")
+async def get_keys(email: str):
+    try:
+        result = supabase.table("api_keys").select("*").eq("user_email", email).order("created_at").execute()
+        return {"keys": result.data or []}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.post("/keys/create")
+async def create_key(request: Request):
+    try:
+        data = await request.json()
+        email = data.get("email", "").strip()
+        key_name = data.get("key_name", "New Key").strip()
+        environment = data.get("environment", "development")
+        plan = data.get("plan", "free")
+
+        # Check key limit based on plan
+        existing = supabase.table("api_keys").select("id").eq("user_email", email).execute()
+        key_count = len(existing.data or [])
+        limits = {"free": 1, "pro": 3, "max": 999}
+        limit = limits.get(plan, 1)
+        if key_count >= limit:
+            return JSONResponse(status_code=403, content={"error": f"Your plan allows {limit} key(s). Upgrade for more."})
+
+        new_key = "sk-rl-" + secrets.token_hex(16)
+        token_limit = {"free": 100000, "pro": 10000000, "max": 100000000}.get(plan, 100000)
+
+        supabase.table("api_keys").insert({
+            "user_email": email,
+            "key_name": key_name,
+            "subscription_key": new_key,
+            "environment": environment,
+            "is_active": True,
+            "tokens_used": 0,
+            "token_limit": token_limit,
+            "created_at": "now()",
+            "last_used_at": None
+        }).execute()
+
+        return {"success": True, "key": new_key, "key_name": key_name}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.post("/keys/toggle")
+async def toggle_key(request: Request):
+    try:
+        data = await request.json()
+        key_id = data.get("key_id")
+        is_active = data.get("is_active")
+        supabase.table("api_keys").update({"is_active": is_active}).eq("id", key_id).execute()
+        return {"success": True}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.delete("/keys/{key_id}")
+async def delete_key(key_id: str):
+    try:
+        supabase.table("api_keys").delete().eq("id", key_id).execute()
+        return {"success": True}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@app.put("/keys/rename")
+async def rename_key(request: Request):
+    try:
+        data = await request.json()
+        key_id = data.get("key_id")
+        new_name = data.get("key_name", "").strip()
+        if not new_name:
+            return JSONResponse(status_code=400, content={"error": "Name required"})
+        supabase.table("api_keys").update({"key_name": new_name}).eq("id", key_id).execute()
+        return {"success": True}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
 @app.post("/login")
 async def login(data: dict):
     try:
