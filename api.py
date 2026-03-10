@@ -678,38 +678,37 @@ async def route_request(request: Request):
 
 @app.post("/rules")
 async def create_rule(request: Request):
-    data = await request.json()
-    subscription_key = data.get("subscription_key")
+    try:
+        data = await request.json()
+        print(f"Creating rule: {data}")
+        subscription_key = data.get("subscription_key", "")
+        if not subscription_key:
+            return JSONResponse(status_code=400, content={"error": "subscription_key required"})
 
-    # Check plan
-    user = supabase.table("users").select("*").eq("subscription_key", subscription_key).execute()
-    if not user.data:
-        return JSONResponse(status_code=404, content={"error": "User not found"})
+        result = supabase.table("routing_rules").insert({
+            "subscription_key": subscription_key,
+            "rule_name": data.get("rule_name", "New Rule"),
+            "rule_type": data.get("rule_type", "keyword"),
+            "condition_value": data.get("condition_value", ""),
+            "target_model": data.get("target_model", "llama-3.1-8b-instant"),
+            "is_active": True,
+            "priority": data.get("priority", 1)
+        }).execute()
 
-    if user.data[0].get("plan") == "free":
-        return JSONResponse(status_code=403, content={"error": "Custom rules are a Pro feature"})
-
-    result = supabase.table("routing_rules").insert({
-        "subscription_key": subscription_key,
-        "rule_name": data.get("rule_name"),
-        "rule_type": data.get("rule_type"),
-        "condition_value": data.get("condition_value"),
-        "target_model": data.get("target_model"),
-        "priority": data.get("priority", 1),
-        "is_active": True
-    }).execute()
-
-    return {"success": True, "rule": result.data[0]}
+        print(f"Rule created: {result.data}")
+        return {"success": True, "rule": result.data[0] if result.data else {}}
+    except Exception as e:
+        print(f"Create rule error: {str(e)}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.get("/rules/{subscription_key}")
 async def get_rules(subscription_key: str):
-    result = supabase.table("routing_rules")\
-        .select("*")\
-        .eq("subscription_key", subscription_key)\
-        .eq("is_active", True)\
-        .order("priority", desc=True)\
-        .execute()
-    return {"rules": result.data}
+    try:
+        result = supabase.table("routing_rules").select("*").eq("subscription_key", subscription_key).eq("is_active", True).order("priority", desc=True).execute()
+        return {"rules": result.data or []}
+    except Exception as e:
+        print(f"Get rules error: {str(e)}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.delete("/rules/{rule_id}")
 async def delete_rule(rule_id: str):
