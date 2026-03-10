@@ -125,11 +125,10 @@ const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpe
 
 const models = [
   // FREE MODELS
-  { id: "google/gemma-3-4b-it:free", name: "Gemma 3 4B", provider: "Google", cost: 0, costLabel: "FREE", speed: "Fast", context: "128K", bestFor: "Simple Q&A, short answers, summaries", type: "free" },
+  { id: "meta-llama/llama-3.2-3b-instruct:free", name: "Llama 3.2 3B", provider: "Meta", cost: 0, costLabel: "FREE", speed: "Very Fast", context: "128K", bestFor: "Simple Q&A, short answers, summaries", type: "free" },
   { id: "meta-llama/llama-3.1-8b-instruct:free", name: "Llama 3.1 8B", provider: "Meta", cost: 0, costLabel: "FREE", speed: "Fast", context: "128K", bestFor: "General text, Q&A, translations", type: "free" },
-  { id: "mistralai/mistral-7b-instruct:free", name: "Mistral 7B", provider: "Mistral", cost: 0, costLabel: "FREE", speed: "Fast", context: "32K", bestFor: "Reasoning, structured output", type: "free" },
-  { id: "meta-llama/llama-3.2-3b-instruct:free", name: "Llama 3.2 3B", provider: "Meta", cost: 0, costLabel: "FREE", speed: "Very Fast", context: "128K", bestFor: "Ultra fast simple tasks", type: "free" },
   { id: "google/gemma-2-9b-it:free", name: "Gemma 2 9B", provider: "Google", cost: 0, costLabel: "FREE", speed: "Fast", context: "8K", bestFor: "Chat, instructions, reasoning", type: "free" },
+  { id: "microsoft/phi-3-mini-128k-instruct:free", name: "Phi-3 Mini", provider: "Microsoft", cost: 0, costLabel: "FREE", speed: "Very Fast", context: "128K", bestFor: "Short tasks, Q&A, simple reasoning", type: "free" },
   // OPENAI
   { id: "openai/gpt-4o-mini", name: "GPT-4o Mini", provider: "OpenAI", cost: 0.15, costLabel: "$0.15/1M", speed: "Fast", context: "128K", bestFor: "Most tasks, affordable and smart", type: "paid" },
   { id: "openai/gpt-4o", name: "GPT-4o", provider: "OpenAI", cost: 5.00, costLabel: "$5.00/1M", speed: "Medium", context: "128K", bestFor: "Complex reasoning, coding, analysis", type: "paid" },

@@ -137,18 +137,19 @@ const RULE_TYPES = [
 ];
 
 const FREE_MODELS = [
-  { value: 'google/gemma-3-4b-it:free', label: 'Gemma 3 4B', provider: 'Google', cost: '$0.00' },
-  { value: 'meta-llama/llama-3.1-8b-instruct:free', label: 'Llama 3.1 8B', provider: 'Meta', cost: '$0.00' },
-  { value: 'mistralai/mistral-7b-instruct:free', label: 'Mistral 7B', provider: 'Mistral', cost: '$0.00' },
+  { value: 'meta-llama/llama-3.2-3b-instruct:free', label: 'Llama 3.2 3B (FREE)', provider: 'Meta', cost: '$0.00' },
+  { value: 'meta-llama/llama-3.1-8b-instruct:free', label: 'Llama 3.1 8B (FREE)', provider: 'Meta', cost: '$0.00' },
+  { value: 'google/gemma-2-9b-it:free', label: 'Gemma 2 9B (FREE)', provider: 'Google', cost: '$0.00' },
+  { value: 'microsoft/phi-3-mini-128k-instruct:free', label: 'Phi-3 Mini (FREE)', provider: 'Microsoft', cost: '$0.00' },
 ];
 
 const PAID_MODELS = [
-  { value: 'openai/gpt-4o-mini', label: 'GPT-4o Mini', provider: 'OpenAI', cost: '$0.15/1M' },
-  { value: 'openai/gpt-4o', label: 'GPT-4o', provider: 'OpenAI', cost: '$5.00/1M' },
-  { value: 'anthropic/claude-3-haiku', label: 'Claude 3 Haiku', provider: 'Anthropic', cost: '$0.25/1M' },
-  { value: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet', provider: 'Anthropic', cost: '$3.00/1M' },
-  { value: 'google/gemini-flash-1.5', label: 'Gemini Flash 1.5', provider: 'Google', cost: '$0.075/1M' },
-  { value: 'meta-llama/llama-3.1-70b-instruct', label: 'Llama 3.1 70B', provider: 'Meta', cost: '$0.59/1M' },
+  { value: 'openai/gpt-4o-mini', label: 'GPT-4o Mini ($0.15/1M)', provider: 'OpenAI', cost: '$0.15/1M' },
+  { value: 'openai/gpt-4o', label: 'GPT-4o ($5.00/1M)', provider: 'OpenAI', cost: '$5.00/1M' },
+  { value: 'anthropic/claude-3-haiku', label: 'Claude 3 Haiku ($0.25/1M)', provider: 'Anthropic', cost: '$0.25/1M' },
+  { value: 'anthropic/claude-3-5-sonnet', label: 'Claude 3.5 Sonnet ($3.00/1M)', provider: 'Anthropic', cost: '$3.00/1M' },
+  { value: 'google/gemini-flash-1.5', label: 'Gemini Flash 1.5 ($0.075/1M)', provider: 'Google', cost: '$0.075/1M' },
+  { value: 'meta-llama/llama-3.1-70b-instruct', label: 'Llama 3.1 70B ($0.59/1M)', provider: 'Meta', cost: '$0.59/1M' },
 ];
 
 const TARGET_MODELS = [...FREE_MODELS, ...PAID_MODELS];
