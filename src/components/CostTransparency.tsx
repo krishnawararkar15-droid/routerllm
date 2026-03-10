@@ -297,23 +297,23 @@ export const CostTransparency = () => {
             {/* Cost Overview Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                <p className="text-gray-500 text-xs uppercase mb-1">Total Spent</p>
-                <p className="text-white text-2xl font-bold">${totalCost.toFixed(4)}</p>
+                <p className="text-gray-500 text-xs uppercase tracking-wide mb-2">TOTAL SPENT</p>
+                <p className="text-white text-3xl font-bold">${totalCost.toFixed(4)}</p>
                 <p className="text-gray-500 text-xs mt-1">this month</p>
               </div>
               <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                <p className="text-gray-500 text-xs uppercase mb-1">Total Saved</p>
-                <p className="text-green-400 text-2xl font-bold">${totalSavings.toFixed(4)}</p>
+                <p className="text-gray-500 text-xs uppercase tracking-wide mb-2">TOTAL SAVED</p>
+                <p className="text-green-400 text-3xl font-bold">${totalSavings.toFixed(4)}</p>
                 <p className="text-gray-500 text-xs mt-1">vs GPT-4o</p>
               </div>
               <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                <p className="text-gray-500 text-xs uppercase mb-1">Savings Rate</p>
-                <p className="text-blue-400 text-2xl font-bold">{savingsPercent.toFixed(1)}%</p>
+                <p className="text-gray-500 text-xs uppercase tracking-wide mb-2">SAVINGS RATE</p>
+                <p className="text-blue-400 text-3xl font-bold">{savingsPercent.toFixed(1)}%</p>
                 <p className="text-gray-500 text-xs mt-1">cost reduction</p>
               </div>
               <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                <p className="text-gray-500 text-xs uppercase mb-1">Avg Cost</p>
-                <p className="text-purple-400 text-2xl font-bold">${avgCostPerRequest.toFixed(6)}</p>
+                <p className="text-gray-500 text-xs uppercase tracking-wide mb-2">AVG COST</p>
+                <p className="text-purple-400 text-3xl font-bold">${avgCostPerRequest.toFixed(6)}</p>
                 <p className="text-gray-500 text-xs mt-1">per request</p>
               </div>
             </div>
