@@ -256,35 +256,33 @@ def is_simple(prompt):
     print(f"[CLASSIFY] Prompt classified as: SIMPLE ({word_count} words)")
     return True
 
-def call_openrouter(prompt, model):
+# Try models in order until one works
+FREE_MODELS = [
+    "meta-llama/llama-3.1-8b-instruct:free",
+    "google/gemma-2-9b-it:free", 
+    "qwen/qwen-2-7b-instruct:free",
+    "microsoft/phi-3-mini-128k-instruct:free",
+    "mistralai/mistral-7b-instruct:free",
+]
+
+async def call_openrouter(model: str, prompt: str, openrouter_key: str):
     url = "https://openrouter.ai/api/v1/chat/completions"
 
-    headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json",
-    }
-
-    data = {
-        "model": model,
-        "messages": [{"role": "user", "content": prompt}]
-    }
-
-    response = requests.post(url, headers=headers, json=data)
-
-    if response.status_code != 200:
-        raise HTTPException(
-            status_code=response.status_code,
-            detail=f"OpenRouter API error: {response.text}"
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {openrouter_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://llmlite-woad.vercel.app",
+                "X-Title": "LLMLite"
+            },
+            json={
+                "model": model,
+                "messages": [{"role": "user", "content": prompt}]
+            }
         )
-
-    result = response.json()
-    response_text = result["choices"][0]["message"]["content"]
-    usage = result.get("usage", {})
-    prompt_tokens = usage.get("prompt_tokens", 0)
-    completion_tokens = usage.get("completion_tokens", 0)
-    total_tokens = usage.get("total_tokens", 0)
-
-    return response_text, prompt_tokens, completion_tokens, total_tokens
+    return response
 
 def calculate_cost(model, prompt_tokens, completion_tokens):
     prices_per_million = {
@@ -581,43 +579,36 @@ async def route_request(request: Request):
         # Call OpenRouter
         print(f"Calling OpenRouter with model: {selected_model}")
         openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
+        or_data = None
+        actual_model = selected_model
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            or_response = await client.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {openrouter_key}",
-                    "Content-Type": "application/json"
-                },
-                json={
-                    "model": selected_model,
-                    "messages": [{"role": "user", "content": prompt}]
-                }
-            )
+        # If selected model is a free model or custom rule, try it first then fallback
+        models_to_try = [selected_model] + [m for m in FREE_MODELS if m != selected_model]
 
-        print(f"OpenRouter response status: {or_response.status_code}")
-        or_data = or_response.json()
+        for model_attempt in models_to_try:
+            try:
+                print(f"Trying model: {model_attempt}")
+                or_response = await call_openrouter(model_attempt, prompt, openrouter_key)
+                print(f"Response status: {or_response.status_code}")
+                or_data = or_response.json()
+                
+                if or_response.status_code == 200 and "choices" in or_data:
+                    actual_model = model_attempt
+                    print(f"Success with model: {actual_model}")
+                    break
+                else:
+                    print(f"Model {model_attempt} failed: {or_data.get('error', 'unknown')}")
+                    or_data = None
+                    continue
+            except Exception as e:
+                print(f"Model {model_attempt} exception: {str(e)}")
+                or_data = None
+                continue
 
-        if or_response.status_code == 404 or "error" in or_data:
-            print(f"Model {selected_model} not found, falling back to gemma")
-            # Fallback to working free model
-            selected_model = "meta-llama/llama-3.2-3b-instruct:free"
-            async with httpx.AsyncClient(timeout=30.0) as client2:
-                or_response = await client2.post(
-                    "https://openrouter.ai/api/v1/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {openrouter_key}",
-                        "Content-Type": "application/json"
-                    },
-                    json={
-                        "model": selected_model,
-                        "messages": [{"role": "user", "content": prompt}]
-                    }
-                )
-            or_data = or_response.json()
-            if "error" in or_data:
-                return JSONResponse(status_code=500, content={"error": "All models failed. Try again."})
+        if not or_data or "choices" not in or_data:
+            return JSONResponse(status_code=500, content={"error": "All models unavailable. Please try again in a moment."})
 
+        selected_model = actual_model
         response_text = or_data["choices"][0]["message"]["content"]
         usage = or_data.get("usage", {})
         tokens_used = usage.get("total_tokens", len(prompt.split()) * 2)
