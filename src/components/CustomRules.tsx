@@ -137,10 +137,10 @@ const RULE_TYPES = [
 ];
 
 const FREE_MODELS = [
-  { value: 'meta-llama/llama-3.2-3b-instruct:free', label: 'Llama 3.2 3B (FREE)', provider: 'Meta', cost: '$0.00' },
-  { value: 'meta-llama/llama-3.1-8b-instruct:free', label: 'Llama 3.1 8B (FREE)', provider: 'Meta', cost: '$0.00' },
-  { value: 'google/gemma-2-9b-it:free', label: 'Gemma 2 9B (FREE)', provider: 'Google', cost: '$0.00' },
-  { value: 'microsoft/phi-3-mini-128k-instruct:free', label: 'Phi-3 Mini (FREE)', provider: 'Microsoft', cost: '$0.00' },
+  { value: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B (FREE)', provider: 'Groq', cost: '$0.00' },
+  { value: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B (FREE)', provider: 'Groq', cost: '$0.00' },
+  { value: 'gemma2-9b-it', label: 'Gemma 2 9B (FREE)', provider: 'Groq', cost: '$0.00' },
+  { value: 'mixtral-8x7b-32768', label: 'Mixtral 8x7B (FREE)', provider: 'Groq', cost: '$0.00' },
 ];
 
 const PAID_MODELS = [
@@ -181,7 +181,7 @@ export const CustomRules = () => {
     rule_name: '',
     rule_type: 'keyword',
     condition_value: '',
-    target_model: 'gpt-4o-mini',
+    target_model: 'llama-3.1-8b-instant',
     priority: 1,
   });
 
@@ -208,35 +208,57 @@ export const CustomRules = () => {
     fetchRules();
   }, []);
 
-  const fetchRules = () => {
-    fetch(`https://routerllm.onrender.com/rules/${userKey}`)
-      .then(r => r.json())
-      .then(d => { setRules(d.rules || []); setLoading(false); })
-      .catch(() => setLoading(false));
+  const fetchRules = async () => {
+    try {
+      const key = localStorage.getItem('routellm_key');
+      const res = await fetch(`https://routerllm.onrender.com/rules/${key}`);
+      const data = await res.json();
+      console.log('Rules fetched:', data);
+      setRules(data.rules || data || []);
+    } catch (err) {
+      console.error('Fetch rules error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.rule_name.trim() || !formData.target_model || !formData.condition_value.trim()) {
+      alert('Please fill in all fields');
+      return;
+    }
     setSaving(true);
     try {
-      const res = await fetch('https://routerllm.onrender.com/rules', {
+      const key = localStorage.getItem('routellm_key');
+      console.log('Adding rule with key:', key?.slice(0, 20));
+      const response = await fetch('https://routerllm.onrender.com/rules', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          subscription_key: userKey,
+          subscription_key: key,
           rule_name: formData.rule_name,
           rule_type: formData.rule_type,
           condition_value: formData.condition_value,
           target_model: formData.target_model,
           priority: formData.priority,
-        }),
+          is_active: true
+        })
       });
-      if (res.ok) {
-        setFormData({ rule_name: '', rule_type: 'keyword', condition_value: '', target_model: 'gpt-4o-mini', priority: 1 });
+      const data = await response.json();
+      console.log('Add rule response:', data);
+      if (data.error) {
+        alert(data.error);
+      } else {
+        setFormData({ rule_name: '', rule_type: 'keyword', condition_value: '', target_model: 'llama-3.1-8b-instant', priority: 1 });
         fetchRules();
       }
-    } catch (err) { console.error(err); }
-    setSaving(false);
+    } catch (err) {
+      console.error('Add rule error:', err);
+      alert('Failed to connect. Try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const deleteRule = async (id: string) => {
