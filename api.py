@@ -288,7 +288,7 @@ def call_openrouter(prompt, model):
 
 def calculate_cost(model, prompt_tokens, completion_tokens):
     prices_per_million = {
-        "google/gemma-3-4b-it:free": {"prompt": 0.0, "completion": 0.0},
+        "google/gemma-2-9b-it:free": {"prompt": 0.0, "completion": 0.0},
         "stepfun/step-3.5-flash:free": {"prompt": 0.0, "completion": 0.0},
     }
 
@@ -571,10 +571,10 @@ async def route_request(request: Request):
             is_complex = word_count > 50 or any(kw in prompt.lower() for kw in complex_keywords)
 
             if is_complex:
-                selected_model = "openai/gpt-4o-mini"
+                selected_model = "meta-llama/llama-3.1-8b-instruct:free"
                 prompt_type = "COMPLEX"
             else:
-                selected_model = "google/gemma-3-4b-it:free"
+                selected_model = "google/gemma-2-9b-it:free"
                 prompt_type = "SIMPLE"
             print(f"Auto routing → {selected_model} ({prompt_type})")
 
@@ -598,9 +598,25 @@ async def route_request(request: Request):
         print(f"OpenRouter response status: {or_response.status_code}")
         or_data = or_response.json()
 
-        if "error" in or_data:
-            print(f"OpenRouter error: {or_data['error']}")
-            return JSONResponse(status_code=500, content={"error": or_data["error"].get("message", "Model error")})
+        if or_response.status_code == 404 or "error" in or_data:
+            print(f"Model {selected_model} not found, falling back to gemma")
+            # Fallback to working free model
+            selected_model = "google/gemma-2-9b-it:free"
+            async with httpx.AsyncClient(timeout=30.0) as client2:
+                or_response = await client2.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {openrouter_key}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": selected_model,
+                        "messages": [{"role": "user", "content": prompt}]
+                    }
+                )
+            or_data = or_response.json()
+            if "error" in or_data:
+                return JSONResponse(status_code=500, content={"error": "All models failed. Try again."})
 
         response_text = or_data["choices"][0]["message"]["content"]
         usage = or_data.get("usage", {})
@@ -608,7 +624,7 @@ async def route_request(request: Request):
 
         # Calculate cost
         model_costs = {
-            "google/gemma-3-4b-it:free": 0.0,
+            "google/gemma-2-9b-it:free": 0.0,
             "meta-llama/llama-3.1-8b-instruct:free": 0.0,
             "mistralai/mistral-7b-instruct:free": 0.0,
             "openai/gpt-4o-mini": 0.00015,
