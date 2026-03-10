@@ -258,41 +258,29 @@ def is_simple(prompt):
 
 # Try models in order until one works
 FREE_MODELS = [
-    "openrouter/auto",
-    "meta-llama/llama-3.3-70b-instruct:free",
-    "deepseek/deepseek-chat:free",
-    "google/gemini-2.0-flash-exp:free",
-    "qwen/qwen2.5-vl-72b-instruct:free",
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "gemma2-9b-it",
+    "mixtral-8x7b-32768",
 ]
 
-async def call_openrouter(model: str, prompt: str, openrouter_key: str):
-    url = "https://openrouter.ai/api/v1/chat/completions"
-
-    print(f"[OPENROUTER] Calling model: {model}")
-    print(f"[OPENROUTER] Key present: {bool(openrouter_key)}, length: {len(openrouter_key) if openrouter_key else 0}")
-
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {openrouter_key}",
-                    "Content-Type": "application/json",
-                    "HTTP-Referer": "https://llmlite-woad.vercel.app",
-                    "X-Title": "LLMLite"
-                },
-                json={
-                    "model": model,
-                    "messages": [{"role": "user", "content": prompt}]
-                }
-            )
-            print(f"[OPENROUTER] Response status: {response.status_code}")
-            if response.status_code != 200:
-                print(f"[OPENROUTER] Error response: {response.text[:500]}")
-            return response
-    except Exception as e:
-        print(f"[OPENROUTER] Exception: {str(e)}")
-        raise
+async def call_groq(model: str, prompt: str, groq_key: str):
+    print(f"Calling Groq model: {model}")
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {groq_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": model,
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 1000
+            }
+        )
+    print(f"Groq response: {response.status_code} - {response.text[:200]}")
+    return response
 
 def calculate_cost(model, prompt_tokens, completion_tokens):
     prices_per_million = {
@@ -582,54 +570,48 @@ async def route_request(request: Request):
             is_complex = word_count > 50 or any(kw in prompt.lower() for kw in complex_keywords)
 
             if is_complex:
-                selected_model = "openrouter/auto"
+                selected_model = "llama-3.3-70b-versatile"
                 prompt_type = "COMPLEX"
             else:
-                selected_model = "openrouter/auto"
+                selected_model = "llama-3.1-8b-instant"
                 prompt_type = "SIMPLE"
             print(f"Auto routing → {selected_model} ({prompt_type})")
 
-        # Call OpenRouter
-        print(f"Calling OpenRouter with model: {selected_model}")
-        openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
+        # Call Groq
+        print(f"Calling Groq with model: {selected_model}")
+        groq_key = os.getenv("GROQ_API_KEY", "")
         
-        if not openrouter_key:
+        if not groq_key:
             return JSONResponse(status_code=500, content={
                 "error": "API key not configured", 
-                "message": "Server missing OPENROUTER_API_KEY. Please contact support."
+                "message": "Server missing GROQ_API_KEY. Please contact support."
             })
         
         or_data = None
         actual_model = selected_model
 
-        # If selected model is a free model or custom rule, try it first then fallback
-        models_to_try = [selected_model] + [m for m in FREE_MODELS if m != selected_model]
+        # Use Groq models for free routing
+        models_to_try = FREE_MODELS
 
         for model_attempt in models_to_try:
             try:
-                print(f"Trying model: {model_attempt}")
-                or_response = await call_openrouter(model_attempt, prompt, openrouter_key)
-                print(f"Response status: {or_response.status_code}")
+                or_response = await call_groq(model_attempt, prompt, groq_key)
                 or_data = or_response.json()
-                
                 if or_response.status_code == 200 and "choices" in or_data:
                     actual_model = model_attempt
-                    print(f"Success with model: {actual_model}")
+                    print(f"Success with Groq model: {actual_model}")
                     break
                 else:
-                    print(f"Model {model_attempt} failed: {or_data.get('error', 'unknown')}")
+                    print(f"Groq model {model_attempt} failed: {or_data.get('error', 'unknown')}")
                     or_data = None
                     continue
             except Exception as e:
-                print(f"Model {model_attempt} exception: {str(e)}")
+                print(f"Groq model {model_attempt} exception: {str(e)}")
                 or_data = None
                 continue
 
         if not or_data or "choices" not in or_data:
-            error_msg = "All models unavailable. Please try again in a moment."
-            if or_data and or_data.get("error"):
-                error_msg = or_data["error"].get("message", or_data.get("error", "Unknown error"))
-            return JSONResponse(status_code=500, content={"error": error_msg})
+            return JSONResponse(status_code=500, content={"error": "Service temporarily unavailable. Try again."})
 
         selected_model = actual_model
         response_text = or_data["choices"][0]["message"]["content"]
@@ -638,11 +620,10 @@ async def route_request(request: Request):
 
         # Calculate cost
         model_costs = {
-            "openrouter/auto": 0.0,
-            "meta-llama/llama-3.3-70b-instruct:free": 0.0,
-            "deepseek/deepseek-chat:free": 0.0,
-            "google/gemini-2.0-flash-exp:free": 0.0,
-            "qwen/qwen2.5-vl-72b-instruct:free": 0.0,
+            "llama-3.3-70b-versatile": 0.0,
+            "llama-3.1-8b-instant": 0.0,
+            "gemma2-9b-it": 0.0,
+            "mixtral-8x7b-32768": 0.0,
             "openai/gpt-4o-mini": 0.00015,
             "openai/gpt-4o": 0.005,
             "anthropic/claude-3-haiku": 0.00025,
