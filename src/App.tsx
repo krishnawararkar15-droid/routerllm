@@ -55,6 +55,7 @@ import { RefundPolicy } from './components/RefundPolicy';
 import { Pricing } from './components/Pricing';
 import AuthCallback from './components/AuthCallback';
 import { CustomRules } from './components/CustomRules';
+import { MultipleKeys } from './components/MultipleKeys';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -1193,6 +1194,7 @@ export default function App() {
           <Route path="/dashboard/cost" element={<CostTransparency />} />
           <Route path="/dashboard/freetier" element={<FreeTier />} />
           <Route path="/dashboard/security" element={<SecurePrivate />} />
+          <Route path="/dashboard/multiplekeys" element={<MultipleKeys />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/refund" element={<RefundPolicy />} />

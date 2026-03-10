@@ -124,6 +124,8 @@ const SidebarContent = ({ userEmail, stats, profilePopupOpen, setProfilePopupOpe
 };
 
 export const MultipleKeys = () => {
+  console.log('MultipleKeys component loaded, email:', localStorage.getItem('routellm_email'))
+  
   const [keys, setKeys] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
@@ -146,11 +148,19 @@ export const MultipleKeys = () => {
   const fetchKeys = async () => {
     setLoading(true)
     try {
+      console.log('Fetching keys for email:', email)
+      if (!email) {
+        console.log('No email found in localStorage')
+        setLoading(false)
+        return
+      }
       const res = await fetch(`https://routerllm.onrender.com/keys/${encodeURIComponent(email)}`)
+      console.log('Keys response status:', res.status)
       const data = await res.json()
+      console.log('Keys data:', data)
       setKeys(data.keys || [])
     } catch (err) {
-      console.error(err)
+      console.error('Failed to fetch keys:', err)
     } finally {
       setLoading(false)
     }
@@ -215,7 +225,7 @@ export const MultipleKeys = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex font-sans">
+    <div className="flex min-h-screen" style={{background: '#0a0a0a'}}>
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
