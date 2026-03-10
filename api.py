@@ -505,177 +505,160 @@ async def login(data: dict):
         return {"error": str(e)}
 
 @app.post("/route")
-async def route_prompt(data: dict):
-    subscription_key = data.get("subscription_key", "")
-    prompt = data.get("prompt", "")
-    model_override = data.get("model_override", None)
-    print(f"Route called - key: {subscription_key[:20]}, model_override: {model_override}")
-
-    if not prompt.strip():
-        raise HTTPException(status_code=400, detail="Prompt cannot be empty")
-
-    user_data = supabase.table("users").select("*").eq("subscription_key", subscription_key).execute()
-    
-    if not user_data.data:
-        raise HTTPException(status_code=401, detail="Invalid subscription key")
-    
-    user = user_data.data[0]
-    user_plan = user.get('plan', 'free')
-    requested_model = data.get('model_override')
-    
-    # Block manual override for free users
-    if user_plan == 'free' and requested_model:
-        return {"error": "Manual model override is a Pro feature. Upgrade at llmlite.vercel.app/pricing"}
-    
-    tokens_used = user.get("tokens_used", 0)
-    token_limit = user.get("token_limit", 100000)
-    plan = user.get("plan", "free")
-
-    if tokens_used >= token_limit:
-        return JSONResponse(
-            status_code=429,
-            content={
-                "error": "token_limit_exceeded",
-                "message": f"You have used all {token_limit:,} tokens on your {plan.upper()} plan. Upgrade to continue.",
-                "tokens_used": tokens_used,
-                "token_limit": token_limit,
-                "upgrade_url": "https://llmlite-woad.vercel.app/dashboard/billing"
-            }
-        )
-
-    # Check custom rules first
-    custom_model = None
+async def route_request(request: Request):
     try:
-        rules_result = supabase.table("routing_rules")\
-            .select("*")\
-            .eq("subscription_key", subscription_key)\
-            .eq("is_active", True)\
-            .order("priority", desc=True)\
-            .execute()
-        
-        if rules_result.data:
-            prompt_lower = prompt.lower()
-            word_count = len(prompt.split())
-            
-            for rule in rules_result.data:
-                rule_type = rule.get("rule_type")
+        data = await request.json()
+        prompt = data.get("prompt", "")
+        subscription_key = data.get("subscription_key", "")
+        model_override = data.get("model", None)
+
+        if not prompt or not subscription_key:
+            return JSONResponse(status_code=400, content={"error": "prompt and subscription_key required"})
+
+        print(f"Route called - key: {subscription_key[:20]}, model_override: {model_override}")
+
+        # Get user from database
+        user_result = supabase.table("users").select("*").eq("subscription_key", subscription_key).execute()
+        if not user_result.data:
+            return JSONResponse(status_code=401, content={"error": "Invalid subscription key"})
+
+        user = user_result.data[0]
+
+        # Check token limit
+        if user.get("tokens_used", 0) >= user.get("token_limit", 100000):
+            return JSONResponse(status_code=429, content={"error": "Token limit reached. Please upgrade your plan."})
+
+        # Determine which model to use
+        selected_model = None
+        prompt_type = None
+
+        # 1. Manual override from request
+        if model_override:
+            selected_model = model_override
+            prompt_type = "MANUAL"
+            print(f"Using manual override: {selected_model}")
+
+        # 2. Check custom rules
+        if not selected_model:
+            rules_result = supabase.table("routing_rules").select("*").eq("subscription_key", subscription_key).eq("is_active", True).order("priority", desc=True).execute()
+            rules = rules_result.data or []
+            print(f"Checking {len(rules)} custom rules")
+
+            for rule in rules:
+                rule_type = rule.get("rule_type", "")
                 condition = rule.get("condition_value", "")
-                
-                if rule_type == "keyword":
-                    if condition.lower() in prompt_lower:
-                        custom_model = rule.get("target_model")
-                        break
-                        
+                target = rule.get("target_model", "")
+
+                if rule_type == "keyword" and condition.lower() in prompt.lower():
+                    selected_model = target
+                    prompt_type = "CUSTOM_RULE"
+                    print(f"Custom rule matched: {rule.get('rule_name')} → {selected_model}")
+                    break
                 elif rule_type == "token_length":
                     try:
-                        if word_count > int(condition):
-                            custom_model = rule.get("target_model")
+                        if len(prompt.split()) > int(condition):
+                            selected_model = target
+                            prompt_type = "CUSTOM_RULE"
+                            print(f"Token length rule matched → {selected_model}")
                             break
                     except:
                         pass
-                        
-                elif rule_type == "cost_cap":
-                    custom_model = rule.get("target_model")
-                    break
-                    
-                elif rule_type == "topic":
-                    if condition.lower() in prompt_lower:
-                        custom_model = rule.get("target_model")
-                        break
-                        
-                elif rule_type == "time_based":
-                    from datetime import datetime
-                    current_hour = datetime.now().hour
-                    try:
-                        from_hour, to_hour = condition.split("-")
-                        if int(from_hour) <= current_hour <= int(to_hour):
-                            custom_model = rule.get("target_model")
-                            break
-                    except:
-                        pass
+
+        # 3. Auto routing (classify prompt)
+        if not selected_model:
+            word_count = len(prompt.split())
+            complex_keywords = ["explain", "analyze", "compare", "write", "create", "debug", "code", "implement", "design", "evaluate", "summarize", "research"]
+            is_complex = word_count > 50 or any(kw in prompt.lower() for kw in complex_keywords)
+
+            if is_complex:
+                selected_model = "openai/gpt-4o-mini"
+                prompt_type = "COMPLEX"
+            else:
+                selected_model = "google/gemma-3-4b-it:free"
+                prompt_type = "SIMPLE"
+            print(f"Auto routing → {selected_model} ({prompt_type})")
+
+        # Call OpenRouter
+        print(f"Calling OpenRouter with model: {selected_model}")
+        openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
+
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            or_response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {openrouter_key}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": selected_model,
+                    "messages": [{"role": "user", "content": prompt}]
+                }
+            )
+
+        print(f"OpenRouter response status: {or_response.status_code}")
+        or_data = or_response.json()
+
+        if "error" in or_data:
+            print(f"OpenRouter error: {or_data['error']}")
+            return JSONResponse(status_code=500, content={"error": or_data["error"].get("message", "Model error")})
+
+        response_text = or_data["choices"][0]["message"]["content"]
+        usage = or_data.get("usage", {})
+        tokens_used = usage.get("total_tokens", len(prompt.split()) * 2)
+
+        # Calculate cost
+        model_costs = {
+            "google/gemma-3-4b-it:free": 0.0,
+            "meta-llama/llama-3.1-8b-instruct:free": 0.0,
+            "mistralai/mistral-7b-instruct:free": 0.0,
+            "openai/gpt-4o-mini": 0.00015,
+            "openai/gpt-4o": 0.005,
+            "anthropic/claude-3-haiku": 0.00025,
+            "anthropic/claude-3-5-sonnet": 0.003,
+            "google/gemini-flash-1.5": 0.000075,
+            "meta-llama/llama-3.1-70b-instruct": 0.00059,
+        }
+        cost_per_token = model_costs.get(selected_model, 0.0)
+        cost_usd = (tokens_used / 1000000) * cost_per_token
+
+        # GPT-4o equivalent cost for savings calculation
+        gpt4o_cost = (tokens_used / 1000000) * 5.0
+        savings = gpt4o_cost - cost_usd
+
+        # Update user tokens
+        new_tokens = user.get("tokens_used", 0) + tokens_used
+        supabase.table("users").update({"tokens_used": new_tokens}).eq("subscription_key", subscription_key).execute()
+
+        # Save request to database
+        supabase.table("requests").insert({
+            "subscription_key": subscription_key,
+            "model_used": selected_model,
+            "prompt_type": prompt_type,
+            "tokens_used": tokens_used,
+            "cost_usd": cost_usd,
+        }).execute()
+
+        # Calculate remaining tokens
+        token_limit = user.get("token_limit", 100000)
+        remaining = max(0, token_limit - new_tokens)
+
+        print(f"Success - model: {selected_model}, tokens: {tokens_used}, cost: {cost_usd}")
+
+        return {
+            "response": response_text,
+            "model_used": selected_model,
+            "prompt_type": prompt_type,
+            "tokens_used": tokens_used,
+            "cost_usd": float(cost_usd),
+            "savings_usd": float(savings),
+            "requests_remaining": remaining
+        }
+
     except Exception as e:
-        print(f"Error checking custom rules: {e}")
-
-    # If model_override provided skip classification
-    if custom_model:
-        model = custom_model
-        prompt_type = "CUSTOM_RULE"
-    elif model_override:
-        model = model_override
-        prompt_type = "MANUAL"
-    else:
-        # existing classification logic stays here
-        if is_simple(prompt):
-            model = "google/gemma-3-4b-it:free"
-            print("[CLASSIFY] Prompt classified as: SIMPLE -> using google/gemma-3-4b-it:free")
-            prompt_type = "SIMPLE"
-        else:
-            model = "stepfun/step-3.5-flash:free"
-            print("[CLASSIFY] Prompt classified as: COMPLEX -> using stepfun/step-3.5-flash:free")
-            prompt_type = "COMPLEX"
-
-    response_text, prompt_tokens, completion_tokens, total_tokens = call_openrouter(
-        prompt, model
-    )
-
-    new_tokens_used = tokens_used + total_tokens
-    try:
-        user_result = supabase.table("users").select("tokens_used").eq("subscription_key", subscription_key).execute()
-        current_tokens = user_result.data[0].get("tokens_used", 0) if user_result.data else 0
-        supabase.table("users").update({
-            "tokens_used": current_tokens + total_tokens
-        }).eq("subscription_key", subscription_key).execute()
-        
-        # Get updated user data for budget alerts
-        user_result = supabase.table("users").select("*").eq("subscription_key", subscription_key).execute()
-        if user_result.data:
-            user = user_result.data[0]
-            tokens_used = user.get("tokens_used", 0)
-            token_limit = user.get("token_limit", 100000)
-            email = user.get("email", "")
-            plan = user.get("plan", "free")
-            percentage = (tokens_used / token_limit) * 100 if token_limit > 0 else 0
-
-            # Send alert at 80% — only once
-            alert_sent_80 = user.get("alert_sent_80", False)
-            if percentage >= 80 and not alert_sent_80:
-                await send_budget_alert_email(email, tokens_used, token_limit, plan)
-                supabase.table("users").update({"alert_sent_80": True}).eq("subscription_key", subscription_key).execute()
-
-            # Send alert at 95% — only once
-            alert_sent_95 = user.get("alert_sent_95", False)
-            if percentage >= 95 and not alert_sent_95:
-                await send_budget_alert_email(email, tokens_used, token_limit, plan)
-                supabase.table("users").update({"alert_sent_95": True}).eq("subscription_key", subscription_key).execute()
-    except Exception as update_err:
-        print(f"Failed to update tokens_used: {update_err}")
-    
-    cost = calculate_cost(model, prompt_tokens, completion_tokens)
-    tokens_remaining = token_limit - new_tokens_used
-
-    model_used = model
-    cost_usd = cost
-
-    supabase.table("requests").insert({
-        "subscription_key": subscription_key,
-        "prompt_type": prompt_type,
-        "model_used": model_used,
-        "tokens_used": total_tokens,
-        "cost_usd": cost_usd
-    }).execute()
-    print(f"Saved to Supabase with key: '{subscription_key}'")
-
-    if not prompt_type:
-        prompt_type = "CUSTOM_RULE" if custom_model else "COMPLEX"
-
-    return {
-        "response": response_text,
-        "model_used": model,
-        "prompt_type": prompt_type if prompt_type else "SIMPLE",
-        "tokens_used": total_tokens if total_tokens else 0,
-        "cost_usd": float(cost) if cost else 0.0,
-        "requests_remaining": tokens_remaining
-    }
+        print(f"Route error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/rules")
 async def create_rule(request: Request):
