@@ -139,6 +139,7 @@ const RULE_TYPES = [
 const FREE_MODELS = [
   { value: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B (FREE)', provider: 'Groq', cost: '$0.00' },
   { value: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B (FREE)', provider: 'Groq', cost: '$0.00' },
+  { value: 'llama3-8b-8192', label: 'Llama 3 8B (FREE)', provider: 'Groq', cost: '$0.00' },
   { value: 'gemma2-9b-it', label: 'Gemma 2 9B (FREE)', provider: 'Groq', cost: '$0.00' },
   { value: 'mixtral-8x7b-32768', label: 'Mixtral 8x7B (FREE)', provider: 'Groq', cost: '$0.00' },
 ];

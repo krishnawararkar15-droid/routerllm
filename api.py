@@ -601,10 +601,13 @@ async def route_request(request: Request):
         actual_model = selected_model
 
         # If custom rule or manual override, try that model first, then fallback
+        print(f"DEBUG: prompt_type={prompt_type}, selected_model={selected_model}")
         if prompt_type in ["CUSTOM_RULE", "MANUAL"]:
             models_to_try = [selected_model] + [m for m in FREE_MODELS if m != selected_model]
         else:
             models_to_try = FREE_MODELS
+        
+        print(f"DEBUG: models_to_try={models_to_try}")
 
         for model_attempt in models_to_try:
             try:
