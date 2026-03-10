@@ -268,21 +268,31 @@ FREE_MODELS = [
 async def call_openrouter(model: str, prompt: str, openrouter_key: str):
     url = "https://openrouter.ai/api/v1/chat/completions"
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {openrouter_key}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://llmlite-woad.vercel.app",
-                "X-Title": "LLMLite"
-            },
-            json={
-                "model": model,
-                "messages": [{"role": "user", "content": prompt}]
-            }
-        )
-    return response
+    print(f"[OPENROUTER] Calling model: {model}")
+    print(f"[OPENROUTER] Key present: {bool(openrouter_key)}, length: {len(openrouter_key) if openrouter_key else 0}")
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {openrouter_key}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://llmlite-woad.vercel.app",
+                    "X-Title": "LLMLite"
+                },
+                json={
+                    "model": model,
+                    "messages": [{"role": "user", "content": prompt}]
+                }
+            )
+            print(f"[OPENROUTER] Response status: {response.status_code}")
+            if response.status_code != 200:
+                print(f"[OPENROUTER] Error response: {response.text[:500]}")
+            return response
+    except Exception as e:
+        print(f"[OPENROUTER] Exception: {str(e)}")
+        raise
 
 def calculate_cost(model, prompt_tokens, completion_tokens):
     prices_per_million = {
@@ -582,6 +592,13 @@ async def route_request(request: Request):
         # Call OpenRouter
         print(f"Calling OpenRouter with model: {selected_model}")
         openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
+        
+        if not openrouter_key:
+            return JSONResponse(status_code=500, content={
+                "error": "API key not configured", 
+                "message": "Server missing OPENROUTER_API_KEY. Please contact support."
+            })
+        
         or_data = None
         actual_model = selected_model
 
@@ -609,7 +626,10 @@ async def route_request(request: Request):
                 continue
 
         if not or_data or "choices" not in or_data:
-            return JSONResponse(status_code=500, content={"error": "All models unavailable. Please try again in a moment."})
+            error_msg = "All models unavailable. Please try again in a moment."
+            if or_data and or_data.get("error"):
+                error_msg = or_data["error"].get("message", or_data.get("error", "Unknown error"))
+            return JSONResponse(status_code=500, content={"error": error_msg})
 
         selected_model = actual_model
         response_text = or_data["choices"][0]["message"]["content"]
