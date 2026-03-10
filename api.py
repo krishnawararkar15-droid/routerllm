@@ -258,11 +258,11 @@ def is_simple(prompt):
 
 # Try models in order until one works
 FREE_MODELS = [
+    "openrouter/auto",
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "deepseek/deepseek-chat:free",
     "google/gemini-2.0-flash-exp:free",
-    "deepseek/deepseek-r1:free", 
-    "meta-llama/llama-3.1-8b-instruct:free",
-    "mistralai/mistral-7b-instruct:free",
-    "google/gemma-2-9b-it:free",
+    "qwen/qwen2.5-vl-72b-instruct:free",
 ]
 
 async def call_openrouter(model: str, prompt: str, openrouter_key: str):
@@ -582,10 +582,10 @@ async def route_request(request: Request):
             is_complex = word_count > 50 or any(kw in prompt.lower() for kw in complex_keywords)
 
             if is_complex:
-                selected_model = "deepseek/deepseek-r1:free"
+                selected_model = "openrouter/auto"
                 prompt_type = "COMPLEX"
             else:
-                selected_model = "google/gemini-2.0-flash-exp:free"
+                selected_model = "openrouter/auto"
                 prompt_type = "SIMPLE"
             print(f"Auto routing → {selected_model} ({prompt_type})")
 
@@ -638,11 +638,11 @@ async def route_request(request: Request):
 
         # Calculate cost
         model_costs = {
+            "openrouter/auto": 0.0,
+            "meta-llama/llama-3.3-70b-instruct:free": 0.0,
+            "deepseek/deepseek-chat:free": 0.0,
             "google/gemini-2.0-flash-exp:free": 0.0,
-            "deepseek/deepseek-r1:free": 0.0,
-            "meta-llama/llama-3.1-8b-instruct:free": 0.0,
-            "mistralai/mistral-7b-instruct:free": 0.0,
-            "google/gemma-2-9b-it:free": 0.0,
+            "qwen/qwen2.5-vl-72b-instruct:free": 0.0,
             "openai/gpt-4o-mini": 0.00015,
             "openai/gpt-4o": 0.005,
             "anthropic/claude-3-haiku": 0.00025,
@@ -664,7 +664,7 @@ async def route_request(request: Request):
         # Save request to database
         supabase.table("requests").insert({
             "subscription_key": subscription_key,
-            "model_used": selected_model,
+            "model_used": or_data.get("model", selected_model) if or_data else selected_model,
             "prompt_type": prompt_type,
             "tokens_used": tokens_used,
             "cost_usd": cost_usd,
@@ -676,9 +676,12 @@ async def route_request(request: Request):
 
         print(f"Success - model: {selected_model}, tokens: {tokens_used}, cost: {cost_usd}")
 
+        # Get actual model used (openrouter/auto returns the real model in response)
+        actual_model_used = or_data.get("model", selected_model) if or_data else selected_model
+
         return {
             "response": response_text,
-            "model_used": selected_model,
+            "model_used": actual_model_used,
             "prompt_type": prompt_type,
             "tokens_used": tokens_used,
             "cost_usd": float(cost_usd),
