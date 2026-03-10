@@ -260,11 +260,21 @@ def is_simple(prompt):
 FREE_MODELS = [
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
-    "gemma2-9b-it",
+    "llama3-8b-8192",
     "mixtral-8x7b-32768",
+    "gemma2-9b-it",
 ]
 
 async def call_groq(model: str, prompt: str, groq_key: str):
+    # Fix model names for Groq
+    groq_name_fix = {
+        "gemma2-9b-it": "gemma2-9b-it",
+        "llama-3.3-70b-versatile": "llama-3.3-70b-versatile",
+        "llama-3.1-8b-instant": "llama-3.1-8b-instant",
+        "mixtral-8x7b-32768": "mixtral-8x7b-32768",
+        "llama3-8b-8192": "llama3-8b-8192",
+    }
+    model = groq_name_fix.get(model, "llama-3.1-8b-instant")
     print(f"Calling Groq model: {model}")
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
@@ -279,7 +289,7 @@ async def call_groq(model: str, prompt: str, groq_key: str):
                 "max_tokens": 1000
             }
         )
-    print(f"Groq response: {response.status_code} - {response.text[:200]}")
+    print(f"Groq {model} response: {response.status_code} - {response.text[:200]}")
     return response
 
 def calculate_cost(model, prompt_tokens, completion_tokens):
@@ -590,8 +600,11 @@ async def route_request(request: Request):
         or_data = None
         actual_model = selected_model
 
-        # Use Groq models for free routing
-        models_to_try = FREE_MODELS
+        # If custom rule or manual override, try that model first, then fallback
+        if prompt_type in ["CUSTOM_RULE", "MANUAL"]:
+            models_to_try = [selected_model] + [m for m in FREE_MODELS if m != selected_model]
+        else:
+            models_to_try = FREE_MODELS
 
         for model_attempt in models_to_try:
             try:
@@ -622,6 +635,7 @@ async def route_request(request: Request):
         model_costs = {
             "llama-3.3-70b-versatile": 0.0,
             "llama-3.1-8b-instant": 0.0,
+            "llama3-8b-8192": 0.0,
             "gemma2-9b-it": 0.0,
             "mixtral-8x7b-32768": 0.0,
             "openai/gpt-4o-mini": 0.00015,
