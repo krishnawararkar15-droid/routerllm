@@ -295,31 +295,41 @@ export const CostTransparency = () => {
             </div>
 
             {/* Cost Overview Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                <p className="text-gray-500 text-xs uppercase tracking-wide mb-2">TOTAL SPENT</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+
+              <div className="relative overflow-hidden rounded-2xl p-5"
+                style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)'}}>
+                <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">TOTAL SPENT</p>
                 <p className="text-white text-3xl font-bold">${totalCost.toFixed(4)}</p>
-                <p className="text-gray-500 text-xs mt-1">this month</p>
+                <p className="text-gray-600 text-xs mt-1">this month</p>
               </div>
-              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                <p className="text-gray-500 text-xs uppercase tracking-wide mb-2">TOTAL SAVED</p>
+
+              <div className="relative overflow-hidden rounded-2xl p-5"
+                style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)'}}>
+                <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">TOTAL SAVED</p>
                 <p className="text-green-400 text-3xl font-bold">${totalSavings.toFixed(4)}</p>
-                <p className="text-gray-500 text-xs mt-1">vs GPT-4o</p>
+                <p className="text-gray-600 text-xs mt-1">vs GPT-4o</p>
               </div>
-              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                <p className="text-gray-500 text-xs uppercase tracking-wide mb-2">SAVINGS RATE</p>
+
+              <div className="relative overflow-hidden rounded-2xl p-5"
+                style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)'}}>
+                <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">SAVINGS RATE</p>
                 <p className="text-blue-400 text-3xl font-bold">{savingsPercent.toFixed(1)}%</p>
-                <p className="text-gray-500 text-xs mt-1">cost reduction</p>
+                <p className="text-gray-600 text-xs mt-1">cost reduction</p>
               </div>
-              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                <p className="text-gray-500 text-xs uppercase tracking-wide mb-2">AVG COST</p>
+
+              <div className="relative overflow-hidden rounded-2xl p-5"
+                style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)'}}>
+                <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">AVG COST</p>
                 <p className="text-purple-400 text-3xl font-bold">${avgCostPerRequest.toFixed(6)}</p>
-                <p className="text-gray-500 text-xs mt-1">per request</p>
+                <p className="text-gray-600 text-xs mt-1">per request</p>
               </div>
+
             </div>
 
             {/* Optimization Score */}
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <div className="rounded-2xl p-6 mb-6"
+              style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)'}}>
               <h3 className="text-white font-bold text-lg mb-4">🎯 Your Optimization Score</h3>
               <div className="flex items-center gap-8">
                 <div className="text-center">
@@ -348,7 +358,8 @@ export const CostTransparency = () => {
             </div>
 
             {/* Recommendations */}
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <div className="rounded-2xl p-6 mb-6"
+              style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)'}}>
               <h3 className="text-white font-bold text-lg mb-4">💡 Cost Recommendations</h3>
               <div className="space-y-3">
                 {getRecommendations().map((rec, i) => (
@@ -379,7 +390,8 @@ export const CostTransparency = () => {
             </div>
 
             {/* Cost by Model */}
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <div className="rounded-2xl p-6 mb-6"
+              style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)'}}>
               <h3 className="text-white font-bold text-lg mb-4">📊 Cost by Model</h3>
               {modelBreakdownArray.length === 0 ? (
                 <p className="text-gray-500 text-sm">No requests yet. Start using the API to see breakdown.</p>
@@ -408,7 +420,8 @@ export const CostTransparency = () => {
             </div>
 
             {/* Request Receipts */}
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <div className="rounded-2xl p-6 mb-6"
+              style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)'}}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-white font-bold text-lg">🧾 Request Receipts</h3>
                 <span className="text-gray-500 text-xs">Last {requests.length} requests</span>
@@ -463,7 +476,8 @@ export const CostTransparency = () => {
             </div>
 
             {/* Forecast */}
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <div className="rounded-2xl p-6 mb-6"
+              style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)'}}>
               <h3 className="text-white font-bold text-lg mb-1">📈 Month Forecast</h3>
               <p className="text-gray-500 text-xs mb-4">Based on your usage so far this month (Day {dayOfMonth} of {daysInMonth})</p>
               <div className="grid grid-cols-3 gap-4">
