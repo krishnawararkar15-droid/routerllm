@@ -89,63 +89,109 @@ async def send_budget_alert_email(email: str, tokens_used: int, token_limit: int
         print(f"Failed to send alert email: {e}")
 
 
-async def send_welcome_email(email: str, subscription_key: str):
+
+def send_email(to_email: str, subject: str, html_content: str):
+    try:
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+        
+        gmail_user = os.getenv("GMAIL_USER", "")
+        gmail_pass = os.getenv("GMAIL_PASS", "")
+
+        if not gmail_user or not gmail_pass:
+            print("Gmail credentials not set")
+            return False
+
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = f"LLMLite <{gmail_user}>"
+        msg["To"] = to_email
+
+        part = MIMEText(html_content, "html")
+        msg.attach(part)
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(gmail_user, gmail_pass)
+            server.sendmail(gmail_user, to_email, msg.as_string())
+
+        print(f"Email sent successfully to {to_email}")
+        return True
+    except Exception as e:
+        print(f"Email error: {str(e)}")
+        return False
+
+def send_welcome_email(email: str, subscription_key: str):
+    subject = "Welcome to LLMLite — Your API Key Inside 🚀"
     html_content = f"""
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0d14; color: #ffffff; padding: 40px; border-radius: 12px;">
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin:0 auto; background: #0a0a0a; color: #ffffff; padding: 40px; border-radius: 16px;">
+        <h1 style="color: #3b82f6; font-size: 28px; margin-bottom: 8px;">Welcome to LLMLite! 🚀</h1>
+        <p style="color: #9ca3af; font-size: 16px; margin-bottom: 32px;">You're now saving 30-80% on AI API costs</p>
 
-        <div style="text-align: center; margin-bottom: 32px;">
-            <h1 style="color: #ffffff; font-size: 28px; margin: 0;">Welcome to LLMLite 🚀</h1>
-            <p style="color: #9ca3af; margin-top: 8px;">Your AI API router is ready to use</p>
+        <div style="background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+            <p style="color: #9ca3af; font-size: 12px; text-transform: uppercase; margin: 0 0 8px 0;">YOUR API KEY</p>
+            <p style="color: #3b82f6; font-family: monospace; font-size: 14px; word-break: break-all; margin: 0;">{subscription_key}</p>
         </div>
 
-        <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
-            <p style="color: #9ca3af; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase;">YOUR API KEY</p>
-            <p style="color: #3b82f6; font-size: 16px; font-family: monospace; font-weight: bold; margin: 0; word-break: break-all;">{subscription_key}</p>
-            <p style="color: #6b7280; font-size: 12px; margin-top: 8px;">Keep this key secret. Do not share it with anyone.</p>
+        <div style="background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+            <p style="color: #ffffff; font-size: 16px; font-weight: bold; margin: 0 0 16px 0;">Quick Start</p>
+            <pre style="background: #000; padding: 16px; border-radius: 8px; color: #22c55e; font-size: 12px; overflow-x: auto;">import requests
+
+response = requests.post(
+    "https://routerllm.onrender.com/route",
+    json={{
+        "prompt": "Your prompt here",
+        "subscription_key": "{subscription_key}"
+    }}
+)
+print(response.json())</pre>
         </div>
 
-        <div style="background: #1a1f2e; border: 1px solid #374151; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
-            <p style="color: #ffffff; font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Free Plan includes:</p>
-            <p style="color: #9ca3af; font-size: 13px; margin: 4px 0;">✅ 100,000 tokens per month</p>
-            <p style="color: #9ca3af; font-size: 13px; margin: 4px 0;">✅ Auto routing to free models</p>
-            <p style="color: #9ca3af; font-size: 13px; margin: 4px 0;">✅ Full usage dashboard</p>
-            <p style="color: #9ca3af; font-size: 13px; margin: 4px 0;">✅ 1 API key</p>
+        <div style="margin-bottom: 24px;">
+            <p style="color: #ffffff; font-size: 16px; font-weight: bold; margin-bottom: 12px;">Your Free Plan Includes</p>
+            <p style="color: #9ca3af; margin: 4px 0;">✅ 100,000 tokens per month</p>
+            <p style="color: #9ca3af; margin: 4px 0;">✅ Auto routing to free models</p>
+            <p style="color: #9ca3af; margin: 4px 0;">✅ Real-time cost tracking</p>
+            <p style="color: #9ca3af; margin: 4px 0;">✅ Full API dashboard</p>
         </div>
 
-        <div style="text-align: center; margin-bottom: 24px;">
-            <a href="https://llmlite-woad.vercel.app/dashboard"
-               style="background: #3b82f6; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; display: inline-block;">
-                Go to Dashboard →
-            </a>
-        </div>
+        <a href="https://llmlite-woad.vercel.app/dashboard" style="display: inline-block; background: #3b82f6; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">Open Dashboard →</a>
 
-        <p style="color: #4b5563; font-size: 12px; text-align: center;">Questions? Contact llmlite.support@gmail.com</p>
+        <p style="color: #4b5563; font-size: 12px; margin-top: 32px;">LLMLite — Save 30-80% on AI API costs</p>
     </div>
     """
+    return send_email(email, subject, html_content)
 
-    try:
-        brevo_key = os.getenv("BREVO_API_KEY")
-        print(f"Brevo key found: {brevo_key is not None}, length: {len(brevo_key) if brevo_key else 0}, starts with: {brevo_key[:10] if brevo_key else 'NONE'}")
-        
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                "https://api.brevo.com/v3/smtp/email",
-                headers={
-                    "api-key": brevo_key,
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                json={
-                    "sender": {"name": "LLMLite", "email": "krishnawararkar15@gmail.com"},
-                    "to": [{"email": email}],
-                    "subject": "Welcome to LLMLite — Your API Key Inside 🚀",
-                    "htmlContent": html_content
-                }
-            )
-            print(f"Brevo response: {response.status_code} - {response.text}")
-            print(f"Welcome email sent to {email}: {response.status_code}")
-    except Exception as e:
-        print(f"Failed to send welcome email: {e}")
+def send_budget_alert_email(email: str, percent: int, tokens_used: int, token_limit: int):
+    subject = f"⚠️ LLMLite Alert — You've used {percent}% of your tokens"
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin:0 auto; background: #0a0a0a; color: #ffffff; padding: 40px; border-radius: 16px;">
+        <h1 style="color: #f59e0b; font-size: 24px; margin-bottom: 8px;">⚠️ Token Usage Alert</h1>
+        <p style="color: #9ca3af;">You have used <strong style="color: #ffffff;">{percent}%</strong> of your monthly token limit.</p>
+
+        <div style="background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 24px; margin: 24px 0;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                <span style="color: #9ca3af;">Tokens Used</span>
+                <span style="color: #ffffff; font-weight: bold;">{tokens_used:,}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                <span style="color: #9ca3af;">Token Limit</span>
+                <span style="color: #ffffff; font-weight: bold;">{token_limit:,}</span>
+            </div>
+            <div style="background: #333; border-radius: 99px; height: 8px;">
+                <div style="background: {'#ef4444' if percent >= 95 else '#f59e0b'}; width: {percent}%; height: 8px; border-radius: 99px;"></div>
+            </div>
+        </div>
+
+        {'<p style="color: #ef4444; font-weight: bold;">🚨 You are almost out of tokens! Upgrade now to avoid service interruption.</p>' if percent >= 95 else '<p style="color: #f59e0b;">Consider upgrading your plan to get more tokens.</p>'}
+
+        <a href="https://llmlite-woad.vercel.app/dashboard/billing" style="display: inline-block; background: #3b82f6; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">Upgrade Plan →</a>
+
+        <p style="color: #4b5563; font-size: 12px; margin-top: 32px;">LLMLite — You received this because you have a usage alert set up.</p>
+    </div>
+    """
+    return send_email(email, subject, html_content)
+
 
 SUBSCRIPTION_KEYS = {
     "sub-basic-001": {"plan": "basic", "request_limit": 100, "requests_used": 0},
@@ -609,6 +655,10 @@ async def route_request(request: Request):
         
         print(f"DEBUG: models_to_try={models_to_try}")
 
+        print(f"DEBUG selected_model: {selected_model}")
+        print(f"DEBUG prompt_type: {prompt_type}")
+        print(f"DEBUG models_to_try: {models_to_try}")
+
         for model_attempt in models_to_try:
             try:
                 or_response = await call_groq(model_attempt, prompt, groq_key)
@@ -675,7 +725,8 @@ async def route_request(request: Request):
         print(f"Success - model: {selected_model}, tokens: {tokens_used}, cost: {cost_usd}")
 
         # Get actual model used (openrouter/auto returns the real model in response)
-        actual_model_used = or_data.get("model", selected_model) if or_data else selected_model
+        actual_model_used = actual_model
+        print(f"DEBUG actual_model_used: {actual_model_used}")
 
         return {
             "response": response_text,
