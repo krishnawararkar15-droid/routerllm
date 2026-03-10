@@ -571,10 +571,10 @@ async def route_request(request: Request):
             is_complex = word_count > 50 or any(kw in prompt.lower() for kw in complex_keywords)
 
             if is_complex:
-                selected_model = "meta-llama/llama-3.1-8b-instruct:free"
+                selected_model = "meta-llama/llama-3.2-3b-instruct:free"
                 prompt_type = "COMPLEX"
             else:
-                selected_model = "google/gemma-2-9b-it:free"
+                selected_model = "meta-llama/llama-3.2-3b-instruct:free"
                 prompt_type = "SIMPLE"
             print(f"Auto routing → {selected_model} ({prompt_type})")
 
@@ -601,7 +601,7 @@ async def route_request(request: Request):
         if or_response.status_code == 404 or "error" in or_data:
             print(f"Model {selected_model} not found, falling back to gemma")
             # Fallback to working free model
-            selected_model = "google/gemma-2-9b-it:free"
+            selected_model = "meta-llama/llama-3.2-3b-instruct:free"
             async with httpx.AsyncClient(timeout=30.0) as client2:
                 or_response = await client2.post(
                     "https://openrouter.ai/api/v1/chat/completions",
@@ -624,9 +624,10 @@ async def route_request(request: Request):
 
         # Calculate cost
         model_costs = {
-            "google/gemma-2-9b-it:free": 0.0,
+            "meta-llama/llama-3.2-3b-instruct:free": 0.0,
             "meta-llama/llama-3.1-8b-instruct:free": 0.0,
-            "mistralai/mistral-7b-instruct:free": 0.0,
+            "google/gemma-2-9b-it:free": 0.0,
+            "microsoft/phi-3-mini-128k-instruct:free": 0.0,
             "openai/gpt-4o-mini": 0.00015,
             "openai/gpt-4o": 0.005,
             "anthropic/claude-3-haiku": 0.00025,
