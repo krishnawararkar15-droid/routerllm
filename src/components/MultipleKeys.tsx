@@ -274,7 +274,12 @@ export const MultipleKeys = () => {
             
             {/* Free plan upgrade banner */}
             {plan === 'free' && keys.length >= 1 && (
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-5 mb-6 flex items-center justify-between">
+              <div className="rounded-2xl p-5 mb-6 flex items-center justify-between"
+                style={{
+                  background: 'rgba(59,130,246,0.05)',
+                  border: '1px solid rgba(59,130,246,0.2)',
+                  backdropFilter: 'blur(10px)'
+                }}>
                 <div>
                   <p className="text-blue-400 font-semibold">Want more keys?</p>
                   <p className="text-gray-400 text-sm">Pro gives you 3 keys. Max gives unlimited keys.</p>
@@ -315,18 +320,29 @@ export const MultipleKeys = () => {
                 { plan: 'Pro', keys: 3, price: '$29/mo', current: plan === 'pro' },
                 { plan: 'Max', keys: 'Unlimited', price: '$99/mo', current: plan === 'max' },
               ].map(tier => (
-                <div key={tier.plan} className={`rounded-2xl p-4 border text-center ${tier.current ? 'border-blue-500 bg-blue-500/10' : 'border-gray-800 bg-gray-900'}`}>
+                <div key={tier.plan}
+                  className="rounded-2xl p-5 text-center transition-all"
+                  style={{
+                    background: tier.current ? 'rgba(59,130,246,0.1)' : 'rgba(255,255,255,0.03)',
+                    border: tier.current ? '1px solid rgba(59,130,246,0.5)' : '1px solid rgba(255,255,255,0.08)',
+                    backdropFilter: 'blur(10px)'
+                  }}>
                   <p className={`text-sm font-bold ${tier.current ? 'text-blue-400' : 'text-gray-400'}`}>{tier.plan}</p>
-                  <p className="text-white text-xl font-bold mt-1">{tier.keys} {typeof tier.keys === 'number' ? (tier.keys > 1 ? 'Keys' : 'Key') : 'Keys'}</p>
+                  <p className="text-white text-2xl font-bold mt-1">{tier.keys} {typeof tier.keys === 'number' ? (tier.keys > 1 ? 'Keys' : 'Key') : 'Keys'}</p>
                   <p className="text-gray-500 text-xs mt-1">{tier.price}</p>
-                  {tier.current && <span className="text-blue-400 text-xs font-semibold">Current Plan</span>}
+                  {tier.current && <span className="text-blue-400 text-xs font-semibold mt-1 block">Current Plan</span>}
                 </div>
               ))}
             </div>
 
             {/* Create Key Form */}
             {showCreateForm && (
-              <div className="bg-gray-900 border border-blue-500/50 rounded-2xl p-6 mb-6">
+              <div className="rounded-2xl p-6 mb-6"
+                style={{
+                  background: 'rgba(59,130,246,0.05)',
+                  border: '1px solid rgba(59,130,246,0.3)',
+                  backdropFilter: 'blur(10px)'
+                }}>
                 <h3 className="text-white font-bold mb-4">Create New API Key</h3>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
@@ -367,13 +383,19 @@ export const MultipleKeys = () => {
 
             {/* New Key Created Success Banner */}
             {createdKey && (
-              <div className="bg-green-500/10 border border-green-500/50 rounded-2xl p-5 mb-6">
+              <div className="rounded-2xl p-5 mb-6"
+                style={{
+                  background: 'rgba(34,197,94,0.05)',
+                  border: '1px solid rgba(34,197,94,0.3)',
+                  backdropFilter: 'blur(10px)'
+                }}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-green-400 text-lg">✅</span>
                   <p className="text-green-400 font-bold">Key Created Successfully!</p>
                 </div>
                 <p className="text-yellow-400 text-xs mb-3">⚠️ Copy this key now — it will never be shown again in full.</p>
-                <div className="flex items-center gap-3 bg-gray-900 rounded-xl p-3">
+                <div className="flex items-center gap-3 rounded-xl p-3"
+                  style={{background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.06)'}}>
                   <code className="text-green-300 text-sm flex-1 font-mono break-all">{createdKey}</code>
                   <button onClick={() => copyKey(createdKey)}
                     className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-2 rounded-lg shrink-0">
@@ -395,7 +417,12 @@ export const MultipleKeys = () => {
 
             {/* Empty state */}
             {!loading && keys.length === 0 && (
-              <div className="text-center py-16 bg-gray-900 border border-gray-800 rounded-2xl">
+              <div className="text-center py-16 rounded-2xl"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  backdropFilter: 'blur(10px)'
+                }}>
                 <div className="text-5xl mb-4">🔑</div>
                 <h3 className="text-white font-bold text-xl mb-2">No API Keys Yet</h3>
                 <p className="text-gray-500 text-sm mb-6">Create your first API key to start routing requests</p>
@@ -418,7 +445,14 @@ export const MultipleKeys = () => {
               const envDots: any = { production: '🔴', staging: '🟡', development: '🟢', testing: '🔵' }
 
               return (
-                <div key={key.id} className={`bg-gray-900 border rounded-2xl p-6 mb-4 transition-all ${key.is_active ? 'border-gray-800' : 'border-gray-800 opacity-60'}`}>
+                <div key={key.id}
+                  className="rounded-2xl p-6 mb-4 transition-all"
+                  style={{
+                    background: 'rgba(255,255,255,0.03)',
+                    border: key.is_active ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(255,255,255,0.04)',
+                    backdropFilter: 'blur(10px)',
+                    opacity: key.is_active ? 1 : 0.6
+                  }}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className={`w-3 h-3 rounded-full ${key.is_active ? 'bg-green-400' : 'bg-gray-600'}`}></div>
