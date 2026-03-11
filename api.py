@@ -587,97 +587,79 @@ async def route_request(request: Request):
         selected_model = None
         prompt_type = None
 
-        # 1. Manual override from request
+        # Step 1 — Manual override
         if model_override:
             selected_model = model_override
             prompt_type = "MANUAL"
-            print(f"Using manual override: {selected_model}")
+            print(f"MANUAL override: {selected_model}")
 
-        # 2. Check custom rules
+        # Step 2 — Custom rules
         if not selected_model:
             rules_result = supabase.table("routing_rules").select("*").eq("subscription_key", subscription_key).eq("is_active", True).order("priority", desc=True).execute()
             rules = rules_result.data or []
-            print(f"Checking {len(rules)} custom rules")
-
             for rule in rules:
-                rule_type = rule.get("rule_type", "")
-                condition = rule.get("condition_value", "")
+                condition = rule.get("condition_value", "").lower()
+                rule_type = rule.get("rule_type", "keyword")
                 target = rule.get("target_model", "")
-
-                if rule_type == "keyword" and condition.lower() in prompt.lower():
+                if rule_type == "keyword" and condition in prompt.lower():
                     selected_model = target
                     prompt_type = "CUSTOM_RULE"
-                    print(f"Custom rule matched: {rule.get('rule_name')} → {selected_model}")
+                    print(f"CUSTOM RULE matched: {rule.get('rule_name')} → {selected_model}")
                     break
-                elif rule_type == "token_length":
-                    try:
-                        if len(prompt.split()) > int(condition):
-                            selected_model = target
-                            prompt_type = "CUSTOM_RULE"
-                            print(f"Token length rule matched → {selected_model}")
-                            break
-                    except:
-                        pass
 
-        # 3. Auto routing (classify prompt)
+        # Step 3 — Auto routing
         if not selected_model:
             word_count = len(prompt.split())
-            complex_keywords = ["explain", "analyze", "compare", "write", "create", "debug", "code", "implement", "design", "evaluate", "summarize", "research"]
-            is_complex = word_count > 50 or any(kw in prompt.lower() for kw in complex_keywords)
-
+            complex_keywords = ["explain", "analyze", "compare", "write", "create", "debug", "code", "implement", "essay", "research"]
+            is_complex = word_count > 30 or any(kw in prompt.lower() for kw in complex_keywords)
             if is_complex:
                 selected_model = "llama-3.3-70b-versatile"
                 prompt_type = "COMPLEX"
             else:
                 selected_model = "llama-3.1-8b-instant"
                 prompt_type = "SIMPLE"
-            print(f"Auto routing → {selected_model} ({prompt_type})")
+            print(f"AUTO routing → {selected_model} ({prompt_type})")
 
-        # Call Groq
-        print(f"Calling Groq with model: {selected_model}")
+        print(f"FINAL selected_model: {selected_model}, prompt_type: {prompt_type}")
+
+        # Call Groq — for custom rules only try exact model
         groq_key = os.getenv("GROQ_API_KEY", "")
-        
-        if not groq_key:
-            return JSONResponse(status_code=500, content={
-                "error": "API key not configured", 
-                "message": "Server missing GROQ_API_KEY. Please contact support."
-            })
-        
         or_data = None
         actual_model = selected_model
 
-        # If custom rule or manual override, try that model first, then fallback
-        print(f"DEBUG: prompt_type={prompt_type}, selected_model={selected_model}")
         if prompt_type in ["CUSTOM_RULE", "MANUAL"]:
-            models_to_try = [selected_model] + [m for m in FREE_MODELS if m != selected_model]
-        else:
-            models_to_try = FREE_MODELS
-        
-        print(f"DEBUG: models_to_try={models_to_try}")
-
-        print(f"DEBUG selected_model: {selected_model}")
-        print(f"DEBUG prompt_type: {prompt_type}")
-        print(f"DEBUG models_to_try: {models_to_try}")
-
-        for model_attempt in models_to_try:
+            # Only try the exact model — no fallback
             try:
-                or_response = await call_groq(model_attempt, prompt, groq_key)
+                or_response = await call_groq(selected_model, prompt, groq_key)
                 or_data = or_response.json()
                 if or_response.status_code == 200 and "choices" in or_data:
-                    actual_model = model_attempt
-                    print(f"Success with Groq model: {actual_model}")
-                    break
+                    actual_model = selected_model
+                    print(f"CUSTOM RULE success: {actual_model}")
                 else:
-                    print(f"Groq model {model_attempt} failed: {or_data.get('error', 'unknown')}")
+                    print(f"CUSTOM RULE model failed: {or_data}")
+                    return JSONResponse(status_code=500, content={"error": f"Model {selected_model} failed. Try a different model in your rule."})
+            except Exception as e:
+                print(f"CUSTOM RULE exception: {str(e)}")
+                return JSONResponse(status_code=500, content={"error": f"Model {selected_model} unavailable."})
+        else:
+            # Auto routing — try models in order
+            auto_models = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"] if prompt_type == "SIMPLE" else ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"]
+            for model_attempt in auto_models:
+                try:
+                    or_response = await call_groq(model_attempt, prompt, groq_key)
+                    or_data = or_response.json()
+                    if or_response.status_code == 200 and "choices" in or_data:
+                        actual_model = model_attempt
+                        print(f"AUTO success: {actual_model}")
+                        break
+                    else:
+                        or_data = None
+                except Exception as e:
                     or_data = None
                     continue
-            except Exception as e:
-                print(f"Groq model {model_attempt} exception: {str(e)}")
-                or_data = None
-                continue
 
         if not or_data or "choices" not in or_data:
-            return JSONResponse(status_code=500, content={"error": "Service temporarily unavailable. Try again."})
+            return JSONResponse(status_code=500, content={"error": "Service unavailable. Try again."})
 
         selected_model = actual_model
         response_text = or_data["choices"][0]["message"]["content"]
