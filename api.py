@@ -642,8 +642,11 @@ async def route_request(request: Request):
                 print(f"CUSTOM RULE exception: {str(e)}")
                 return JSONResponse(status_code=500, content={"error": f"Model {selected_model} unavailable."})
         else:
-            # Auto routing — try models in order
-            auto_models = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"] if prompt_type == "SIMPLE" else ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"]
+            # Auto routing — single model per type
+            if prompt_type == "SIMPLE":
+                auto_models = ["llama-3.1-8b-instant"]
+            else:
+                auto_models = ["llama-3.3-70b-versatile"]
             for model_attempt in auto_models:
                 try:
                     or_response = await call_groq(model_attempt, prompt, groq_key)
