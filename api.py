@@ -92,26 +92,31 @@ async def send_budget_alert_email(email: str, tokens_used: int, token_limit: int
 
 async def send_email_http(to_email: str, subject: str, html_content: str):
     try:
-        resend_key = os.getenv("RESEND_API_KEY", "")
-        if not resend_key:
-            print("ERROR: RESEND_API_KEY not set")
+        api_key = os.getenv("MAILJET_API_KEY", "")
+        secret_key = os.getenv("MAILJET_SECRET_KEY", "")
+        if not api_key:
+            print("ERROR: MAILJET keys not set")
             return False
-        print(f"Sending email via Resend to {to_email}")
+        print(f"Sending email via Mailjet to {to_email}")
+        import base64
+        credentials = base64.b64encode(f"{api_key}:{secret_key}".encode()).decode()
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
-                "https://api.resend.com/emails",
+                "https://api.mailjet.com/v3.1/send",
                 headers={
-                    "Authorization": f"Bearer {resend_key}",
+                    "Authorization": f"Basic {credentials}",
                     "Content-Type": "application/json"
                 },
                 json={
-                    "from": "LLMLite <onboarding@resend.dev>",
-                    "to": [to_email],
-                    "subject": subject,
-                    "html": html_content
+                    "Messages": [{
+                        "From": {"Email": "krishnawararkar15@gmail.com", "Name": "LLMLite"},
+                        "To": [{"Email": to_email}],
+                        "Subject": subject,
+                        "HTMLPart": html_content
+                    }]
                 }
             )
-        print(f"Resend response: {response.status_code} - {response.text}")
+        print(f"Mailjet response: {response.status_code} - {response.text[:200]}")
         return response.status_code == 200
     except Exception as e:
         print(f"Email error: {str(e)}")
