@@ -423,6 +423,39 @@ async def signup(data: dict):
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/test-email")
+async def test_email():
+    try:
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+        import os
+        
+        gmail_user = os.getenv("GMAIL_USER", "NOT SET")
+        gmail_pass = os.getenv("GMAIL_PASS", "NOT SET")
+        
+        print(f"GMAIL_USER: {gmail_user}")
+        print(f"GMAIL_PASS length: {len(gmail_pass)}")
+        
+        if gmail_user == "NOT SET":
+            return {"error": "GMAIL_USER not set in environment"}
+        
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = "LLMLite Test Email"
+        msg["From"] = gmail_user
+        msg["To"] = gmail_user
+        msg.attach(MIMEText("<h1>Test email works!</h1>", "html"))
+        
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(gmail_user, gmail_pass)
+            server.sendmail(gmail_user, gmail_user, msg.as_string())
+        
+        print("TEST EMAIL SENT SUCCESSFULLY")
+        return {"success": True, "sent_to": gmail_user}
+    except Exception as e:
+        print(f"TEST EMAIL FAILED: {str(e)}")
+        return {"error": str(e)}
+
 @app.post("/regenerate-key")
 async def regenerate_key(request: Request):
     try:
