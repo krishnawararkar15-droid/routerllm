@@ -304,11 +304,8 @@ def is_simple(prompt):
 
 # Try models in order until one works
 FREE_MODELS = [
-    "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
-    "llama3-8b-8192",
-    "mixtral-8x7b-32768",
-    "gemma2-9b-it",
+    "llama-3.3-70b-versatile",
 ]
 
 async def call_groq(model: str, prompt: str, groq_key: str):
@@ -628,19 +625,17 @@ async def route_request(request: Request):
         actual_model = selected_model
 
         if prompt_type in ["CUSTOM_RULE", "MANUAL"]:
-            # Only try the exact model — no fallback
             try:
                 or_response = await call_groq(selected_model, prompt, groq_key)
                 or_data = or_response.json()
                 if or_response.status_code == 200 and "choices" in or_data:
                     actual_model = selected_model
-                    print(f"CUSTOM RULE success: {actual_model}")
                 else:
-                    print(f"CUSTOM RULE model failed: {or_data}")
-                    return JSONResponse(status_code=500, content={"error": f"Model {selected_model} failed. Try a different model in your rule."})
+                    or_response = await call_groq("llama-3.1-8b-instant", prompt, groq_key)
+                    or_data = or_response.json()
+                    actual_model = "llama-3.1-8b-instant"
             except Exception as e:
-                print(f"CUSTOM RULE exception: {str(e)}")
-                return JSONResponse(status_code=500, content={"error": f"Model {selected_model} unavailable."})
+                or_data = None
         else:
             # Auto routing — single model per type
             if prompt_type == "SIMPLE":
