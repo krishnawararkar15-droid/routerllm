@@ -122,6 +122,7 @@ def send_email(to_email: str, subject: str, html_content: str):
         return False
 
 def send_welcome_email(email: str, subscription_key: str):
+    print(f"send_welcome_email called for {email}")
     subject = "Welcome to LLMLite — Your API Key Inside 🚀"
     html_content = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin:0 auto; background: #0a0a0a; color: #ffffff; padding: 40px; border-radius: 16px;">
@@ -375,6 +376,12 @@ async def signup(data: dict):
         existing = supabase.table("users").select("*").eq("email", email).execute()
         if existing.data:
             user = existing.data[0]
+            # First-time login (no password set) — send welcome email
+            if not user.get("password_hash") and password:
+                try:
+                    send_welcome_email(email, user["subscription_key"])
+                except Exception as e:
+                    print(f"Welcome email failed: {str(e)}")
             # Update password if provided
             if password:
                 from passlib.context import CryptContext
