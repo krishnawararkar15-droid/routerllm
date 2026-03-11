@@ -402,7 +402,10 @@ async def signup(data: dict):
         }).execute()
         
         # Send welcome email to new users only
-        await send_welcome_email(email, new_key)
+        try:
+            send_welcome_email(email, new_key)
+        except Exception as e:
+            print(f"Welcome email failed: {str(e)}")
         
         return {
             "subscription_key": new_key,
