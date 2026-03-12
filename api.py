@@ -829,5 +829,40 @@ async def send_budget_alert(request: Request):
     result = mailjet.send.create(data=data)
     return {"success": result.status_code == 200}
 
+@app.post("/paddle-webhook")
+async def paddle_webhook(request: Request):
+    body = await request.json()
+    event_type = body.get("event_type")
+    
+    if event_type == "subscription.created" or event_type == "transaction.completed":
+        data = body.get("data", {})
+        customer_email = data.get("customer", {}).get("email")
+        items = data.get("items", [])
+        
+        if not customer_email or not items:
+            return {"status": "ignored"}
+        
+        price_id = items[0].get("price", {}).get("id", "")
+        pro_price_id = os.environ.get("PADDLE_PRO_PRICE_ID")
+        max_price_id = os.environ.get("PADDLE_MAX_PRICE_ID")
+        
+        if price_id == pro_price_id:
+            new_plan = "pro"
+            new_limit = 10000000
+        elif price_id == max_price_id:
+            new_plan = "max"
+            new_limit = 100000000
+        else:
+            return {"status": "unknown price"}
+        
+        supabase.table("users").update({
+            "plan": new_plan,
+            "token_limit": new_limit
+        }).eq("email", customer_email).execute()
+        
+        return {"status": "upgraded", "plan": new_plan}
+    
+    return {"status": "ignored"}
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
