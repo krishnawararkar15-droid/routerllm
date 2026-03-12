@@ -12,14 +12,14 @@ export const Pricing = () => {
       period: "/month",
       tokens: "100,000",
       tokensUnit: "tokens/month",
+      description: "For developers who want to try LLMLite risk-free",
       features: [
-        "Auto routing",
-        "3 free models",
-        "Basic dashboard",
-        "1 API key",
-        "Community support"
+        "100K tokens/month",
+        "Auto-routing",
+        "All free OpenRouter models",
+        "Basic dashboard"
       ],
-      cta: "Get Started Free",
+      cta: "Get Started",
       to: "/signup",
       highlight: false
     },
@@ -128,6 +128,7 @@ export const Pricing = () => {
                   <span className="text-white/40 text-sm">{plan.period}</span>
                 </div>
                 <div className="mt-2 text-white/60 text-sm">{plan.tokens} {plan.tokensUnit}</div>
+                {plan.description && <div className="mt-2 text-white/40 text-xs">{plan.description}</div>}
               </div>
               <ul className="space-y-3 mb-6">
                 {plan.features.map((feature, fIdx) => (
@@ -150,7 +151,12 @@ export const Pricing = () => {
               </Link>
               ) : (
               <button 
-                onClick={() => openCheckout(import.meta.env.VITE_PADDLE_PRO_PRICE_ID, userEmail)}
+                onClick={() => openCheckout(
+                  plan.name === "Max" 
+                    ? import.meta.env.VITE_PADDLE_MAX_PRICE_ID 
+                    : import.meta.env.VITE_PADDLE_PRO_PRICE_ID, 
+                  userEmail
+                )}
                 className={`block w-full py-3 text-center font-bold rounded-xl transition-colors ${
                   plan.highlight 
                     ? 'bg-blue-600 hover:bg-blue-500 text-white' 
