@@ -393,7 +393,6 @@ async def test_email():
     )
     return {"success": result}
 
-from mailjet_rest import Client
 import os
 
 @app.post("/send-budget-alert")
@@ -404,15 +403,18 @@ async def send_budget_alert(request: Request):
     tokens_used = body.get("tokens_used")
     token_limit = body.get("token_limit")
 
-    mailjet = Client(auth=(os.environ["MJ_APIKEY_PUBLIC"], os.environ["MJ_APIKEY_PRIVATE"]), version='v3.1')
-    
+    import mailjet_rest
+    mailjet = mailjet_rest.Client(
+        auth=(os.environ["MJ_APIKEY_PUBLIC"], os.environ["MJ_APIKEY_PRIVATE"]),
+        version='v3.1'
+    )
     data = {
         "Messages": [{
             "From": {"Email": "llmlite.support@gmail.com", "Name": "LLMLite"},
             "To": [{"Email": email}],
-            "Subject": f"⚠️ Budget Alert: {percent}% of tokens used",
-            "TextPart": f"You have used {tokens_used} of {token_limit} tokens ({percent}%). Consider upgrading your plan at llmlite.vercel.app/dashboard/billing.",
-            "HTMLPart": f"<h3>Budget Alert</h3><p>You have used <strong>{tokens_used}</strong> of <strong>{token_limit}</strong> tokens (<strong>{percent}%</strong>).</p><p><a href='https://llmlite.vercel.app/dashboard/billing'>Upgrade your plan</a></p>"
+            "Subject": f"⚠️ LLMLite Budget Alert: {percent}% of tokens used",
+            "TextPart": f"Warning: You have used {tokens_used} of {token_limit} tokens ({percent}%). Visit https://llmlite.vercel.app/dashboard/billing to upgrade.",
+            "HTMLPart": f"<h2>⚠️ Budget Alert</h2><p>You've used <strong>{percent}%</strong> of your token limit.</p><p>{tokens_used} / {token_limit} tokens used.</p><a href='https://llmlite.vercel.app/dashboard/billing'>Upgrade your plan →</a>"
         }]
     }
     result = mailjet.send.create(data=data)
