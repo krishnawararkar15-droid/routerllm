@@ -61,6 +61,27 @@ export const Pricing = () => {
       cta: "Start Max",
       to: "/signup",
       highlight: false
+    },
+    {
+      name: "Custom",
+      price: "Let's Talk",
+      period: "",
+      tokens: "",
+      tokensUnit: "",
+      description: "For companies running AI at scale",
+      features: [
+        "Everything in Max",
+        "Unlimited tokens",
+        "Custom routing rules",
+        "Dedicated support",
+        "Custom billing",
+        "SLA guarantee",
+        "Team access",
+        "Monthly strategy call"
+      ],
+      cta: "Contact Us →",
+      to: "mailto:llmlite.support@gmail.com",
+      highlight: false
     }
   ];
 
@@ -108,7 +129,7 @@ export const Pricing = () => {
           <p className="text-white/40">Start free. Upgrade when you need more.</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
           {plans.map((plan, idx) => (
             <div 
               key={idx} 
@@ -125,9 +146,9 @@ export const Pricing = () => {
                 <h3 className="text-lg font-bold mb-2">{plan.name}</h3>
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-4xl font-black">{plan.price}</span>
-                  <span className="text-white/40 text-sm">{plan.period}</span>
+                  {plan.period && <span className="text-white/40 text-sm">{plan.period}</span>}
                 </div>
-                <div className="mt-2 text-white/60 text-sm">{plan.tokens} {plan.tokensUnit}</div>
+                {plan.tokens && <div className="mt-2 text-white/60 text-sm">{plan.tokens} {plan.tokensUnit}</div>}
                 {plan.description && <div className="mt-2 text-white/40 text-xs">{plan.description}</div>}
               </div>
               <ul className="space-y-3 mb-6">
@@ -149,6 +170,17 @@ export const Pricing = () => {
               >
                 {plan.cta}
               </Link>
+              ) : plan.name === "Custom" ? (
+              <a 
+                href={plan.to}
+                className={`block w-full py-3 text-center font-bold rounded-xl transition-colors ${
+                  plan.highlight 
+                    ? 'bg-blue-600 hover:bg-blue-500 text-white' 
+                    : 'bg-white/10 hover:bg-white/20 text-white'
+                }`}
+              >
+                {plan.cta}
+              </a>
               ) : (
               <button 
                 onClick={() => openCheckout(
@@ -162,7 +194,7 @@ export const Pricing = () => {
                     ? 'bg-blue-600 hover:bg-blue-500 text-white' 
                     : 'bg-white/10 hover:bg-white/20 text-white'
                 }`}
-              >
+                >
                 {plan.cta}
               </button>
               )}
