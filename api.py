@@ -393,6 +393,31 @@ async def test_email():
     )
     return {"success": result}
 
+from mailjet_rest import Client
+import os
+
+@app.post("/send-budget-alert")
+async def send_budget_alert(request: Request):
+    body = await request.json()
+    email = body.get("email")
+    percent = body.get("percent")
+    tokens_used = body.get("tokens_used")
+    token_limit = body.get("token_limit")
+
+    mailjet = Client(auth=(os.environ["MJ_APIKEY_PUBLIC"], os.environ["MJ_APIKEY_PRIVATE"]), version='v3.1')
+    
+    data = {
+        "Messages": [{
+            "From": {"Email": "llmlite.support@gmail.com", "Name": "LLMLite"},
+            "To": [{"Email": email}],
+            "Subject": f"⚠️ Budget Alert: {percent}% of tokens used",
+            "TextPart": f"You have used {tokens_used} of {token_limit} tokens ({percent}%). Consider upgrading your plan at llmlite.vercel.app/dashboard/billing.",
+            "HTMLPart": f"<h3>Budget Alert</h3><p>You have used <strong>{tokens_used}</strong> of <strong>{token_limit}</strong> tokens (<strong>{percent}%</strong>).</p><p><a href='https://llmlite.vercel.app/dashboard/billing'>Upgrade your plan</a></p>"
+        }]
+    }
+    result = mailjet.send.create(data=data)
+    return {"success": result.status_code == 200}
+
 @app.post("/regenerate-key")
 async def regenerate_key(request: Request):
     try:
