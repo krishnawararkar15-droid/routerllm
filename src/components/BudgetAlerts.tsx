@@ -147,7 +147,35 @@ export const BudgetAlerts = () => {
     setAlertEmail(userEmail);
     fetch('https://routerllm.onrender.com/stats/' + userKey)
       .then(r => r.json())
-      .then(d => { setStats(d); setLoading(false); })
+      .then(d => {
+        setStats(d);
+        setLoading(false);
+
+        // Check thresholds and send email alert if needed
+        const tokensUsedNow = d?.total_tokens ?? 0;
+        const tokenLimitNow = d?.token_limit ?? 100000;
+        const pct = Math.round((tokensUsedNow / tokenLimitNow) * 100);
+        const savedThreshold = Number(localStorage.getItem('routellm_alert_threshold') || '80');
+        const savedEmail = localStorage.getItem('routellm_alert_email') || userEmail;
+        const alertsOn = localStorage.getItem('routellm_alerts_enabled') !== 'false';
+        const alreadySent = localStorage.getItem(`alert_sent_${savedThreshold}`);
+        const plan = localStorage.getItem('routellm_plan') || 'free';
+
+        if (alertsOn && plan !== 'free' && pct >= savedThreshold && !alreadySent && savedEmail) {
+          fetch('https://routerllm.onrender.com/send-budget-alert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: savedEmail,
+              percent: pct,
+              tokens_used: tokensUsedNow,
+              token_limit: tokenLimitNow
+            })
+          }).then(() => {
+            localStorage.setItem(`alert_sent_${savedThreshold}`, 'true');
+          });
+        }
+      })
       .catch(() => setLoading(false));
   }, []);
 
