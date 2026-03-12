@@ -2,7 +2,11 @@ import { Layers, ArrowLeft, Check, Zap, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { openCheckout } from '../lib/paddle';
 
-const userEmail = localStorage.getItem('routellm_email') || '';
+const userEmail = 
+  localStorage.getItem('routellm_email') || 
+  localStorage.getItem('routerllm_email') ||
+  localStorage.getItem('user_email') ||
+  '';
 
 export const Pricing = () => {
   const plans = [
@@ -183,12 +187,15 @@ export const Pricing = () => {
               </a>
               ) : (
               <button 
-                onClick={() => openCheckout(
+                onClick={() => {
+                  console.log('userEmail:', userEmail);
+                  console.log('all localStorage keys:', Object.keys(localStorage));
+                  openCheckout(
                   plan.name === "Max" 
                     ? import.meta.env.VITE_PADDLE_MAX_PRICE_ID 
                     : import.meta.env.VITE_PADDLE_PRO_PRICE_ID, 
                   userEmail
-                )}
+                )}}
                 className={`block w-full py-3 text-center font-bold rounded-xl transition-colors ${
                   plan.highlight 
                     ? 'bg-blue-600 hover:bg-blue-500 text-white' 
