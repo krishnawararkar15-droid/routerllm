@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing - LLMLite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #000000;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+    .nav {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background-color: rgba(0,0,0,0.8);
+      backdrop-filter: blur(24px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .nav-container {
+      max-width: 64rem;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo-icon {
+      width: 2rem;
+      height: 2rem;
+      background-color: white;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-icon svg { width: 1.25rem; height: 1.25rem; }
+    .logo-text { font-size: 1.125rem; font-weight: 700; }
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.6);
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: white; }
+    .back-link svg { width: 1rem; height: 1rem; }
+    main {
+      max-width: 64rem;
+      margin: 0 auto;
+      padding: 3rem 1rem;
+    }
+    .hero { text-align: center; margin-bottom: 3rem; }
+    .hero h1 {
+      font-size: 2.25rem;
+      font-weight: 900;
+      margin-bottom: 0.75rem;
+    }
+    .hero p { color: rgba(255,255,255,0.4); }
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (min-width: 768px) {
+      .plans { grid-template-columns: repeat(3, 1fr); }
+    }
+    .plan {
+      position: relative;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      background-color: rgba(255,255,255,0.02);
+    }
+    .plan.highlight {
+      background-color: rgba(255,255,255,0.05);
+      border-color: rgba(59,130,246,0.5);
+    }
+    .badge {
+      position: absolute;
+      top: -0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .badge span {
+      padding: 0.25rem 0.75rem;
+      background-color: #3b82f6;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 9999px;
+    }
+    .badge svg { width: 0.75rem; height: 0.75rem; }
+    .plan-header { text-align: center; margin-bottom: 1.5rem; }
+    .plan-name { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.25rem;
+    }
+    .plan-price .amount { font-size: 2.25rem; font-weight: 900; }
+    .plan-price .period { color: rgba(255,255,255,0.4); font-size: 0.875rem; }
+    .plan-tokens { margin-top: 0.5rem; color: rgba(255,255,255,0.6); font-size: 0.875rem; }
+    .plan-features { margin-bottom: 1.5rem; }
+    .plan-features ul { list-style: none; }
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .plan-features li svg {
+      width: 1rem;
+      height: 1rem;
+      color: #4ade80;
+      flex-shrink: 0;
+      margin-top: 0.125rem;
+    }
+    .plan-features li span { color: rgba(255,255,255,0.7); }
+    .plan-cta {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      text-align: center;
+      font-weight: 700;
+      border-radius: 0.75rem;
+      transition: background-color 0.2s;
+    }
+    .plan-cta.primary {
+      background-color: #2563eb;
+      color: white;
+    }
+    .plan-cta.primary:hover { background-color: #3b82f6; }
+    .plan-cta.secondary {
+      background-color: rgba(255,255,255,0.1);
+      color: white;
+    }
+    .plan-cta.secondary:hover { background-color: rgba(255,255,255,0.2); }
+    .guarantee {
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.875rem;
+      margin-bottom: 3rem;
+    }
+    .faq { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 3rem; }
+    .faq h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .faq-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .faq-item {
+      background-color: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+    }
+    .faq-item h3 { font-weight: 700; margin-bottom: 0.5rem; }
+    .faq-item p { color: rgba(255,255,255,0.6); font-size: 0.875rem; }
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 2rem 0;
+      margin-top: 3rem;
+    }
+    .footer-links {
+      max-width: 64rem;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      font-size: 0.875rem;
+    }
+    .footer-links a { color: rgba(255,255,255,0.4); transition: color 0.2s; }
+    .footer-links a:hover { color: white; }
+    .copyright {
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.2);
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <span class="logo-text">LLMLite</span>
+      </a>
+      <a href="/dashboard" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <h1>Simple, Transparent Pricing</h1>
+      <p>Start free. Upgrade when you need more.</p>
+    </div>
+
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-header">
+          <h3 class="plan-name">Free</h3>
+          <div class="plan-price">
+            <span class="amount">$0</span>
+            <span class="period">/month</span>
+          </div>
+          <div class="plan-tokens">100,000 tokens/month</div>
+        </div>
+        <div class="plan-features">
+          <ul>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Auto routing</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>3 free models</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Basic dashboard</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>1 API key</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Community support</span>
+            </li>
+          </ul>
+        </div>
+        <a href="/signup" class="plan-cta secondary">Get Started Free</a>
+      </div>
+
+      <div class="plan highlight">
+        <div class="badge">
+          <span>Most Popular</span>
+        </div>
+        <div class="plan-header">
+          <h3 class="plan-name">Pro</h3>
+          <div class="plan-price">
+            <span class="amount">$29</span>
+            <span class="period">/month</span>
+          </div>
+          <div class="plan-tokens">10,000,000 tokens/month</div>
+        </div>
+        <div class="plan-features">
+          <ul>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Everything in Free</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Manual model override</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>GPT-4o, Claude, Gemini access</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Budget alerts email</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Full analytics dashboard</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>3 API keys</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Email support</span>
+            </li>
+          </ul>
+        </div>
+        <a href="/signup" class="plan-cta primary">Start Pro</a>
+      </div>
+
+      <div class="plan">
+        <div class="plan-header">
+          <h3 class="plan-name">Max</h3>
+          <div class="plan-price">
+            <span class="amount">$99</span>
+            <span class="period">/month</span>
+          </div>
+          <div class="plan-tokens">100,000,000 tokens/month</div>
+        </div>
+        <div class="plan-features">
+          <ul>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Everything in Pro</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Custom routing rules</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Unlimited API keys</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Webhook alerts</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Priority support (4hr response)</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Team access (5 members)</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Monthly strategy call</span>
+            </li>
+          </ul>
+        </div>
+        <a href="/signup" class="plan-cta secondary">Start Max</a>
+      </div>
+    </div>
+
+    <p class="guarantee">All plans include a 7-day money back guarantee. No questions asked.</p>
+
+    <div class="faq">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h3>Can I upgrade or downgrade anytime?</h3>
+          <p>Yes, changes take effect immediately.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What happens when I hit my token limit?</h3>
+          <p>Requests are paused until next month or you upgrade.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Do you store my prompts?</h3>
+          <p>Never. We only store token counts and metadata.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What payment methods do you accept?</h3>
+          <p>All major credit cards via Paddle.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-links">
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/refund">Refund</a>
+      <a href="/pricing">Pricing</a>
+    </div>
+    <p class="copyright">© 2026 LLMLite. All rights reserved.</p>
+  </footer>
+</body>
+</html>

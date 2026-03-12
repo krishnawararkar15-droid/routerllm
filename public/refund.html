@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refund Policy - LLMLite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #000000;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+    .nav {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background-color: rgba(0,0,0,0.8);
+      backdrop-filter: blur(24px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .nav-container {
+      max-width: 56rem;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo-icon {
+      width: 2rem;
+      height: 2rem;
+      background-color: white;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-icon svg { width: 1.25rem; height: 1.25rem; }
+    .logo-text { font-size: 1.125rem; font-weight: 700; }
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.6);
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: white; }
+    .back-link svg { width: 1rem; height: 1rem; }
+    main {
+      max-width: 56rem;
+      margin: 0 auto;
+      padding: 3rem 1rem;
+    }
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle { color: rgba(255,255,255,0.4); margin-bottom: 3rem; }
+    .content { margin-bottom: 3rem; }
+    .section { margin-bottom: 2rem; }
+    .section h2 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+    .section p {
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+    }
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 2rem 0;
+      margin-top: 3rem;
+    }
+    .footer-links {
+      max-width: 56rem;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      font-size: 0.875rem;
+    }
+    .footer-links a { color: rgba(255,255,255,0.4); transition: color 0.2s; }
+    .footer-links a:hover { color: white; }
+    .copyright {
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.2);
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <span class="logo-text">LLMLite</span>
+      </a>
+      <a href="/dashboard" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <h1>Refund Policy</h1>
+    <p class="subtitle">Last updated: March 2026</p>
+
+    <div class="content">
+      <div class="section">
+        <h2>Our Refund Policy</h2>
+        <p>We offer a 7-day money back guarantee on all paid plans. Email us within 7 days for a full refund, no questions asked.</p>
+      </div>
+
+      <div class="section">
+        <h2>How to Request a Refund</h2>
+        <p>Email refunds@llmlite.com with your account email and optional reason. We process within 5-7 business days.</p>
+      </div>
+
+      <div class="section">
+        <h2>After 7 Days</h2>
+        <p>Refunds not available after 7 days. You can cancel anytime to stop future charges.</p>
+      </div>
+
+      <div class="section">
+        <h2>How to Cancel</h2>
+        <p>Email support@llmlite.com to cancel. You keep access until end of current billing period.</p>
+      </div>
+
+      <div class="section">
+        <h2>Exceptions</h2>
+        <p>No refunds for: accounts suspended for terms violations, requests after 7 days of billing date.</p>
+      </div>
+
+      <div class="section">
+        <h2>Contact</h2>
+        <p>Email: refunds@llmlite.com</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-links">
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/refund">Refund</a>
+      <a href="/pricing">Pricing</a>
+    </div>
+    <p class="copyright">© 2026 LLMLite. All rights reserved.</p>
+  </footer>
+</body>
+</html>
