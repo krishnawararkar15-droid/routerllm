@@ -1093,7 +1093,7 @@ const CTASection = () => {
             className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4"
           >
             <motion.button
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/pricing')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full sm:w-auto px-8 md:px-10 py-3 md:py-4 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-colors text-sm md:text-base"
