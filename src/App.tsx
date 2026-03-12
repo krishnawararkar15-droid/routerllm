@@ -329,7 +329,7 @@ const Hero = () => {
             className="flex justify-center w-full px-4"
           >
             <motion.button
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/pricing')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition-all duration-200 mt-8 max-w-xs w-full sm:w-auto text-center"
