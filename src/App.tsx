@@ -841,7 +841,16 @@ const PricingSection = () => {
 
   const plans = [
     {
-      name: "STARTER",
+      name: "FREE",
+      price: "0",
+      description: "For developers who want to try LLMLite risk-free",
+      features: ["100K tokens/month", "Auto-routing", "All free OpenRouter models", "Basic dashboard"],
+      buttonText: "Get Started →",
+      to: "/signup",
+      highlight: false
+    },
+    {
+      name: "PRO",
       price: isAnnual ? "24" : "29",
       description: "For solo developers and indie hackers who want to stop overpaying for AI.",
       features: ["10M tokens/month", "Auto-routing", "All free OpenRouter models", "Savings dashboard", "Email support"],
@@ -849,7 +858,7 @@ const PricingSection = () => {
       highlight: false
     },
     {
-      name: "PRO",
+      name: "MAX",
       price: isAnnual ? "82" : "99",
       description: "For growing teams that need full control over their AI spending.",
       features: ["100M tokens/month", "Manual model selection", "Access to 100+ models", "Budget alerts", "Priority support"],
@@ -917,7 +926,7 @@ const PricingSection = () => {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {plans.map((plan, idx) => (
             <motion.div
               key={idx}
@@ -972,7 +981,7 @@ const PricingSection = () => {
 
                 <div className="space-y-3 md:space-y-5 mb-8 md:mb-12">
                   <p className={cn("text-[8px] md:text-[10px] font-bold uppercase tracking-widest", plan.highlight ? "text-black" : "text-white/80")}>
-                    {idx === 0 ? "This Plan Includes:" : idx === 1 ? "Everything in Standard, plus:" : "Everything in Standard & Pro, plus:"}
+                    This Plan Includes:
                   </p>
                   {plan.features.map((feature, fIdx) => (
                     <div key={fIdx} className="flex items-center gap-2 md:gap-3">
@@ -982,6 +991,19 @@ const PricingSection = () => {
                   ))}
                 </div>
 
+                {plan.name === "FREE" ? (
+                  <motion.a
+                    href={plan.to}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={cn(
+                      "block w-full py-3 md:py-4 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm transition-all text-center",
+                      "bg-white/10 text-white border border-white/20 hover:bg-white/20"
+                    )}
+                  >
+                    {plan.buttonText}
+                  </motion.a>
+                ) : (
                 <motion.button
                   onClick={() => navigate('/signup')}
                   whileHover={{ scale: 1.02 }}
@@ -995,6 +1017,7 @@ const PricingSection = () => {
                 >
                   {plan.buttonText}
                 </motion.button>
+                )}
               </div>
             </motion.div>
           ))}
