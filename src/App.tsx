@@ -958,37 +958,39 @@ const PricingSection = () => {
                 plan.highlight ? "border-black/5 shadow-[inset_0_1px_1px_rgba(0,0,0,0.1)]" : "border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)]"
               )} />
 
-              <div className="relative z-10">
-                <div className="mb-8 md:mb-10">
-                  <span className={cn("text-[8px] md:text-[10px] font-bold uppercase tracking-[0.2em]", plan.highlight ? "text-gray-400" : "text-white/30")}>
-                    {plan.name}
-                  </span>
-                  <div className="mt-4 md:mt-6 flex items-baseline gap-1">
-                    <span className="text-3xl md:text-5xl font-extrabold font-display tracking-tight">
-                      {plan.price !== "Custom" && "$"}
-                      {plan.price}
+              <div className="relative z-10 flex flex-col justify-between h-full">
+                <div>
+                  <div className="mb-8 md:mb-10">
+                    <span className={cn("text-[8px] md:text-[10px] font-bold uppercase tracking-[0.2em]", plan.highlight ? "text-gray-400" : "text-white/30")}>
+                      {plan.name}
                     </span>
-                    {plan.price !== "Custom" && (
-                      <span className={cn("text-[10px] md:text-xs font-medium ml-1", plan.highlight ? "text-gray-400" : "text-white/30")}>
-                        /month
+                    <div className="mt-4 md:mt-6 flex items-baseline gap-1">
+                      <span className="text-3xl md:text-5xl font-extrabold font-display tracking-tight">
+                        {plan.price !== "Custom" && "$"}
+                        {plan.price}
                       </span>
-                    )}
-                  </div>
-                  <p className={cn("mt-4 md:mt-6 text-xs md:text-sm leading-relaxed font-medium", plan.highlight ? "text-gray-500" : "text-white/50")}>
-                    {plan.description}
-                  </p>
-                </div>
-
-                <div className="space-y-3 md:space-y-5 mb-8 md:mb-12">
-                  <p className={cn("text-[8px] md:text-[10px] font-bold uppercase tracking-widest", plan.highlight ? "text-black" : "text-white/80")}>
-                    This Plan Includes:
-                  </p>
-                  {plan.features.map((feature, fIdx) => (
-                    <div key={fIdx} className="flex items-center gap-2 md:gap-3">
-                      <CheckCircle2 className={cn("w-3.5 h-3.5 md:w-4 md:h-4 shrink-0", plan.highlight ? "text-black" : "text-white/20")} />
-                      <span className={cn("text-xs md:text-sm font-medium", plan.highlight ? "text-gray-700" : "text-white/70")}>{feature}</span>
+                      {plan.price !== "Custom" && (
+                        <span className={cn("text-[10px] md:text-xs font-medium ml-1", plan.highlight ? "text-gray-400" : "text-white/30")}>
+                          /month
+                        </span>
+                      )}
                     </div>
-                  ))}
+                    <p className={cn("mt-4 md:mt-6 text-xs md:text-sm leading-relaxed font-medium", plan.highlight ? "text-gray-500" : "text-white/50")}>
+                      {plan.description}
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 md:space-y-5 mb-8 md:mb-12">
+                    <p className={cn("text-[8px] md:text-[10px] font-bold uppercase tracking-widest", plan.highlight ? "text-black" : "text-white/80")}>
+                      This Plan Includes:
+                    </p>
+                    {plan.features.map((feature, fIdx) => (
+                      <div key={fIdx} className="flex items-center gap-2 md:gap-3">
+                        <CheckCircle2 className={cn("w-3.5 h-3.5 md:w-4 md:h-4 shrink-0", plan.highlight ? "text-black" : "text-white/20")} />
+                        <span className={cn("text-xs md:text-sm font-medium", plan.highlight ? "text-gray-700" : "text-white/70")}>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {plan.name === "FREE" ? (
