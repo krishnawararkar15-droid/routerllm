@@ -6,11 +6,16 @@ export const initPaddle = () => {
   }
 };
 
-export const openCheckout = (priceId: string, userEmail: string) => {
+export const openCheckout = (priceId: string, userEmail?: string) => {
   if (typeof window !== 'undefined' && (window as any).Paddle) {
-    (window as any).Paddle.Checkout.open({
+    const checkoutConfig: any = {
       items: [{ priceId, quantity: 1 }],
-      customer: { email: userEmail },
-    });
+    };
+    
+    if (userEmail && userEmail.trim() !== '') {
+      checkoutConfig.customer = { email: userEmail };
+    }
+    
+    (window as any).Paddle.Checkout.open(checkoutConfig);
   }
 };
