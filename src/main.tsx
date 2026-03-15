@@ -3,7 +3,9 @@ import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { initPaddle } from './lib/paddle';
+import { inject } from '@vercel/analytics';
 
+inject();
 initPaddle();
 
 createRoot(document.getElementById('root')!).render(
