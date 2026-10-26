@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Sliders, Trash2, Plus, ToggleLeft, ToggleRight, Clock, Zap } from 'lucide-react';
 import { LayoutDashboard, Key, BarChart3, FileText, Settings, Bell, Layers, Code2, CreditCard, Shield, LogOut, Menu, X } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';

@@ -63,18 +63,31 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: 'https://llmlite-woad.vercel.app/auth/callback'
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'https://llmlite-woad.vercel.app/auth/callback'
+        }
+      });
+      if (error) {
+        setError(error.message);
       }
-    })
-    if (error) console.error('Google sign in error:', error)
+    } catch (err: any) {
+      setError('Google Sign-in failed. Please verify your Supabase project is active.');
+    }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!email.trim() || !password.trim()) {
+      setError('Please enter both email and password.');
+      return;
+    }
     setLoading(true);
     setError('');
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
     try {
       const res = await fetch('https://routerllm.onrender.com/login', {
         method: 'POST',
@@ -82,7 +95,8 @@ export const Login = () => {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
+        signal: controller.signal
       });
       const data = await res.json();
       if (data.subscription_key) {
@@ -90,12 +104,22 @@ export const Login = () => {
         localStorage.setItem('routellm_email', email);
         navigate('/dashboard');
       } else {
-        setError(data.error || 'Invalid email or password');
+        let msg = data.error || 'Invalid email or password';
+        if (typeof msg === 'string' && (msg.includes('Name or service not known') || msg.includes('Failed to resolve') || msg.includes('gaierror'))) {
+          msg = 'Database connection error: Your Supabase project appears to be paused or inactive. Please restore/unpause your project in the Supabase Dashboard.';
+        }
+        setError(msg);
       }
-    } catch (e) {
-      setError('Connection failed. Try again.');
+    } catch (e: any) {
+      if (e.name === 'AbortError') {
+        setError('Server request timed out. The backend server might be waking up; please try again.');
+      } else {
+        setError('Connection failed. Please check your network connection.');
+      }
+    } finally {
+      clearTimeout(timeoutId);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -104,9 +128,10 @@ export const Login = () => {
         <h2 className="text-2xl font-bold text-white mb-2">Welcome back</h2>
         <p className="text-white/40 text-sm mb-6">Sign in to your LLMLite account</p>
         {error && <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg p-3 mb-4">{error}</div>}
-        <div className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
           {/* Google Sign In Button */}
           <button
+            type="button"
             onClick={handleGoogleSignIn}
             className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-all duration-200"
           >
@@ -134,11 +159,11 @@ export const Login = () => {
             <label className="text-xs font-bold text-white/40 uppercase tracking-widest mb-2 block">Password</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
-          <button onClick={handleLogin} disabled={loading} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg text-sm transition-all">
+          <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg text-sm transition-all">
             {loading ? 'Signing in...' : 'Sign In →'}
           </button>
-          <p className="text-center text-sm text-white/40">Don't have an account? <a href="/signup" className="text-blue-400 hover:text-blue-300">Create one now</a></p>
-        </div>
+          <p className="text-center text-sm text-white/40">Don't have an account? <Link to="/signup" className="text-blue-400 hover:text-blue-300">Create one now</Link></p>
+        </form>
       </div>
     </div>
   );
@@ -155,13 +180,19 @@ export const Signup = () => {
   const navigate = useNavigate();
 
   const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: 'https://llmlite-woad.vercel.app/auth/callback'
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'https://llmlite-woad.vercel.app/auth/callback'
+        }
+      });
+      if (error) {
+        setError(error.message);
       }
-    })
-    if (error) console.error('Google sign in error:', error)
+    } catch (err: any) {
+      setError('Google Sign-in failed. Please verify your Supabase project is active.');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -175,27 +206,40 @@ export const Signup = () => {
     
     setLoading(true);
     setError(null);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
     
     try {
       const res = await fetch('https://routerllm.onrender.com/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
+        signal: controller.signal
       });
       
       const data = await res.json();
       
       if (data.error) {
-        setError(data.error);
+        let msg = data.error;
+        if (typeof msg === 'string' && (msg.includes('Name or service not known') || msg.includes('Failed to resolve') || msg.includes('gaierror'))) {
+          msg = 'Database connection error: Your Supabase project appears to be paused or inactive. Please restore/unpause your project in the Supabase Dashboard.';
+        }
+        setError(msg);
         return;
       }
       
       localStorage.setItem('routellm_key', data.subscription_key);
       localStorage.setItem('routellm_email', email);
       setSubscriptionKey(data.subscription_key);
-    } catch (err) {
-      setError('Failed to create account. Please try again.');
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        setError('Server request timed out. The backend server might be waking up; please try again.');
+      } else {
+        setError('Failed to create account. Please check your network and try again.');
+      }
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };
@@ -402,6 +446,7 @@ export const Signup = () => {
         <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Google Sign In Button */}
           <button
+            type="button"
             onClick={handleGoogleSignIn}
             className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold py-3 px-4 rounded-xl transition-all duration-200"
           >

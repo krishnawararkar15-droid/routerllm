@@ -382,7 +382,10 @@ async def signup(data: dict):
             "email": email
         }
     except Exception as e:
-        return {"error": str(e)}
+        err_msg = str(e)
+        if "Name or service not known" in err_msg or "Failed to resolve" in err_msg or "gaierror" in err_msg:
+            err_msg = "Database connection error: Your Supabase project appears to be paused or unreachable. Please restore/unpause your project in the Supabase Dashboard."
+        return {"error": err_msg}
 
 @app.get("/test-email")
 async def test_email():
@@ -536,7 +539,10 @@ async def login(data: dict):
             "email": email
         }
     except Exception as e:
-        return {"error": str(e)}
+        err_msg = str(e)
+        if "Name or service not known" in err_msg or "Failed to resolve" in err_msg or "gaierror" in err_msg:
+            err_msg = "Database connection error: Your Supabase project appears to be paused or unreachable. Please restore/unpause your project in the Supabase Dashboard."
+        return {"error": err_msg}
 
 @app.post("/route")
 async def route_request(request: Request):
@@ -812,22 +818,10 @@ async def send_budget_alert(request: Request):
     tokens_used = body.get("tokens_used")
     token_limit = body.get("token_limit")
 
-    import mailjet_rest
-    mailjet = mailjet_rest.Client(
-        auth=(os.environ["MJ_APIKEY_PUBLIC"], os.environ["MJ_APIKEY_PRIVATE"]),
-        version='v3.1'
-    )
-    data = {
-        "Messages": [{
-            "From": {"Email": "llmlite.support@gmail.com", "Name": "LLMLite"},
-            "To": [{"Email": email}],
-            "Subject": f"⚠️ LLMLite Budget Alert: {percent}% of tokens used",
-            "TextPart": f"Warning: You have used {tokens_used} of {token_limit} tokens ({percent}%). Visit https://llmlite.vercel.app/dashboard/billing to upgrade.",
-            "HTMLPart": f"<h2>⚠️ Budget Alert</h2><p>You've used <strong>{percent}%</strong> of your token limit.</p><p>{tokens_used} / {token_limit} tokens used.</p><a href='https://llmlite.vercel.app/dashboard/billing'>Upgrade your plan →</a>"
-        }]
-    }
-    result = mailjet.send.create(data=data)
-    return {"success": result.status_code == 200}
+    subject = f"⚠️ LLMLite Budget Alert: {percent}% of tokens used"
+    html_content = f"<h2>⚠️ Budget Alert</h2><p>You've used <strong>{percent}%</strong> of your token limit.</p><p>{tokens_used} / {token_limit} tokens used.</p><a href='https://llmlite.vercel.app/dashboard/billing'>Upgrade your plan →</a>"
+    result = await send_email_http(email, subject, html_content)
+    return {"success": result}
 
 @app.post("/paddle-webhook")
 async def paddle_webhook(request: Request):
